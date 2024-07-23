@@ -37,10 +37,10 @@ public class Game {
     @Column(name = "image_path", nullable = false)
     private String imagePath; // 사진 경로
 
-    @ManyToOne
-    @JoinColumn(name = "store_id")
-    private Store store;
-
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
-    private List<Review> reviews;
+//    @ManyToOne
+//    @JoinColumn(name = "store_id")
+//    private Store store;
+//
+//    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+//    private List<Review> reviews;
 }
