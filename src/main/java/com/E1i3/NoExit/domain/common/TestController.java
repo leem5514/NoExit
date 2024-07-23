@@ -10,6 +10,7 @@ public class TestController {
     @GetMapping("/home")
     @ResponseBody
     public String test(){
+        System.out.println("실행 테스트 완료");
         return "실행 테스트 완료.";
     }
 }
