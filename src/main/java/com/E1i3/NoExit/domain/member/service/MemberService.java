@@ -110,9 +110,10 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void memberDelete(String email) {
+	public Member memberDelete(String email) {
 		Member member = memberRepository.findByEmail(email).orElse(null);
 		memberRepository.delete(member);
+		return member;
 	}
 
 	@Transactional

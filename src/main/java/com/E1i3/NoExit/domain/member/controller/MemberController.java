@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.common.CommonResDto;
+
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
@@ -37,25 +39,27 @@ public class MemberController {
 
 	// 회원가입
 	@PostMapping("/emails/requestCode")
-	public Member memberCreatePost(@RequestBody MemberSaveReqDto dto) {
+	public ResponseEntity<CommonResDto> memberCreatePost(@RequestBody MemberSaveReqDto dto) {
 		// 일단 mariadb에 저장
 		// @RequestParam("email") @Valid String email
 		// 회원정보 입력받고 그 이메일로 인증번호 전송 요청
 		memberService.sendCodeToEmail(dto.getEmail());
-		return memberService.memberCreate(dto);
+		Member member = memberService.memberCreate(dto);
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 요청", member);
+		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
 	// 인증번호 검증 요청
 	@GetMapping("/emails/requestCode")
-	public ResponseEntity verificationEmail(@RequestParam("email") @Valid String email,
+	public ResponseEntity<CommonResDto> verificationEmail(@RequestParam("email") @Valid String email,
 		@RequestParam("code") String authCode) {
 		boolean response = memberService.verifiedCode(email, authCode);
 		if (!response) {
 			// 	일치하지 않는다면 mariadb에서 삭제
 			memberService.memberDelete(email);
 		}
-		System.out.println(response);
-		return new ResponseEntity<>(HttpStatus.OK);
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 성공", "");
+		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
 	// @PostMapping("/create")
@@ -68,17 +72,19 @@ public class MemberController {
 	// 상세 내역 수정
 	@PostMapping("/update")
 	@ResponseBody
-	public String updateMember(@RequestBody MemberUpdateDto dto) {
-		memberService.memberUpdate(dto);
-		return "update ok";
+	public ResponseEntity<CommonResDto> updateMember(@RequestBody MemberUpdateDto dto) {
+		Member member = memberService.memberUpdate(dto);
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 수정", "");
+		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
 	// 탈퇴 (?)
 	@PostMapping("/delete")
 	@ResponseBody
-	public String deleteMember(@RequestBody MemberUpdateDto dto) {
-		memberService.memberUpdate(dto);
-		return "update ok";
+	public ResponseEntity<CommonResDto> deleteMember(@RequestBody MemberUpdateDto dto) {
+		Member member = memberService.memberDelete(dto.getEmail());
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제", "");
+		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
 }

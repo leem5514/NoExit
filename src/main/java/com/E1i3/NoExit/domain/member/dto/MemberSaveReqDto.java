@@ -1,9 +1,7 @@
 package com.E1i3.NoExit.domain.member.dto;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-
 import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.member.domain.Role;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +19,7 @@ public class MemberSaveReqDto {
 	private String email;
 
 	private int age;
-	// private Role role;
+	private Role role;
 
 	private String phone_number;
 	private String nickname;
@@ -31,7 +29,7 @@ public class MemberSaveReqDto {
 			.username(this.username)
 			.password(this.password)
 			.email(this.email)
-			// .role(this.role)
+			.role(this.role)
 			.age(this.age)
 			.phone_number(this.phone_number)
 			.nickname(this.nickname)
