@@ -13,6 +13,9 @@ import javax.persistence.Id;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
+import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,7 +35,7 @@ public class Member {
 	private String username;
 	@Column(length = 50, nullable = false)
 	private String password;
-	@Column(length = 100, nullable = false)
+	@Column(length = 100, unique = true)
 	private String email;
 
 	private int point;
@@ -49,5 +52,15 @@ public class Member {
 	private LocalDateTime createdTime;
 	@UpdateTimestamp
 	private LocalDateTime updateTime;
+
+	public Member updateMember(MemberUpdateDto dto){
+		// 이메일은 수정x
+		this.username = dto.getUsername();
+		this.password = dto.getPassword();
+		this.age = dto.getAge();
+		this.phone_number = dto.getPhone_number();
+		this.nickname = dto.getNickname();
+		return this;
+	}
 }
 

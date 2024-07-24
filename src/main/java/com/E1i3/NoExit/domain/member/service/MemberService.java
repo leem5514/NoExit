@@ -6,26 +6,33 @@ import java.time.Duration;
 import java.util.Optional;
 import java.util.Random;
 
+import javax.persistence.EntityNotFoundException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.dto.MailReqDto;
+import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
+import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
-@Transactional
+@Transactional(readOnly = true)
 public class MemberService {
 
+	@Autowired
 	private final MemberRepository memberRepository;
 
+	@Autowired
 	private final MailService mailService;
 
+	@Autowired
 	private final RedisService redisService;
 
 	private static final String AUTH_CODE_PREFIX = "AUTH_CODE ";
@@ -61,7 +68,6 @@ public class MemberService {
 	public boolean verifiedCode(String email, String authCode) {
 		// 	존재하는 회원 정보가 있는지 확인
 		boolean result = false;
-		chkDuplicatedEmail(email);
 		String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
 		if(redisService.checkExistsValue(redisAuthCode)){
 			result =  redisAuthCode.equals(authCode);
@@ -69,6 +75,8 @@ public class MemberService {
 		return result;
 	}
 
+
+	@Transactional
 	public void sendCodeToEmail(String email) {
 		chkDuplicatedEmail(email);
 
@@ -90,5 +98,26 @@ public class MemberService {
 		if(member.isPresent()) {
 			throw new IllegalArgumentException("이미 존재하는 회원 정보입니다.");
 		}
+	}
+
+	@Transactional
+	public Member memberCreate(MemberSaveReqDto dto) {
+		if (memberRepository.findByEmail(dto.getEmail()).isPresent()) {
+			throw new IllegalArgumentException("이미 존재하는 email입니다.");
+		}
+		Member member = dto.toEntity();
+		return memberRepository.save(member);
+	}
+
+	@Transactional
+	public void memberDelete(String email) {
+		Member member = memberRepository.findByEmail(email).orElse(null);
+		memberRepository.delete(member);
+	}
+
+	@Transactional
+	public Member memberUpdate(MemberUpdateDto dto) {
+		Member member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		return member.updateMember(dto);
 	}
 }
