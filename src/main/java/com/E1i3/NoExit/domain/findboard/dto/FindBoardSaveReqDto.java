@@ -25,6 +25,7 @@ public class FindBoardSaveReqDto {
                 .expirationDate(expirationDate)
                 .totalCapacity(totalCapacity)
                 .image(image)
+                .view("Y")
                 .build();
     }
 
