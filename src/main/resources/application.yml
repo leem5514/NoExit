@@ -1,0 +1,43 @@
+server:
+  port: ${MONGODB_PORT}
+
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${MONGODB_URL}
+    username: ${MONGODB_USERNAME}
+    password: ${MONGODB_PASSWORD}
+  jpa :
+    database: mysql
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    generate-ddl : true
+    hibernate:
+      ddl-auto: create
+    show_sql : true
+  application:
+    name: NoExit
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB
+      max-request-size: 215MB
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    auth-code-expiration-millis: 1800000
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
