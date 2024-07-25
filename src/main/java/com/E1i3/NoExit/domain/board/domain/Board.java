@@ -27,8 +27,6 @@ public class Board {
 
     private String content; // 내용
 
-//    private String category; // 카테고리
-
     private int boardHits; // 조회수
 
     private int likes; // 좋아요
@@ -48,6 +46,8 @@ public class Board {
 
     @Enumerated(EnumType.STRING)
     private BoardType boardType; // 게시판 유형 (자유, 공략)
+
+    private DelYN delYN;
 
 
     public BoardListResDto fromEntity(){
