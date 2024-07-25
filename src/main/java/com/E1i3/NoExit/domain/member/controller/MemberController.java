@@ -37,7 +37,7 @@ public class MemberController {
 		this.memberService = memberService;
 	}
 
-	// 회원가입
+	// 회원가입 /members/emails/requestCode
 	@PostMapping("/emails/requestCode")
 	public ResponseEntity<CommonResDto> memberCreatePost(@RequestBody MemberSaveReqDto dto) {
 		// 일단 mariadb에 저장
