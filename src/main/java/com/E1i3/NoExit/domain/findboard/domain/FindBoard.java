@@ -51,7 +51,7 @@ public class FindBoard {
     private byte[] image;
 
 //    @Column(nullable = true, columnDefinition = "varchar(1) default 'Y'")
-    private String view;
+    private String delYn;
 
     public void incrementCurrentCount() {
         this.currentCount++;
