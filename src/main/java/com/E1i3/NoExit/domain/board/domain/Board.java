@@ -2,15 +2,14 @@ package com.E1i3.NoExit.domain.board.domain;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -20,8 +19,7 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 아이디
 
-    @Column(nullable = false)
-    private Long member_id; // 작성자 아이디
+    private Long memberId; // 작성자 아이디
 
     private String writer; // 작성자 > 이런 거 안 쓰면 에타처럼 익명1 이렇게 되게 해야 할까요
 
@@ -29,40 +27,40 @@ public class Board {
 
     private String content; // 내용
 
-    private String category; // 카테고리
+//    private String category; // 카테고리
 
-    @Column(nullable = false)
-    private int board_hits; // 조회수
+    private int boardHits; // 조회수
 
-    @Column(nullable = false)
     private int likes; // 좋아요
 
     private int dislikes; // 싫어요
 
-    private LocalDateTime created_at; // 작성시간
+    @CreationTimestamp
+    private LocalDateTime createdTime; // 작성시간
 
-    private LocalDateTime update_at; // 수정시간
+    @UpdateTimestamp
+    private LocalDateTime updatedTime; // 수정시간
 
-    @Column(name = "image_path", nullable = false)
-    private String image_path; // 이미지
+    @Column(name = "imagePath")
+    private String imagePath; // 이미지
 
-    private int notification_state; // 알림 상태
+    private int notificationState; // 알림 상태
 
     @Enumerated(EnumType.STRING)
-    private BoardType board_type; // 게시판 유형 (자유, 전략)
+    private BoardType boardType; // 게시판 유형 (자유, 공략)
 
 
     public BoardListResDto fromEntity(){
         BoardListResDto boardListResDto = BoardListResDto.builder()
                 .writer(this.writer)
                 .title(this.title)
-                .category(this.category)
-                .board_hits(this.board_hits)
+//                .category(this.category)
+                .boardHits(this.boardHits)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
-                .created_at(this.created_at)
-                .update_at(this.update_at)
-                .board_type(this.board_type)
+                .createdTime(this.createdTime)
+                .updatedTime(this.updatedTime)
+                .boardType(this.boardType)
                 .build();
 
         return boardListResDto;
@@ -74,22 +72,24 @@ public class Board {
                 .writer(this.writer)
                 .title(this.title)
                 .content(this.content)
-                .category(this.category)
-                .board_hits(this.board_hits)
+//                .category(this.category)
+                .boardHits(this.boardHits)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
-                .created_at(this.created_at)
-                .update_at(this.update_at)
-                .image_path(this.image_path)
-                .board_type(this.board_type)
+                .createdTime(this.createdTime)
+                .updatedTime(this.updatedTime)
+                .imagePath(this.imagePath)
+                .boardType(this.boardType)
                 .build();
 
         return boardDetailResDto;
     }
 
-    public void updateBoard(BoardUpdateReqDto boardUpdateReqDto) {
-        this.title = boardUpdateReqDto.getTitle();
-        this.content = boardUpdateReqDto.getContents();
+    public void updateEntity(BoardUpdateReqDto dto) {
+        this.title = dto.getTitle();
+        this.content = dto.getContent();
+        this.imagePath = dto.getImagePath();
+        this.boardType = dto.getBoardType();
     }
 
 }
