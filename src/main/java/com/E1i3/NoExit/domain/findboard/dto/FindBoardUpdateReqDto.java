@@ -23,7 +23,7 @@ public class FindBoardUpdateReqDto {
     public FindBoard toEntity(Long id, FindBoard existingBoard) {
         return FindBoard.builder()
                 .id(id)
-                .memberId(existingBoard.getMemberId())
+//                .memberId(existingBoard.getMemberId())
                 .title(title != null ? title : existingBoard.getTitle())
                 .contents(contents != null ? contents : existingBoard.getContents())
                 .createdAt(existingBoard.getCreatedAt())
@@ -33,7 +33,7 @@ public class FindBoardUpdateReqDto {
                 .totalCapacity(totalCapacity != 0 ? totalCapacity : existingBoard.getTotalCapacity())
                 .participantCount(existingBoard.getParticipantCount())
                 .image(image != null ? image : existingBoard.getImage())
-                .view(existingBoard.getView())
+                .delYn(existingBoard.getDelYn())
                 .build();
     }
 }

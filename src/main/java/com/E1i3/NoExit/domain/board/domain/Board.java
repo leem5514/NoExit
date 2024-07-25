@@ -2,6 +2,7 @@ package com.E1i3.NoExit.domain.board.domain;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
+import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -18,22 +19,18 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 아이디
-
-    private Long memberId; // 작성자 아이디
-
+//    private Long memberId; // 작성자 아이디
     private String writer; // 작성자 > 이런 거 안 쓰면 에타처럼 익명1 이렇게 되게 해야 할까요
-
     private String title; //  제목 > 이런 거 안 쓰면 ㅇ월ㅇ일 ㅇ시ㅇ분에 작성된 글입니다. 디폴트로 되게 만들어야 할까요
-
     private String content; // 내용
-
 //    private String category; // 카테고리
-
     private int boardHits; // 조회수
-
     private int likes; // 좋아요
-
     private int dislikes; // 싫어요
+
+    @ManyToOne //추가 7-25
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @CreationTimestamp
     private LocalDateTime createdTime; // 작성시간

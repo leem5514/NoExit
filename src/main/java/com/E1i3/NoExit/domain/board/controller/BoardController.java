@@ -28,10 +28,6 @@ public class BoardController {
         this.boardService = boardService;
     }
 
-
-
-
-
     @PostMapping("/board/create") // 게시글 생성
     public String boardCreate(@RequestBody BoardCreateReqDto dto) {
         boardService.boardCreate(dto);

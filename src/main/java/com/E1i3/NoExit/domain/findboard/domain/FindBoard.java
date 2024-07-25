@@ -25,7 +25,7 @@ public class FindBoard {
 //  @ManyToOne(fetch = FetchType.LAZY) //참조 안 하면 안 나가게.
 //  @JoinColumn(name = "member_id")
 //  member_id fk쪽에 oneToMany 설정이랑 해야하는거 잊지마셈.
-    private Long memberId;
+//    private Long memberId;
 
     @Column(length = 50, nullable = false)
     private String title;

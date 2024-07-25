@@ -40,8 +40,8 @@ public class FindBoardDetailResDto {
                 .totalCapacity(findBoard.getTotalCapacity())
                 .participantCount(findBoard.getParticipantCount())
                 .image(findBoard.getImage())
-                .view(findBoard.getView())
-                .memberId(findBoard.getMemberId())
+                .view(findBoard.getDelYn())
+//                .memberId(findBoard.getMemberId()) // memberId 컬럼 현재 사용 안 하고 있으므로 주석 처리했음.
                 .build();
     }
 }

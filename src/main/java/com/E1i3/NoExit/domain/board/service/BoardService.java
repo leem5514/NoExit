@@ -6,6 +6,8 @@ import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
+import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,67 +15,53 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BoardService {
-    private final BoardRepository boardRepository;
-    @Autowired
-    public BoardService(BoardRepository boardRepository) {
-        this.boardRepository = boardRepository;
-    }
 
+    private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
+
+    @Autowired
+    public BoardService(BoardRepository boardRepository, MemberRepository memberRepository) {
+        this.boardRepository = boardRepository;
+        this.memberRepository = memberRepository;
+    }
 
     @Transactional
     public void boardCreate(BoardCreateReqDto dto) { // 게시글 생성
-        Board board = dto.toEntity();
+        // Member 엔티티를 memberId로 조회
+        Member member = memberRepository.findById(dto.getMemberId())
+                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + dto.getMemberId()));
+
+        // DTO를 Entity로 변환하고 Member 설정
+        Board board = dto.toEntity(member);
         boardRepository.save(board);
     }
 
-
-
-
-
-
-    public Page<BoardListResDto> boardList(Pageable pageable){ // 게시글 전체 조회
+    public Page<BoardListResDto> boardList(Pageable pageable) { // 게시글 전체 조회
         Page<Board> boards = boardRepository.findAll(pageable);
-        Page<BoardListResDto> boardListResDtos = boards.map(
-                a->a.fromEntity());
-
+        Page<BoardListResDto> boardListResDtos = boards.map(Board::fromEntity);
         return boardListResDtos;
     }
 
-
-
-
-
     public BoardDetailResDto boardDetail(Long id) { // 특정 게시글 조회
-        Board board = boardRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("없는 회원입니다."));
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
         return board.detailFromEntity();
     }
 
-
-
-
-
     @Transactional
     public Board boardUpdate(Long id, BoardUpdateReqDto dto) {
-        Board board = boardRepository.findById(id).orElseThrow(()->new EntityNotFoundException(" 찾을 수 없습니다."));
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
         board.updateEntity(dto);
-        Board updatedBoard = boardRepository.save(board);
-        return updatedBoard;
+        return boardRepository.save(board);
     }
 
-
-
-
-
-
     public void boardDelete(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(()->new EntityNotFoundException("찾을 수 없습니다."));
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
         boardRepository.delete(board);
     }
 }
-
