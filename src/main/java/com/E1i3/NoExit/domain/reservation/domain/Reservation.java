@@ -14,6 +14,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -28,7 +30,7 @@ public class Reservation {
 
     private String phoneNumber; // 핸드폰 번호
 
-    private int count; // 인원 수
+    private int numberOfPlayers; // 인원 수
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'")
     private LocalDate resDate; // 예약일(년-월-일) 만 출력
@@ -43,45 +45,80 @@ public class Reservation {
     @JoinColumn(name = "member_id")
     private Member member; // 예약을 한 회원
 
-    @Enumerated
-    private State state;
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus reservationStatus; // 예약 승인에 대한 확정 상태
+
+    @Enumerated(EnumType.STRING)
+    private ApprovalStatus approvalStatus; // 사장님기준 예약 승인 거절 여부
+    private UUID reservationUuid;
 
     @CreationTimestamp
-    private LocalDateTime createdTime; // 예약 당시 시간
+    private LocalDateTime createdAt; // 예약 당시 시간
+
 
     @Builder
-    public Reservation(String resName, String phoneNumber, int count, LocalDate resDate, String resDateTime, Game game, Member member, State state) {
+    public Reservation(Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
+                       int numberOfPlayers, ReservationStatus reservationStatus, ApprovalStatus approvalStatus,
+                       UUID reservationUuid, LocalDateTime createdAt) {
+        this.member = member;
+        this.game = game;
         this.resName = resName;
         this.phoneNumber = phoneNumber;
-        this.count = count;
         this.resDate = resDate;
         this.resDateTime = resDateTime;
-        this.game = game;
-        this.member = member;
-        this.state = state;
+        this.numberOfPlayers = numberOfPlayers;
+        this.reservationStatus = reservationStatus;
+        this.approvalStatus = approvalStatus;
+        this.reservationUuid = reservationUuid;
+        this.createdAt = createdAt;
+        this.reservationUuid = UUID.randomUUID();
     }
 
-    public ReservationListResDto listFromEntity() {
-        return ReservationListResDto.builder()
-                .id(this.id)
-                .resName(this.resName)
-                .count(this.count)
-                .build();
+
+    public void updateStatus(ApprovalStatus approvalStatus) {
+        this.approvalStatus = approvalStatus;
+        if (approvalStatus == ApprovalStatus.OK) {
+            this.reservationStatus = ReservationStatus.ACCEPT;
+        } else if (approvalStatus == ApprovalStatus.NO) {
+            this.reservationStatus = ReservationStatus.REJECT;
+        }
     }
 
-    public ReservationDetailResDto detailFromEntity() {
-        LocalDateTime createdTime = this.getCreatedTime();
-        String date1 = createdTime.getYear() + "년 " + createdTime.getMonthValue() + "월 " +
-                createdTime.getDayOfMonth() + "일";
-
+    public ReservationDetailResDto toDetailDto() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return ReservationDetailResDto.builder()
                 .id(this.id)
                 .resName(this.resName)
                 .phoneNumber(this.phoneNumber)
-                .count(this.count)
+                .numberOfPlayers(this.numberOfPlayers)
                 .resDate(this.resDate)
                 .resDateTime(this.resDateTime)
-                .createdTime(date1)
+                .reservationStatus(this.reservationStatus)
+                .reservationUuid(this.reservationUuid)
+                .createdTime(this.createdAt.format(formatter))
                 .build();
     }
+//    public ReservationListResDto listFromEntity() {
+//        return ReservationListResDto.builder()
+//                .id(this.id)
+//                .resName(this.resName)
+//                .count(this.count)
+//                .build();
+//    }
+//
+//    public ReservationDetailResDto detailFromEntity() {
+//        LocalDateTime createdTime = this.getCreatedTime();
+//        String date1 = createdTime.getYear() + "년 " + createdTime.getMonthValue() + "월 " +
+//                createdTime.getDayOfMonth() + "일";
+//
+//        return ReservationDetailResDto.builder()
+//                .id(this.id)
+//                .resName(this.resName)
+//                .phoneNumber(this.phoneNumber)
+//                .count(this.count)
+//                .resDate(this.resDate)
+//                .resDateTime(this.resDateTime)
+//                .createdTime(date1)
+//                .build();
+//    }
 }
