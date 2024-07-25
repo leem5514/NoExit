@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class FindBoardService {
 
@@ -19,16 +20,12 @@ public class FindBoardService {
         this.findBoardRepository = findBoardRepository;
     }
 
-    @Transactional
     public FindBoardListResDto participateInBoard(Long id) {
         Optional<FindBoard> findBoardOptional = findBoardRepository.findById(id);
         if (findBoardOptional.isPresent()) {
             FindBoard findBoard = findBoardOptional.get();
-            // 참가 수 증가
             findBoard.incrementCurrentCount();
-            // 업데이트
             findBoardRepository.save(findBoard);
-            // 업데이트된 FindBoard를 DTO로 변환하여 반환
             return FindBoardListResDto.fromEntity(findBoard);
         } else {
             throw new RuntimeException("게시글을 찾을 수 없습니다.");
@@ -36,8 +33,6 @@ public class FindBoardService {
     }
 
 
-
-    @Transactional
     public Long findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
         FindBoard findBoard = findBoardSaveReqDto.toEntity();
         findBoardRepository.save(findBoard);
@@ -53,7 +48,6 @@ public class FindBoardService {
         }
     }
 
-    @Transactional
     public Long update(Long id, FindBoardUpdateReqDto findBoardUpdateReqDto) {
         Optional<FindBoard> findBoardOptional = findBoardRepository.findById(id);
         if (findBoardOptional.isPresent()) {
@@ -75,7 +69,6 @@ public class FindBoardService {
         }
     }
 
-    @Transactional
     public void delete(Long id) {
         if (findBoardRepository.existsById(id)) {
             findBoardRepository.deleteById(id);

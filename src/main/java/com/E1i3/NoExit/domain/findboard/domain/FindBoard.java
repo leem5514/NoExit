@@ -21,10 +21,10 @@ public class FindBoard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // FK 설정하기 , 이거 나중에 하자 CRUD 확인하고
-//    @ManyToOne(fetch = FetchType.LAZY) //참조 안 하면 안 나가게.
-//    @JoinColumn(name = "member_id")
-    //member_id fk쪽에 oneToMany 설정이랑 해야하는거 잊지마셈.
+//  FK 설정하기 , 이거 나중에 하자 CRUD 확인하고
+//  @ManyToOne(fetch = FetchType.LAZY) //참조 안 하면 안 나가게.
+//  @JoinColumn(name = "member_id")
+//  member_id fk쪽에 oneToMany 설정이랑 해야하는거 잊지마셈.
     private Long memberId;
 
     @Column(length = 50, nullable = false)
