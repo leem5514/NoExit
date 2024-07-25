@@ -15,6 +15,7 @@ public class FindBoardController {
 
     @Autowired
     public FindBoardController(FindBoardService findBoardService) {
+        System.out.println();
         this.findBoardService = findBoardService;
     }
 
