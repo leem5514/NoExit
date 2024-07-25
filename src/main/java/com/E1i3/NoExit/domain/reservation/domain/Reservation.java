@@ -1,6 +1,8 @@
 package com.E1i3.NoExit.domain.reservation.domain;
 
 import com.E1i3.NoExit.domain.game.domain.Game;
+import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
+import com.E1i3.NoExit.domain.reservation.dto.ReservationListResDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,15 +36,20 @@ public class Reservation {
 
     // (더미데이터로 받는) GAME DB에서 게임명 , 예약시간, 최대 인원수 정보 받아오기!
     @OneToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "game_id")
     private Game game;
+
+//    @ManyToOne
+//    @JoinColumn(name = "member_id")
+//    private Member member;
 
     @Enumerated
     private State state;
 
     @CreationTimestamp
     private LocalDateTime createdTime; // 예약 당시 시간
-    //    private boolean notificationState; // 알림 상태
+
+    // private boolean notificationState; // 알림 상태
 
     @Builder
     public Reservation(String resName, String phoneNumber, int count, LocalDate resDate, String resDateTime, Game game, State state) {
@@ -51,10 +58,41 @@ public class Reservation {
         this.count = count;
         this.resDate = resDate;
         this.resDateTime = resDateTime;
-        this.game = game;//
+        //this.game = game;//
+//        this.member = member
         this.state = state;
     }
 
 
+    public ReservationListResDto listFromEntity() {
+        ReservationListResDto reservationListResDto = ReservationListResDto.builder()
+                .id(this.id)
+                .resName(this.resName)
+                .count(this.count)
+//                .state(this.state)
+                //.member_email(this.member.getEmail())
+                .build();
+        return reservationListResDto;
+    }
 
+    public ReservationDetailResDto detailFromEntity() {
+
+        LocalDateTime createdTime = this.getCreatedTime();
+        String date1 = createdTime.getYear()+"년 " + createdTime.getMonthValue() + "월 " +
+                createdTime.getDayOfMonth() + "일";
+
+        ReservationDetailResDto reservationDetailResDto = ReservationDetailResDto.builder()
+                .id(this.id)
+                .resName(this.resName)
+                .phoneNumber(this.phoneNumber)
+                .count(this.count)
+                .resDate(this.resDate)
+                .resDateTime(this.resDateTime)
+//                .state(this.state)
+//                .store_name(this.getStore().getName())
+                .createdTime(date1)
+                .build();
+
+        return reservationDetailResDto;
+    }
 }
