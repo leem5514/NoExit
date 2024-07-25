@@ -12,7 +12,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl : true
     hibernate:
-      ddl-auto: create
+      ddl-auto: udpate
     show_sql : true
   application:
     name: NoExit
@@ -37,6 +37,7 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+#          30 * 60 * 1000 == 30분
     auth-code-expiration-millis: 1800000
   redis:
     host: ${REDIS_HOST}
