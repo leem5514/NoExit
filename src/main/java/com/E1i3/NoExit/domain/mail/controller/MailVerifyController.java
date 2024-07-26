@@ -40,22 +40,13 @@ public class MailVerifyController {
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
-	// // 인증 이메일 요청
-	// @PostMapping("/requestCode")
-	// public ResponseEntity<?> reqeustCode(MailReqDto mailReqDto) {
-	// 	// 회원정보 입력받고 그 이메일로 인증번호 전송 요청
-	// 	mailVerifyService.sendEmail(mailReqDto);
-	// 	return new ResponseEntity<>(HttpStatus.OK);
-	// }
-
-
 	// 인증번호 검증 요청
 	@GetMapping("/requestCode")
 	public ResponseEntity<CommonResDto> verificationEmail(@RequestParam("email") @Valid String email,
 		@RequestParam("code") String authCode) {
 		boolean response = mailVerifyService.verifiedCode(email, authCode);
-		if (!response) {
-			// 	일치하지 않는다면 MariaDB 삭제
+		if (response) {
+			// 	일치하지 않는다면 MariaDB 삭제 -> 카운트 몇번이나 가능하게 할지 수정 예정
 			memberService.memberDelete(email);
 		}
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 성공", response);

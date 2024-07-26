@@ -19,7 +19,7 @@ public class MemberSaveReqDto {
 	private String email;
 
 	private int age;
-	private String phoneNumber;
+	private String phone_number;
 	private String nickname;
 
 	public Member toEntity(){
@@ -29,7 +29,7 @@ public class MemberSaveReqDto {
 			.email(this.email)
 			.email(this.email)
 			.age(this.age)
-			.phoneNumber(this.phoneNumber)
+			.phone_number(this.phone_number)
 			.nickname(this.nickname)
 			.build();
 	}

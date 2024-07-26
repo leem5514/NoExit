@@ -15,6 +15,6 @@ public class MemberUpdateDto {
 	private String password;
 	private String email;
 	private int age;
-	private String phoneNumber;
+	private String phone_number;
 	private String nickname;
 }
