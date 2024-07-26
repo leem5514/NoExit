@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.findboard.repository;
 
+import com.E1i3.NoExit.domain.findboard.domain.DelYn;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,5 +14,5 @@ import java.util.List;
 public interface FindBoardRepository extends JpaRepository<FindBoard, Long> {
 
     Page<FindBoard> findAll(Pageable pageable);
-    Page<FindBoard> findByDelYn(Pageable pageable,String apt);
+    Page<FindBoard> findByDelYn(Pageable pageable, DelYn delYn);
 }

@@ -56,7 +56,7 @@ public class Member {
 	private String phone_number;
 
 	@Column(length = 100, nullable = false)
-	private String nickname;
+	private String nickname; //카멜케이스..수정..
 
 	@CreationTimestamp
 	private LocalDateTime createdTime;

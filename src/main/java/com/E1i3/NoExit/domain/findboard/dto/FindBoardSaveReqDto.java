@@ -1,6 +1,7 @@
 package com.E1i3.NoExit.domain.findboard.dto;
 
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
+import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,14 +20,17 @@ public class FindBoardSaveReqDto {
     private int totalCapacity;
     private byte[] image;
 
-    public FindBoard toEntity() {
+    public FindBoard toEntity(Member member) {
         return FindBoard.builder()
                 .title(this.title)
-                .writer(this.writer)
+                .writer(member.getNickname())
                 .contents(this.contents)
                 .expirationTime(this.expirationDate)
                 .totalCapacity(this.totalCapacity)
                 .image(this.image)
+                .member(member)
                 .build();
     }
+
+
 }

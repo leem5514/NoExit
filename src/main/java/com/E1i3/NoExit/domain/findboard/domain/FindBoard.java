@@ -26,14 +26,15 @@ public class FindBoard {
     @Column(length = 50, nullable = false)
     private String title;
 
-    @Column(length = 100, nullable = false)
+    // wirter = nickname 이라면 사용자에게 데이터
+    @Column(length = 100, nullable = true)
     private String writer;
 
     @Column(length = 3000)
     private String contents;
 
     @CreationTimestamp
-    private LocalDateTime cratedTime;
+    private LocalDateTime createdTime;
 
     @UpdateTimestamp
     private LocalDateTime updateTime;
@@ -64,7 +65,7 @@ public class FindBoard {
                 .expirationTime(this.expirationTime) //이거 어떻게 받아올지 생각해
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .cratedTime(this.getCratedTime())
+                .cratedTime(this.getCreatedTime())
                 .image(this.image)
                 .build();
     }
@@ -95,7 +96,7 @@ public class FindBoard {
                 .expirationTime(this.expirationTime) //이거 어떻게 받아올지 생각해
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .cratedTime(this.getCratedTime())
+                .cratedTime(this.getCreatedTime())
                 .image(this.image)
                 .build();
     }

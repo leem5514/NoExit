@@ -28,6 +28,7 @@ public class BoardController {
     private final BoardService boardService;
     @Autowired
     public BoardController(BoardService boardService) {
+
         this.boardService = boardService;
     }
 

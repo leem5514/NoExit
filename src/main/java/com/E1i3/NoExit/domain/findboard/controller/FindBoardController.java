@@ -44,6 +44,7 @@ public class FindBoardController {
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "조회 성공", findBoardListResDtos);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
+
 }
 
 
