@@ -17,7 +17,6 @@ public class BoardDetailResDto {
     private String writer; // 작성자
     private String title; //  제목
     private String content; // 내용
-//    private String category; // 카테고리
     private int boardHits; // 조회수
     private int likes; // 좋아요
     private int dislikes; // 싫어요

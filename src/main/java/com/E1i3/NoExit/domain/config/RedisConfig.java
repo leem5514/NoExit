@@ -19,6 +19,7 @@ public class RedisConfig {
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
+		// 추후에 알림처리에서 데이터베이스를 사용하니깐 데이터베이스 설정하는 식으로 코드 수정
 		return new LettuceConnectionFactory(host, port);
 	}
 

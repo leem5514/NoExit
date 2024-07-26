@@ -28,10 +28,6 @@ public class BoardController {
         this.boardService = boardService;
     }
 
-
-
-
-
     @PostMapping("/board/create") // 게시글 생성
     public String boardCreate(@RequestBody BoardCreateReqDto dto) {
         boardService.boardCreate(dto);
@@ -75,6 +71,12 @@ public class BoardController {
 
 
 
+
+//    @DeleteMapping("/board/delete/{id}") // 게시글 삭제
+//    public String boardDelete(@PathVariable Long id) {
+//        boardService.boardDelete(id);
+//        return "ok";
+//    }
 
     @DeleteMapping("/board/delete/{id}") // 게시글 삭제
     public String boardDelete(@PathVariable Long id) {

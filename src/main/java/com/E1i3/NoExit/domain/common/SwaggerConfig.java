@@ -29,7 +29,7 @@
 //        return new Docket(DocumentationType.SWAGGER_2)
 //                .select()
 //                .apis(RequestHandlerSelectors.any())
-//                .paths(PathSelectors.ant("/rest/**")) // *의 의미는? * : 직계 경로 즉 바로 아래 경로, ** : 자손까지 포함
+//                .paths(PathSelectors.ant("/**")) // *의 의미는? * : 직계 경로 즉 바로 아래 경로, ** : 자손까지 포함
 //                .build();
 //
 //    }
