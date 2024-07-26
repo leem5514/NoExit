@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class FindBoardDetailResDto {
 
     private Long id;
+    private String writer;
     private String title;
     private String contents;
     private LocalDateTime createdAt;
@@ -31,6 +32,7 @@ public class FindBoardDetailResDto {
     public static FindBoardDetailResDto fromEntity(FindBoard findBoard) {
         return FindBoardDetailResDto.builder()
                 .id(findBoard.getId())
+                .writer(findBoard.getWriter())
                 .title(findBoard.getTitle())
                 .contents(findBoard.getContents())
                 .createdAt(findBoard.getCreatedAt())
@@ -44,4 +46,5 @@ public class FindBoardDetailResDto {
 //                .memberId(findBoard.getMemberId()) // memberId 컬럼 현재 사용 안 하고 있으므로 주석 처리했음.
                 .build();
     }
+
 }

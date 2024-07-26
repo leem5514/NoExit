@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.findboard.domain;
 
+import com.E1i3.NoExit.domain.member.domain.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,28 +31,24 @@ public class FindBoard {
     @Column(length = 50, nullable = false)
     private String title;
 
+    @Column(length = 10, nullable = false)
+    private String writer;
     @Column(length = 3000)
     private String contents;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
-
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
     // 만료 시간 정보 저장
     private LocalDateTime expirationDate;
-
     private int currentCount;
     private int totalCapacity;
     private int participantCount;
-
     @Lob
     @Column(name = "image", nullable = true)
     private byte[] image;
-
-//    @Column(nullable = true, columnDefinition = "varchar(1) default 'Y'")
-    private String delYn;
+    @Builder.Default
+    private String delYn = "Y";
 
     public void incrementCurrentCount() {
         this.currentCount++;
