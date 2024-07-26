@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.member.service;
+package com.E1i3.NoExit.domain.common.service;
 
 import java.time.Duration;
 
