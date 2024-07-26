@@ -1,4 +1,4 @@
-package com.beyond.ordersystem.common.domain;
+package com.E1i3.NoExit.domain.common.domain;
 
 import java.time.LocalDateTime;
 
