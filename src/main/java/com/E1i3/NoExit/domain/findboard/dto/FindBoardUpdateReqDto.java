@@ -1,25 +1,25 @@
 package com.E1i3.NoExit.domain.findboard.dto;
 
-import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Getter
-@Setter
+@NoArgsConstructor
 public class FindBoardUpdateReqDto {
-    private String writer;
     private String title;
     private String contents;
     private LocalDateTime expirationDate;
     private int totalCapacity;
     private byte[] image;
 
-    public FindBoard toEntity(Long id, FindBoard existingBoard) {
-        existingBoard.updateFromDto(this);
-        return existingBoard;
+    public FindBoardUpdateReqDto(String title, String contents, LocalDateTime expirationDate, int totalCapacity, byte[] image) {
+        this.title = title;
+        this.contents = contents;
+        this.expirationDate = expirationDate;
+        this.totalCapacity = totalCapacity;
+        this.image = image;
     }
 }

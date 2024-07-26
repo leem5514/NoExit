@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FindBoardRepository extends JpaRepository<FindBoard, Long> {
 
     Page<FindBoard> findAll(Pageable pageable);
     Page<FindBoard> findByDelYn(Pageable pageable, DelYn delYn);
+    Optional<FindBoard> findByIdAndDelYn(Long id, DelYn delYn);
 }

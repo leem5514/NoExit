@@ -13,11 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Random;
 
 @Transactional
 @Service
@@ -28,51 +25,63 @@ public class FindBoardService {
 
     @Autowired
     public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository) {
-
         this.findBoardRepository = findBoardRepository;
         this.memberRepository = memberRepository;
     }
-
+    @Transactional
     public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
+        // 모든 사용자 중 하나를 랜덤으로 선택
+        List<Member> members = memberRepository.findAll();
+        if (members.isEmpty()) {
+            throw new EntityNotFoundException("등록된 사용자가 없습니다.");
+        }
 
-        //나중에 Security 붙여서 처리하는 로직을 추가해야한다. 우선 테스트를 위해 하드코딩
-        String nickname = "test"; // 로그인 시큐리티로 이 로직 수정해야함.
-
-
-        Member member = memberRepository.findBynickname(nickname)
-                .orElseThrow(()-> new EntityNotFoundException("닉네임이 없습니다."));
+        Member member = members.get(new Random().nextInt(members.size())); // 랜덤으로 사용자 선택
 
         FindBoard findBoard = findBoardSaveReqDto.toEntity(member);
-
         findBoardRepository.save(findBoard);
-
     }
 
-    public FindBoardResDto getResDto (Long id) {
-        FindBoard findBoard = findBoardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
-        FindBoardResDto resDto = findBoard.ResDtoFromEntity();
-
-        return resDto;
-    }
-
-    // 페이징 처리 + delYn 상태 Y만 찾아서 반환.
-    public Page<FindBoardListResDto> findBoardListResDto(Pageable pageable){
-        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYn.Y);
-        Page<FindBoardListResDto> findBoardListResDtos = findBoards.map(a -> a.listFromEintity());
-        return findBoardListResDtos;
-    }
-
-
-
-//    이거 보류
-//    public FindBoardDetailResDto getDetailResDto (Long id) {
+    //이게 완성된 코드고 위에는 테스트를 위한 임시 코드
+//    public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
+//        String nickname = "test"; // 하드코딩된 닉네임
 //
-//        FindBoard findBoard = findBoardRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
-//        FindBoardDetailResDto detailResDto = findBoard.detailResDtoFromEntity();
+//        Member member = memberRepository.findBynickname(nickname)
+//                .orElseThrow(() -> new EntityNotFoundException("닉네임이 없습니다."));
 //
-//        return detailResDto;
+//        FindBoard findBoard = findBoardSaveReqDto.toEntity(member);
+//        findBoardRepository.save(findBoard);
 //    }
+
+    public FindBoardResDto getResDto(Long id) {
+        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYn.Y)
+                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
+        return findBoard.ResDtoFromEntity();
+    }
+
+
+    public Page<FindBoardListResDto> findBoardListResDto(Pageable pageable) {
+        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYn.Y);
+        return findBoards.map(FindBoard::listFromEintity);
+    }
+
+
+    @Transactional
+    public String delete(Long id) {
+        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYn.Y)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 게시글입니다."));
+        findBoard.markAsDeleted();
+        findBoardRepository.save(findBoard); // 상태를 업데이트하기 위해 저장
+        return "삭제 완료";
+    }
+
+
+    @Transactional
+    public FindBoardResDto update(Long id, FindBoardUpdateReqDto dto) {
+        FindBoard findBoard = findBoardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 게시글입니다."));
+        findBoard.updateFromDto(dto);
+        return findBoard.ResDtoFromEntity();
+    }
 
 }

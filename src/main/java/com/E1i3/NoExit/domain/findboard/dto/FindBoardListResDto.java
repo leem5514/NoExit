@@ -1,13 +1,16 @@
 package com.E1i3.NoExit.domain.findboard.dto;
 
-import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class FindBoardListResDto {
 
     private Long member_id;
@@ -15,9 +18,9 @@ public class FindBoardListResDto {
     private String writer;
     private String title;
     private String contents;
+    private LocalDateTime createdTime;
     private LocalDateTime expirationTime;
     private int totalCapacity;
-    private LocalDateTime cratedTime;
     private int currentCount;
     private byte[] image;
 

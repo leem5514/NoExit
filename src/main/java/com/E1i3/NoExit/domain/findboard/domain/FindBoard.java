@@ -55,20 +55,22 @@ public class FindBoard {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public FindBoardResDto ResDtoFromEntity(){
+    public FindBoardResDto ResDtoFromEntity() {
         return FindBoardResDto.builder()
-//                .member_id(this.member.getId()) // 작성자 id? 필요할까? 없을듯?
-                .id(this.id) //게시글 번호가 나와야함
+                .member_id(this.member.getId()) // 작성자 ID 추가
+                .id(this.id)
                 .writer(this.member.getNickname())
                 .title(this.title)
                 .contents(this.contents)
-                .expirationTime(this.expirationTime) //이거 어떻게 받아올지 생각해
+                .createdTime(this.createdTime)
+                .updateTime(this.updateTime)
+                .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .cratedTime(this.getCreatedTime())
                 .image(this.image)
                 .build();
     }
+
 
     // detailResDtoFromEntity 이게 필요할까? 중복되는것같은데 논의 해보자!!
 //    public FindBoardDetailResDto detailResDtoFromEntity(){
@@ -89,14 +91,15 @@ public class FindBoard {
     //ResDto도 필요없을 것 같은데.. 생각해보길 바람.
     public FindBoardListResDto listFromEintity(){
         return FindBoardListResDto.builder()
-                .id(this.id) //게시글 번호가 나와야함
+                .member_id(this.member.getId()) // 작성자 ID 추가
+                .id(this.id)
                 .writer(this.member.getNickname())
                 .title(this.title)
                 .contents(this.contents)
-                .expirationTime(this.expirationTime) //이거 어떻게 받아올지 생각해
+                .createdTime(this.createdTime)
+                .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .cratedTime(this.getCreatedTime())
                 .image(this.image)
                 .build();
     }
@@ -108,7 +111,6 @@ public class FindBoard {
     public void incrementCurrentCount() {
         this.currentCount++;
     }
-
 
     public void updateFromDto(FindBoardUpdateReqDto dto) {
         this.title = dto.getTitle();
