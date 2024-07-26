@@ -1,35 +1,28 @@
 package com.E1i3.NoExit.domain.findboard.dto;
 
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
 public class FindBoardResDto {
 
+    private Long member_id;
+    private Long id; // 게시글 번호
+    private String writer;
     private String title;
     private String contents;
-    private LocalDateTime expirationDate; // 카멜 케이스로 수정
-    private int currentCount; // 카멜 케이스로 수정
-    private int totalCapacity; // 카멜 케이스로 수정
+    private LocalDateTime cratedTime;
+    private LocalDateTime updateTime;
+    private LocalDateTime expirationTime;
+    private int currentCount;
+    private int totalCapacity;
     private byte[] image;
 
-    // 엔티티에서 변환하는 메서드
-    public static FindBoardResDto fromEntity(FindBoard findBoard) {
-        return FindBoardResDto.builder()
-                .title(findBoard.getTitle())
-                .contents(findBoard.getContents())
-                .expirationDate(findBoard.getExpirationDate())
-                .currentCount(findBoard.getCurrentCount())
-                .totalCapacity(findBoard.getTotalCapacity())
-                .image(findBoard.getImage())
-                .build();
-    }
 }

@@ -3,9 +3,16 @@ package com.E1i3.NoExit.domain.findboard.service;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.findboard.dto.*;
 import com.E1i3.NoExit.domain.findboard.repository.FindBoardRepository;
+import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,76 +22,59 @@ import java.util.stream.Collectors;
 public class FindBoardService {
 
     private final FindBoardRepository findBoardRepository;
+    private final MemberRepository memberRepository;
 
-    public FindBoardService(FindBoardRepository findBoardRepository) {
+    @Autowired
+    public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository) {
+
         this.findBoardRepository = findBoardRepository;
+        this.memberRepository = memberRepository;
     }
 
-    public FindBoardListResDto participateInBoard(Long id) {
-        Optional<FindBoard> findBoardOptional = findBoardRepository.findById(id);
-        if (findBoardOptional.isPresent()) {
-            FindBoard findBoard = findBoardOptional.get();
-            findBoard.incrementCurrentCount();
-            findBoardRepository.save(findBoard);
-            return FindBoardListResDto.fromEntity(findBoard);
-        } else {
-            throw new RuntimeException("게시글을 찾을 수 없습니다.");
-        }
-    }
+    public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
 
-
-    public Long findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
+        //나중에 Security 붙여서 처리하는 로직을 추가해야한다.
         FindBoard findBoard = findBoardSaveReqDto.toEntity();
         findBoardRepository.save(findBoard);
-        return findBoard.getId();
+
     }
 
-    public FindBoardResDto getFindBoard(Long id) {
-        Optional<FindBoard> findBoardOptional = findBoardRepository.findById(id);
-        if (findBoardOptional.isPresent()) {
-            return FindBoardResDto.fromEntity(findBoardOptional.get());
-        } else {
-            throw new RuntimeException("게시글을 찾을 수 없습니다.");
-        }
+    public FindBoardResDto getResDto (Long id) {
+        FindBoard findBoard = findBoardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+        FindBoardResDto resDto = findBoard.ResDtoFromEntity();
+
+        return resDto;
     }
 
-    public Long update(Long id, FindBoardUpdateReqDto findBoardUpdateReqDto) {
-        Optional<FindBoard> findBoardOptional = findBoardRepository.findById(id);
-        if (findBoardOptional.isPresent()) {
-            FindBoard existingBoard = findBoardOptional.get();
-            FindBoard updatedBoard = findBoardUpdateReqDto.toEntity(id, existingBoard);
-            findBoardRepository.save(updatedBoard);
-            return updatedBoard.getId();
-        } else {
-            throw new RuntimeException("게시글을 찾을 수 없습니다.");
-        }
-    }
-
-    public FindBoardDetailResDto getFindBoardDetail(Long id) {
-        Optional<FindBoard> findBoardOptional = findBoardRepository.findById(id);
-        if (findBoardOptional.isPresent()) {
-            return FindBoardDetailResDto.fromEntity(findBoardOptional.get());
-        } else {
-            throw new RuntimeException("게시글을 찾을 수 없습니다.");
-        }
-    }
-
-    public void delete(Long id) {
-        if (findBoardRepository.existsById(id)) {
-            findBoardRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("게시글을 찾을 수 없습니다.");
-        }
+    // 페이징 처리 + delYn 상태 Y만 찾아서 반환.
+    public Page<FindBoardListResDto> findBoardListResDto(Pageable pageable){
+        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable,"Y");
+        Page<FindBoardListResDto> findBoardListResDtos = findBoards.map(a -> a.listFromEintity());
+        return findBoardListResDtos;
     }
 
 
-    public List<FindBoardListResDto> getFindBoardList() {
-        List<FindBoard> findBoardList = findBoardRepository.findAll();
-        return findBoardList.stream()
-                .map(FindBoardListResDto::fromEntity)
-                .collect(Collectors.toList());
-    }
 
 
+
+
+
+
+
+
+
+
+
+
+//    이거 보류
+//    public FindBoardDetailResDto getDetailResDto (Long id) {
+//
+//        FindBoard findBoard = findBoardRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 회원입니다."));
+//        FindBoardDetailResDto detailResDto = findBoard.detailResDtoFromEntity();
+//
+//        return detailResDto;
+//    }
 
 }

@@ -62,12 +62,12 @@ public class MemberController {
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
-	// @PostMapping("/create")
-	// @ResponseBody
-	// public String createMember(@RequestBody MemberSaveReqDto dto) {
-	// 	memberService.memberCreate(dto);
-	// 	return "create ok";
-	// }
+	 @PostMapping("/create")
+	 @ResponseBody
+	 public String createMember(@RequestBody MemberSaveReqDto dto) {
+	 	memberService.memberCreate(dto);
+	 	return "create ok";
+	 }
 
 	// 상세 내역 수정
 	@PostMapping("/update")

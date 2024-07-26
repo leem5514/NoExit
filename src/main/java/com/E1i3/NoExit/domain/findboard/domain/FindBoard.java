@@ -1,10 +1,11 @@
 package com.E1i3.NoExit.domain.findboard.domain;
 
-import com.E1i3.NoExit.domain.member.domain.Role;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+//import com.E1i3.NoExit.domain.findboard.dto.FindBoardDetailResDto;
+import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
+import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
+import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
+import com.E1i3.NoExit.domain.member.domain.Member;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -22,36 +23,98 @@ public class FindBoard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//  FK 설정하기 , 이거 나중에 하자 CRUD 확인하고
-//  @ManyToOne(fetch = FetchType.LAZY) //참조 안 하면 안 나가게.
-//  @JoinColumn(name = "member_id")
-//  member_id fk쪽에 oneToMany 설정이랑 해야하는거 잊지마셈.
-//    private Long memberId;
-
     @Column(length = 50, nullable = false)
     private String title;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 100, nullable = false)
     private String writer;
+
     @Column(length = 3000)
     private String contents;
+
     @CreationTimestamp
-    private LocalDateTime createdAt;
+    private LocalDateTime cratedTime;
+
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
-    // 만료 시간 정보 저장
-    private LocalDateTime expirationDate;
+    private LocalDateTime updateTime;
+
+    private LocalDateTime expirationTime;
     private int currentCount;
     private int totalCapacity;
-    private int participantCount;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private DelYn delYn = DelYn.Y;
+
     @Lob
     @Column(name = "image", nullable = true)
     private byte[] image;
-    @Builder.Default
-    private String delYn = "Y";
+
+    @ManyToOne(fetch = FetchType.LAZY) //참조 안 하면 안 나가게.
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    public FindBoardResDto ResDtoFromEntity(){
+        return FindBoardResDto.builder()
+//                .member_id(this.member.getId()) // 작성자 id? 필요할까? 없을듯?
+                .id(this.id) //게시글 번호가 나와야함
+                .writer(this.member.getNickname())
+                .title(this.title)
+                .contents(this.contents)
+                .expirationTime(this.expirationTime) //이거 어떻게 받아올지 생각해
+                .currentCount(this.currentCount)
+                .totalCapacity(this.totalCapacity)
+                .cratedTime(this.getCratedTime())
+                .image(this.image)
+                .build();
+    }
+
+    // detailResDtoFromEntity 이게 필요할까? 중복되는것같은데 논의 해보자!!
+//    public FindBoardDetailResDto detailResDtoFromEntity(){
+//        return FindBoardDetailResDto.builder()
+//                .id(this.id)
+//                .writer(this.member.getNickname())
+//                .title(this.title)
+//                .contents(this.contents)
+//                .createdAt(this.cratedTime)
+//                .updatedAt(this.updateTime)//나중에 뺴던지? 일단 주자
+//                .expirationDate(this.expirationTime)
+//                .totalCapacity(this.totalCapacity)
+//                .image(this.image)
+//                .build();
+//    }
+
+    //생각해보니까 FindBoard에는 리스트만 잇으면 되지않나? 어차피 글 안에 들어가는게 아니잖아
+    //ResDto도 필요없을 것 같은데.. 생각해보길 바람.
+    public FindBoardListResDto listFromEintity(){
+        return FindBoardListResDto.builder()
+                .id(this.id) //게시글 번호가 나와야함
+                .writer(this.member.getNickname())
+                .title(this.title)
+                .contents(this.contents)
+                .expirationTime(this.expirationTime) //이거 어떻게 받아올지 생각해
+                .currentCount(this.currentCount)
+                .totalCapacity(this.totalCapacity)
+                .cratedTime(this.getCratedTime())
+                .image(this.image)
+                .build();
+    }
+
+    public void markAsDeleted() {
+        this.delYn = DelYn.N; // delYn을 N으로 변경
+    }
 
     public void incrementCurrentCount() {
         this.currentCount++;
     }
 
+
+    public void updateFromDto(FindBoardUpdateReqDto dto) {
+        this.title = dto.getTitle();
+        this.contents = dto.getContents();
+        this.expirationTime = dto.getExpirationDate();
+        this.totalCapacity = dto.getTotalCapacity();
+        this.image = dto.getImage();
+        this.updateTime = LocalDateTime.now();
+    }
 }

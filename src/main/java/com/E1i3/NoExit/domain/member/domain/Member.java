@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
+import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.review.domain.Review;
@@ -71,6 +72,9 @@ public class Member {
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> boards;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST) // cascadetype 해야 FK 삭제 가능
+	private List<FindBoard> FindBoards;
 
 	public Member updateMember(MemberUpdateDto dto) {
 		// 이메일은 수정 x
