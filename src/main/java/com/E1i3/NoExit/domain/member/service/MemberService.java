@@ -62,7 +62,7 @@ public class MemberService {
 		// redis에 code 저장
 		redisService.setValues(AUTH_CODE_PREFIX + email, authCode, Duration.ofMillis(this.authCodeExpirationMillis));
 		// 이메일만 존재하는 상태로 db에 저장
-		Member member = Member.builder().username("").password("").phoneNumber("").nickname("").delYN(DelYN.N).email(email).build();
+		Member member = Member.builder().username("").password("").phone_number("").nickname("").delYN(DelYN.N).email(email).build();
 		return memberRepository.save(member);
 	}
 

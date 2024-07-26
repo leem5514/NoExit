@@ -59,12 +59,8 @@ public class MailVerifyService {
 	// 일치하면 true, 불일치하면 false;
 	public boolean verifiedCode(String email, String authCode) {
 		// 	존재하는 회원 정보가 있는지 확인
-		boolean result = false;
 		String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
-		if(redisService.checkExistsValue(redisAuthCode)){
-			result =  redisAuthCode.equals(authCode);
-		}
-		return result;
+		return redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
 	}
 
 

@@ -53,18 +53,6 @@ public class MemberController {
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
-	// // 인증번호 검증 요청
-	// @GetMapping("/email/requestCode")
-	// public ResponseEntity<CommonResDto> verificationEmail(@RequestParam("email") @Valid String email,
-	// 	@RequestParam("code") String authCode) {
-	// 	boolean response = mailVerifyService.verifiedCode(email, authCode);
-	// 	if (!response) {
-	// 		// 	일치하지 않는다면 MariaDB 삭제
-	// 		memberService.memberDelete(email);
-	// 	}
-	// 	CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 성공", response);
-	// 	return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-	// }
 
 	// 상세 내역 수정
 	@PostMapping("/member/update")

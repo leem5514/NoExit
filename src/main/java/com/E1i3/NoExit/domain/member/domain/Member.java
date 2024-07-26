@@ -57,7 +57,7 @@ public class Member {
 	private Role role = Role.USER;
 
 	@Column(length = 255, nullable = false)
-	private String phoneNumber;
+	private String phone_number;
 
 	@Column(length = 100, nullable = false)
 	private String nickname;
@@ -90,7 +90,7 @@ public class Member {
 		this.username = dto.getUsername();
 		this.password =  encodedPassword;
 		this.age = dto.getAge();
-		this.phoneNumber = dto.getPhone_number();
+		this.phone_number = dto.getPhone_number();
 		this.nickname = dto.getNickname();
 		return this;
 	}
@@ -99,7 +99,7 @@ public class Member {
 		this.username = dto.getUsername();
 		this.password = encodedPassword;
 		this.age = dto.getAge();
-		this.phoneNumber = dto.getPhoneNumber();
+		this.phone_number = dto.getPhone_number();
 		this.nickname = dto.getNickname();
 		return this;
 	}
@@ -118,14 +118,4 @@ public class Member {
 			.build();
 	}
 
-	// public Member toEntity(MemberSaveReqDto dto) {
-	// 	return Member.builder()
-	// 		.username(dto.getUsername())
-	// 		.password(dto.getPassword())
-	// 		.role(dto.getRole())
-	// 		.age(dto.getAge())
-	// 		.phone_number(dto.getPhone_number())
-	// 		.nickname(dto.getNickname())
-	// 		.build();
-	// }
 }
