@@ -5,14 +5,11 @@ import java.security.SecureRandom;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import com.E1i3.NoExit.domain.mail.repository.MailVerifyRepository;
 import com.E1i3.NoExit.domain.mail.dto.MailReqDto;
-import com.E1i3.NoExit.domain.member.service.MemberService;
 import com.E1i3.NoExit.domain.common.service.RedisService;
 
 @Service

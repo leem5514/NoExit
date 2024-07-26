@@ -12,13 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.common.service.RedisService;
+import com.E1i3.NoExit.domain.mail.dto.MailReqDto;
 import com.E1i3.NoExit.domain.mail.service.MailVerifyService;
 import com.E1i3.NoExit.domain.member.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
-import com.E1i3.NoExit.domain.mail.dto.MailReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
-import com.E1i3.NoExit.domain.member.dto.MemberLoginReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
@@ -66,6 +66,7 @@ public class MemberService {
 		return memberRepository.save(member);
 	}
 
+
 	// 회원 등록
 	@Transactional
 	public Member memberCreate(MemberSaveReqDto memberSaveReqDto) {
@@ -96,12 +97,12 @@ public class MemberService {
 	}
 
 	// 로그인
-	public Member login(MemberLoginReqDto memberLoginReqDto) {
+	public Member login(LoginReqDto loginReqDto) {
 		// 	email의 존재여부
-		Member member = memberRepository.findByEmail(memberLoginReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		Member member = memberRepository.findByEmail(loginReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
 
 		// 	password 일치 여부
-		if(!passwordEncoder.matches(memberLoginReqDto.getPassword(), member.getPassword())){
+		if(!passwordEncoder.matches(loginReqDto.getPassword(), member.getPassword())){
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 		return member;

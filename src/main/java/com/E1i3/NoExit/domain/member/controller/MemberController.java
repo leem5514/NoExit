@@ -3,29 +3,23 @@ package com.E1i3.NoExit.domain.member.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
+import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.mail.service.MailVerifyService;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
-import com.E1i3.NoExit.domain.member.dto.MemberLoginReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.service.MemberService;
@@ -80,9 +74,9 @@ public class MemberController {
 	// 회원 정보(마이페이지) 조회하는 api필요 -> 토큰으로 처리
 
 	@PostMapping("/doLogin")
-	public ResponseEntity<Object> doLogin(@RequestBody MemberLoginReqDto memberLoginReqDto) {
+	public ResponseEntity<Object> doLogin(@RequestBody LoginReqDto loginReqDto) {
 		// email, password가 일치하는지 검증
-		Member member = memberService.login(memberLoginReqDto);
+		Member member = memberService.login(loginReqDto);
 
 		// 	일치하는 경우 accessToken 생성
 		String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
