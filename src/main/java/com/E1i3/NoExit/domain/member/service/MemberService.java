@@ -1,124 +1,111 @@
 package com.E1i3.NoExit.domain.member.service;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.Duration;
-import java.util.Optional;
-import java.util.Random;
 
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.E1i3.NoExit.domain.common.service.RedisService;
+import com.E1i3.NoExit.domain.mail.service.MailVerifyService;
+import com.E1i3.NoExit.domain.member.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
-import com.E1i3.NoExit.domain.member.dto.MailReqDto;
+import com.E1i3.NoExit.domain.mail.dto.MailReqDto;
+import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
+import com.E1i3.NoExit.domain.member.dto.MemberLoginReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Service
-@Slf4j
 @Transactional(readOnly = true)
 public class MemberService {
 
-	@Autowired
 	private final MemberRepository memberRepository;
-
-	@Autowired
-	private final MailService mailService;
-
-	@Autowired
+	private final MailVerifyService mailVerifyService;
 	private final RedisService redisService;
 
-	private static final String AUTH_CODE_PREFIX = "AUTH_CODE ";
+	@Autowired
+	private final PasswordEncoder passwordEncoder;
 
-	public MemberService(MemberRepository memberRepository, MailService mailService, RedisService redisService) {
-		this.memberRepository = memberRepository;
-		this.mailService = mailService;
-		this.redisService = redisService;
-	}
+	private static final String AUTH_CODE_PREFIX = "AUTH_CODE ";
 
 	@Value("${spring.mail.auth-code-expiration-millis}")
 	private long authCodeExpirationMillis;
 
-	// 	인증번호 생성
-	private String createCode() {
-		StringBuilder sb = new StringBuilder();	//인증번호
-		try{
-			Random random = SecureRandom.getInstanceStrong();
-			for (int i = 0; i < 6; i++) {
-				// 6자리 랜덤 수 생성 -> 추후에 문자와 숫자 섞는걸로 수정
-				sb.append(random.nextInt(10));
-			}
-		}catch (NoSuchAlgorithmException e) {
-			// common - error코드로 수정필요
-			e.printStackTrace();
-		}
-		return sb.toString();
+	public MemberService(MemberRepository memberRepository, MailVerifyService mailVerifyService,
+		RedisService redisService, PasswordEncoder passwordEncoder) {
+		this.memberRepository = memberRepository;
+		this.mailVerifyService = mailVerifyService;
+		this.redisService = redisService;
+		this.passwordEncoder = passwordEncoder;
 	}
-
-	// 	인증번호 검증
-	// 이메일을 입력받아 redis의 인증코드와 파라미터의 인증코드가 동일한지 비교
-	// 일치하면 true, 불일치하면 false;
-	public boolean verifiedCode(String email, String authCode) {
-		// 	존재하는 회원 정보가 있는지 확인
-		boolean result = false;
-		String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
-		if(redisService.checkExistsValue(redisAuthCode)){
-			result =  redisAuthCode.equals(authCode);
-		}
-		return result;
-	}
-
 
 	@Transactional
-	public void sendCodeToEmail(String email) {
-		chkDuplicatedEmail(email);
-
+	public Member sendCodeToEmail(String email) {
 		String title = "이메일 인증 번호";
-		String authCode = this.createCode();
+		String authCode = mailVerifyService.createCode();
 		MailReqDto mailReqDto = MailReqDto.builder()
 			.receiver(email)
 			.title(title)
 			.contents(authCode)
 			.build();
+
 		// 메일 전송하고
-		mailService.sendEmail(mailReqDto);
-		// redis에 저장
+		mailVerifyService.sendEmail(mailReqDto);
+		// redis에 code 저장
 		redisService.setValues(AUTH_CODE_PREFIX + email, authCode, Duration.ofMillis(this.authCodeExpirationMillis));
-	}
-
-	public void chkDuplicatedEmail(String email) {
-		Optional<Member> member = memberRepository.findByEmail(email);
-		if(member.isPresent()) {
-			throw new IllegalArgumentException("이미 존재하는 회원 정보입니다.");
-		}
-	}
-
-	@Transactional
-	public Member memberCreate(MemberSaveReqDto dto) {
-		if (memberRepository.findByEmail(dto.getEmail()).isPresent()) {
-			throw new IllegalArgumentException("이미 존재하는 email입니다.");
-		}
-		Member member = dto.toEntity();
+		// 이메일만 존재하는 상태로 db에 저장
+		Member member = Member.builder().username("").password("").phoneNumber("").nickname("").delYN(DelYN.N).email(email).build();
 		return memberRepository.save(member);
 	}
 
+	// 회원 등록
+	@Transactional
+	public Member memberCreate(MemberSaveReqDto memberSaveReqDto) {
+		Member member = memberRepository.findByEmail(memberSaveReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		String encodedPassword = passwordEncoder.encode(memberSaveReqDto.getPassword());
+		return member.saveMember(memberSaveReqDto, encodedPassword);
+	}
+
+	// 회원 조회
+	public Page<MemberListResDto> memberList(Pageable pageable) {
+		Page<Member> memberList = memberRepository.findAll(pageable);
+		return memberList.map(a -> a.fromEntity());
+	}
+
+	// 회원 삭제
 	@Transactional
 	public Member memberDelete(String email) {
-		Member member = memberRepository.findByEmail(email).orElse(null);
-		memberRepository.delete(member);
+		Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		return member.updateDelYN();
+	}
+
+	// 회원 정보 수정
+	@Transactional
+	public Member memberUpdate(MemberUpdateDto memberUpdateDto) {
+		Member member = memberRepository.findByEmail(memberUpdateDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		String encodedPassword = passwordEncoder.encode(memberUpdateDto.getPassword());
+		return member.updateMember(memberUpdateDto, encodedPassword);
+	}
+
+	// 로그인
+	public Member login(MemberLoginReqDto memberLoginReqDto) {
+		// 	email의 존재여부
+		Member member = memberRepository.findByEmail(memberLoginReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+
+		// 	password 일치 여부
+		if(!passwordEncoder.matches(memberLoginReqDto.getPassword(), member.getPassword())){
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+		}
 		return member;
 	}
 
-	@Transactional
-	public Member memberUpdate(MemberUpdateDto dto) {
-		Member member = memberRepository.findByEmail(dto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
-		return member.updateMember(dto);
-	}
+
 }

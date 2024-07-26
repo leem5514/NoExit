@@ -14,11 +14,14 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
+import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
+import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,7 +42,7 @@ public class Member {
 	@Column(length = 50, nullable = false)
 	private String username;
 
-	@Column(length = 50, nullable = false)
+	@Column(length = 255, nullable = false)
 	private String password;
 
 	@Column(length = 100, unique = true)
@@ -49,13 +52,18 @@ public class Member {
 	private int age;
 
 	@Enumerated(EnumType.STRING)
-	private Role role;
+	@Builder.Default
+	private Role role = Role.USER;
 
 	@Column(length = 255, nullable = false)
-	private String phone_number;
+	private String phoneNumber;
 
 	@Column(length = 100, nullable = false)
 	private String nickname;
+
+	@Enumerated(EnumType.STRING)
+	@Builder.Default
+	private DelYN delYN = DelYN.N;
 
 	@CreationTimestamp
 	private LocalDateTime createdTime;
@@ -72,13 +80,47 @@ public class Member {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> boards;
 
-	public Member updateMember(MemberUpdateDto dto) {
+	public Member updateMember(MemberUpdateDto dto, String encodedPassword) {
 		// 이메일은 수정 x
 		this.username = dto.getUsername();
-		this.password = dto.getPassword();
+		this.password =  encodedPassword;
 		this.age = dto.getAge();
-		this.phone_number = dto.getPhone_number();
+		this.phoneNumber = dto.getPhone_number();
 		this.nickname = dto.getNickname();
 		return this;
 	}
+
+	public Member saveMember(MemberSaveReqDto dto,  String encodedPassword) {
+		this.username = dto.getUsername();
+		this.password = encodedPassword;
+		this.age = dto.getAge();
+		this.phoneNumber = dto.getPhoneNumber();
+		this.nickname = dto.getNickname();
+		return this;
+	}
+
+	public Member updateDelYN() {
+		this.delYN = DelYN.Y;
+		return this;
+	}
+
+	public MemberListResDto fromEntity(){
+		return MemberListResDto.builder()
+			.email(this.email)
+			.id(this.id)
+			.nickname(this.nickname)
+			.username(this.username)
+			.build();
+	}
+
+	// public Member toEntity(MemberSaveReqDto dto) {
+	// 	return Member.builder()
+	// 		.username(dto.getUsername())
+	// 		.password(dto.getPassword())
+	// 		.role(dto.getRole())
+	// 		.age(dto.getAge())
+	// 		.phone_number(dto.getPhone_number())
+	// 		.nickname(dto.getNickname())
+	// 		.build();
+	// }
 }
