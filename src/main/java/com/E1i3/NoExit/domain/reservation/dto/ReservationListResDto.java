@@ -20,7 +20,6 @@ public class ReservationListResDto {
     private int numberOfPlayers;
     private LocalDate resDate;
     private String resDateTime;
-    private UUID reservationUuid;
     private ReservationStatus reservationStatus;
 
 
@@ -31,7 +30,6 @@ public class ReservationListResDto {
                 .numberOfPlayers(reservation.getNumberOfPlayers())
                 .resDate(reservation.getResDate())
                 .resDateTime(reservation.getResDateTime())
-                .reservationUuid(reservation.getReservationUuid())
                 .reservationStatus(reservation.getReservationStatus())
                 .build();
     }

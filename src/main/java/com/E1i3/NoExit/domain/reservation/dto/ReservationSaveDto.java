@@ -38,7 +38,7 @@ public class ReservationSaveDto {
                 .resDateTime(this.resDateTime)
                 .reservationStatus(ReservationStatus.WAITING)
                 .approvalStatus(ApprovalStatus.READY)
-                //.reservationUuid(UUID.randomUUID())
+                .reservationUuid(UUID.randomUUID())
                 .createdAt(LocalDateTime.now())
                 .build();
     }
