@@ -30,10 +30,10 @@ public class MailVerifyController {
 	}
 
 	@PostMapping("/requestCode")
-	public ResponseEntity<CommonResDto> memberCreatePost(@RequestParam("email") @Valid String email) {
-		// Member member = memberService.sendCodeToEmail(email);
-		Member member = memberService.sendCodeToEmail(email);
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 요청", member.getId());
+	public ResponseEntity<CommonResDto> requestEmail(@RequestParam("email") @Valid String email) {
+		mailVerifyService.sendCodeToEmail(email);
+		// 이메일 전송하고 레디스에 저장
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 요청", email);
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
@@ -41,11 +41,7 @@ public class MailVerifyController {
 	@GetMapping("/requestCode")
 	public ResponseEntity<CommonResDto> verificationEmail(@RequestParam("email") @Valid String email,
 		@RequestParam("code") String authCode) {
-		boolean response = mailVerifyService.verifiedCode(email, authCode);
-		if (response) {
-			// 	일치하지 않는다면 MariaDB 삭제 -> 카운트 몇번이나 가능하게 할지 수정 예정
-			memberService.memberDelete(email);
-		}
+		boolean response = mailVerifyService.verifiedCode(email, authCode);	// 레디스의 정보와 입력한 정보를 비교
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 성공", response);
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}

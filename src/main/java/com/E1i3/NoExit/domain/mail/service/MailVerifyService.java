@@ -2,12 +2,15 @@ package com.E1i3.NoExit.domain.mail.service;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.E1i3.NoExit.domain.mail.dto.MailReqDto;
 import com.E1i3.NoExit.domain.common.service.RedisService;
@@ -19,6 +22,11 @@ public class MailVerifyService {
 	private final RedisService redisService;
 
 	private static final String AUTH_CODE_PREFIX = "USER_AUTH_CODE ";
+	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
+
+	@Value("${spring.mail.auth-code-expiration-millis}")
+	private long authCodeExpirationMillis;
+
 
 	@Autowired
 	public MailVerifyService(JavaMailSender mailSender, RedisService redisService) {
@@ -57,8 +65,29 @@ public class MailVerifyService {
 	public boolean verifiedCode(String email, String authCode) {
 		// 	존재하는 회원 정보가 있는지 확인
 		String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
-		return redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
+		boolean response = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
+
+		if (response) {
+			redisService.setValues(AUTH_EMAIL_PREFIX + email, "true",
+				Duration.ofMillis(this.authCodeExpirationMillis));
+			redisService.deleteValues(AUTH_CODE_PREFIX + email);
+		}
+		return response;
 	}
 
+	@Transactional
+	public void sendCodeToEmail(String email) {
+		String title = "이메일 인증 번호";
+		String authCode = this.createCode();
+		MailReqDto mailReqDto = MailReqDto.builder()
+			.receiver(email)
+			.title(title)
+			.contents(authCode)
+			.build();
 
+		// 메일 전송하고
+		this.sendEmail(mailReqDto);
+		// redis에 code 저장
+		redisService.setValues(AUTH_CODE_PREFIX + email, authCode, Duration.ofMillis(this.authCodeExpirationMillis));
+	}
 }

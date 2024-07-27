@@ -2,10 +2,10 @@ package com.E1i3.NoExit.domain.member.service;
 
 import java.time.Duration;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,65 +14,50 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.common.service.RedisService;
-import com.E1i3.NoExit.domain.mail.dto.MailReqDto;
-import com.E1i3.NoExit.domain.mail.service.MailVerifyService;
-import com.E1i3.NoExit.domain.member.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.owner.domain.Owner;
+import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
 
 @Service
 @Transactional(readOnly = true)
 public class MemberService {
 
 	private final MemberRepository memberRepository;
-	private final MailVerifyService mailVerifyService;
 	private final RedisService redisService;
-
-	@Autowired
 	private final PasswordEncoder passwordEncoder;
 
-	private static final String AUTH_CODE_PREFIX = "AUTH_CODE ";
+	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
+	private final OwnerRepository ownerRepository;
 
-	@Value("${spring.mail.auth-code-expiration-millis}")
-	private long authCodeExpirationMillis;
-
-	public MemberService(MemberRepository memberRepository, MailVerifyService mailVerifyService,
-		RedisService redisService, PasswordEncoder passwordEncoder) {
+	@Autowired
+	public MemberService(MemberRepository memberRepository, RedisService redisService, PasswordEncoder passwordEncoder,
+		OwnerRepository ownerRepository) {
 		this.memberRepository = memberRepository;
-		this.mailVerifyService = mailVerifyService;
 		this.redisService = redisService;
 		this.passwordEncoder = passwordEncoder;
+		this.ownerRepository = ownerRepository;
 	}
-
-	@Transactional
-	public Member sendCodeToEmail(String email) {
-		String title = "이메일 인증 번호";
-		String authCode = mailVerifyService.createCode();
-		MailReqDto mailReqDto = MailReqDto.builder()
-			.receiver(email)
-			.title(title)
-			.contents(authCode)
-			.build();
-
-		// 메일 전송하고
-		mailVerifyService.sendEmail(mailReqDto);
-		// redis에 code 저장
-		redisService.setValues(AUTH_CODE_PREFIX + email, authCode, Duration.ofMillis(this.authCodeExpirationMillis));
-		// 이메일만 존재하는 상태로 db에 저장
-		Member member = Member.builder().username("").password("").phone_number("").nickname("").delYN(DelYN.N).email(email).build();
-		return memberRepository.save(member);
-	}
-
 
 	// 회원 등록
 	@Transactional
 	public Member memberCreate(MemberSaveReqDto memberSaveReqDto) {
-		Member member = memberRepository.findByEmail(memberSaveReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		// 레디스에 인증이 된 상태인지 확인
+		String chkVerified = redisService.getValues(AUTH_EMAIL_PREFIX + memberSaveReqDto.getEmail());
+		if (chkVerified == null || !chkVerified.equals("true")) {
+			throw new IllegalStateException("이메일 인증이 필요합니다.");
+		}
+
+		// 이메일로 회원을 검색
+		memberRepository.findByEmail(memberSaveReqDto.getEmail()).ifPresent(existingMember -> {
+			throw new EntityExistsException("이미 존재하는 이메일입니다.");
+		});
 		String encodedPassword = passwordEncoder.encode(memberSaveReqDto.getPassword());
-		return member.saveMember(memberSaveReqDto, encodedPassword);
+		return memberRepository.save(memberSaveReqDto.toEntity(encodedPassword));
 	}
 
 	// 회원 조회
@@ -97,15 +82,23 @@ public class MemberService {
 	}
 
 	// 로그인
-	public Member login(LoginReqDto loginReqDto) {
-		// 	email의 존재여부
-		Member member = memberRepository.findByEmail(loginReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
-
-		// 	password 일치 여부
-		if(!passwordEncoder.matches(loginReqDto.getPassword(), member.getPassword())){
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+	public Object login(LoginReqDto loginReqDto) {
+		if (loginReqDto.getRole().equals(Role.USER)) {
+			Member member = memberRepository.findByEmail(loginReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+			// 	password 일치 여부
+			if(!passwordEncoder.matches(loginReqDto.getPassword(), member.getPassword())){
+				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+			}
+			return member;
+		}else if(loginReqDto.getRole().equals(Role.OWNER)) {
+			Owner owner = ownerRepository.findByEmail(loginReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+			// 	password 일치 여부
+			if(!passwordEncoder.matches(loginReqDto.getPassword(), owner.getPassword())){
+				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+			}
+			return owner;
 		}
-		return member;
+		return null;
 	}
 
 

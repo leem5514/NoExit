@@ -17,10 +17,10 @@ public class OwnerSaveReqDto {
 	private String storeName;
 	private String email;
 
-	public Owner toEntity(){
+	public Owner toEntity(String encodedPassword){
 		return Owner.builder()
 			.username(this.username)
-			.password(this.password)
+			.password(encodedPassword)
 			.storeName(this.storeName)
 			.email(this.email)
 			.build();

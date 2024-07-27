@@ -19,10 +19,13 @@ import com.E1i3.NoExit.domain.mail.service.MailVerifyService;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 
+import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.service.MemberService;
+import com.E1i3.NoExit.domain.owner.domain.Owner;
+import com.E1i3.NoExit.domain.owner.service.OwnerService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,12 +36,15 @@ public class MemberController {
 	@Autowired
 	private final MemberService memberService;
 	@Autowired
+	private final OwnerService ownerService;
+	@Autowired
 	private MailVerifyService mailVerifyService;
 	@Autowired
 	private final JwtTokenProvider jwtTokenProvider;
 
-	public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
+	public MemberController(MemberService memberService, OwnerService ownerService, JwtTokenProvider jwtTokenProvider) {
 		this.memberService = memberService;
+		this.ownerService = ownerService;
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
 
@@ -76,15 +82,23 @@ public class MemberController {
 	@PostMapping("/doLogin")
 	public ResponseEntity<Object> doLogin(@RequestBody LoginReqDto loginReqDto) {
 		// email, password가 일치하는지 검증
-		Member member = memberService.login(loginReqDto);
-
-		// 	일치하는 경우 accessToken 생성
-		String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
 		Map<String, Object> loginInfo = new HashMap<>();
-		loginInfo.put("id", member.getId());
-		loginInfo.put("token", jwtToken);
+		Object user = memberService.login(loginReqDto);
 
+		if (user instanceof Member) {
+			Member member = (Member) user;
+			String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
+			loginInfo.put("id", member.getId());
+			loginInfo.put("token", jwtToken);
+			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "Member login", loginInfo), HttpStatus.OK);
+		} else if (user instanceof OwnerService) {
+			Owner owner = (Owner) user;
+			String jwtToken = jwtTokenProvider.createToken(owner.getEmail(), owner.getRole().toString());
+			loginInfo.put("id", owner.getId());
+			loginInfo.put("token", jwtToken);
+			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OWNER login", loginInfo), HttpStatus.OK);
+		}
 		// 생성된 토큰을 comonResDto에 담아서 사용자에게 리턴
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "member login", loginInfo), HttpStatus.OK);
+		return null;
 	}
 }

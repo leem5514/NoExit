@@ -1,5 +1,8 @@
 package com.E1i3.NoExit.domain.owner.service;
 
+import java.time.Duration;
+
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,32 +24,43 @@ import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
 
 @Service
 public class OwnerService {
-	private final OwnerRepository ownerRepository;
-	private final MailVerifyService mailVerifyService;
-	private final RedisService redisService;
 
-	@Autowired
+	private final OwnerRepository ownerRepository;
+	private final RedisService redisService;
 	private final PasswordEncoder passwordEncoder;
 
-	private static final String AUTH_CODE_PREFIX = "AUTH_CODE ";
+	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
 
-	@Value("${spring.mail.auth-code-expiration-millis}")
-	private long authCodeExpirationMillis;
-
-	public OwnerService(OwnerRepository ownerRepository, MailVerifyService mailVerifyService,
+	@Autowired
+	public OwnerService(OwnerRepository ownerRepository,
 		RedisService redisService, PasswordEncoder passwordEncoder) {
 		this.ownerRepository = ownerRepository;
-		this.mailVerifyService = mailVerifyService;
 		this.redisService = redisService;
 		this.passwordEncoder = passwordEncoder;
 	}
 
 	// 회원 등록
+	// @Transactional
+	// public Owner ownerCreate(OwnerSaveReqDto ownerSaveReqDto) {
+	// 	Owner owner = ownerRepository.findByEmail(ownerSaveReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+	// 	String encodedPassword = passwordEncoder.encode(ownerSaveReqDto.getPassword());
+	// 	return owner.saveOwner(ownerSaveReqDto, encodedPassword);
+	// }
+
 	@Transactional
-	public Owner owernerCreate(OwnerSaveReqDto ownerSaveReqDto) {
-		Owner owner = ownerRepository.findByEmail(ownerSaveReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+	public Owner ownerCreate(OwnerSaveReqDto ownerSaveReqDto) {
+		// 레디스에 인증이 된 상태인지 확인
+		String chkVerified = redisService.getValues(AUTH_EMAIL_PREFIX + ownerSaveReqDto.getEmail());
+		if (chkVerified == null || !chkVerified.equals("true")) {
+			throw new IllegalStateException("이메일 인증이 필요합니다.");
+		}
+
+		// 이메일로 회원을 검색
+		ownerRepository.findByEmail(ownerSaveReqDto.getEmail()).ifPresent(existingMember -> {
+			throw new EntityExistsException("이미 존재하는 이메일입니다.");
+		});
 		String encodedPassword = passwordEncoder.encode(ownerSaveReqDto.getPassword());
-		return owner.saveOwner(ownerSaveReqDto, encodedPassword);
+		return ownerRepository.save(ownerSaveReqDto.toEntity(encodedPassword));
 	}
 
 	// 회원 조회
@@ -81,5 +95,4 @@ public class OwnerService {
 		}
 		return owner;
 	}
-
 }
