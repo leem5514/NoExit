@@ -27,7 +27,14 @@ public class SecurityConfigs {
 			.cors().and()//CORS 활성화
 			.httpBasic().disable()
 			.authorizeRequests()
-			.antMatchers("/email/requestCode", "/", "/doLogin", "/member/create")
+			.antMatchers("/email/requestCode", "/", "/doLogin", "/member/create"
+
+			//테스틀 위해서 임시로 수정했으니 /member/create 이하 나중에 다 삭제하기 : 김민성 7.27
+			,"/findboard/create","/findboard/{id}","/findboard/update/{id}","/findboard/delete/{id}"
+			,"/findboard/list","/findboard/participate/{id}"
+			,"/findboard/increment/{id}")
+
+
 			.permitAll()
 			.anyRequest().authenticated()
 			.and()

@@ -1,10 +1,9 @@
 package com.E1i3.NoExit.domain.comment.controller;
 
-import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentUpdateReqDto;
-import com.E1i3.NoExit.domain.comment.service.CommentService;
+import com.E1i3.NoExit.domain.board.service.CommentService;
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import org.springframework.beans.factory.annotation.Autowired;
