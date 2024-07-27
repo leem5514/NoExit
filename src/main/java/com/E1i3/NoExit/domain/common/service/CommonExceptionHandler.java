@@ -12,7 +12,6 @@ import javax.persistence.EntityNotFoundException;
 
 @ControllerAdvice
 public class CommonExceptionHandler {
-
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<CommonErrorDto> entityNotFoundHandler(EntityNotFoundException e) {
 		CommonErrorDto commonErrorDto = new CommonErrorDto(
@@ -22,6 +21,7 @@ public class CommonExceptionHandler {
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.NOT_FOUND);
 	}
 
+	// 나머지 예외 핸들러도 여기에 포함되어야 합니다.
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<CommonErrorDto> illegalArgumentHandler(IllegalArgumentException e) {
 		CommonErrorDto commonErrorDto = new CommonErrorDto(
@@ -60,5 +60,14 @@ public class CommonExceptionHandler {
 				"서버 내부에서 오류가 발생했습니다. 관리자에게 문의해주세요."
 		);
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(UnsupportedOperationException.class)
+	public ResponseEntity<CommonErrorDto> unsupportedOperationExceptionHandler(UnsupportedOperationException e) {
+		CommonErrorDto commonErrorDto = new CommonErrorDto(
+				HttpStatus.METHOD_NOT_ALLOWED,
+				"지원하지 않는 작업입니다. (" + e.getMessage() + ")"
+		);
+		return new ResponseEntity<>(commonErrorDto, HttpStatus.METHOD_NOT_ALLOWED);
 	}
 }

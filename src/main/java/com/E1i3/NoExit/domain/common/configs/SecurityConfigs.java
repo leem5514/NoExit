@@ -32,7 +32,7 @@ public class SecurityConfigs {
 			//테스틀 위해서 임시로 수정했으니 /member/create 이하 나중에 다 삭제하기 : 김민성 7.27
 			,"/findboard/create","/findboard/{id}","/findboard/update/{id}","/findboard/delete/{id}"
 			,"/findboard/list","/findboard/participate/{id}"
-			,"/findboard/increment/{id}")
+			,"/findboard/participate/{id}")
 
 
 			.permitAll()

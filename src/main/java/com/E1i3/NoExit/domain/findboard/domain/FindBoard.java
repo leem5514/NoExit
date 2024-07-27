@@ -71,25 +71,9 @@ public class FindBoard {
                 .build();
     }
 
-
-    // detailResDtoFromEntity 이게 필요할까? 중복되는것같은데 논의 해보자!!
-//    public FindBoardDetailResDto detailResDtoFromEntity(){
-//        return FindBoardDetailResDto.builder()
-//                .id(this.id)
-//                .writer(this.member.getNickname())
-//                .title(this.title)
-//                .contents(this.contents)
-//                .createdAt(this.cratedTime)
-//                .updatedAt(this.updateTime)//나중에 뺴던지? 일단 주자
-//                .expirationDate(this.expirationTime)
-//                .totalCapacity(this.totalCapacity)
-//                .image(this.image)
-//                .build();
-//    }
-
     //생각해보니까 FindBoard에는 리스트만 잇으면 되지않나? 어차피 글 안에 들어가는게 아니잖아
     //ResDto도 필요없을 것 같은데.. 생각해보길 바람.
-    public FindBoardListResDto listFromEintity(){
+    public FindBoardListResDto listFromEntity(){
         return FindBoardListResDto.builder()
                 .member_id(this.member.getId()) // 작성자 ID 추가
                 .id(this.id)
