@@ -44,7 +44,7 @@ public class CommentService {
                 .content(dto.getContent())
                 .build();
 
-        board.getComments().add(comment);
+        board.getComments().add(comment); // 게시글 댓글 목록에 추가
         commentRepository.save(comment);
     }
 
