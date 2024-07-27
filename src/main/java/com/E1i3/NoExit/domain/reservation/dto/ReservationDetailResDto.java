@@ -24,6 +24,5 @@ public class ReservationDetailResDto {
 
     private ReservationStatus reservationStatus;
 //    private String store_name; // 가게 명(store 상속)
-    private UUID reservationUuid;
     private String createdTime;
 }

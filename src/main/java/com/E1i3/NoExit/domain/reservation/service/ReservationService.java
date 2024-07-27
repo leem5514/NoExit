@@ -52,6 +52,107 @@ public class ReservationService {
 
     private static final String RESERVATION_LOCK_PREFIX = "reservation:lock:";
 
+
+    /* 레디스를 통한 예약하기 */
+    @Transactional
+    public Reservation save(ReservationSaveDto dto) {
+        String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
+
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(reservationKey))) {
+            throw new IllegalStateException("(예약불가) 이미 예약 중인 시간대 입니다.");
+        }
+
+        redisTemplate.opsForValue().set(reservationKey, "LOCKED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
+
+        try {
+            Member member = memberRepository.findByEmail(dto.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("없는 이메일입니다."));
+            Game game = gameRepository.findById(dto.getGameId())
+                    .orElseThrow(() -> new IllegalArgumentException("없는 게임 ID입니다. 후 게임 이름으로 변경"));
+
+            Reservation reservation = dto.toEntity(member, game);
+            reservationRepository.save(reservation);
+
+            redisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
+
+            return reservation;
+        } catch (Exception e) {
+            redisTemplate.delete(reservationKey);
+            throw e;
+        }
+    }
+
+    /* email을 통한 예약 조회(USER 기준) */
+    @Transactional(readOnly = true)
+    public List<ReservationListResDto> find(String email) {
+        List<Reservation> reservations = reservationRepository.findByMemberEmail(email);
+        return reservations.stream()
+                .map(ReservationListResDto::listFromEntity)
+                .collect(Collectors.toList());
+    }
+    /* ADMIN 기준에서의 업데이트 */
+    /* 추가) 후 STORE 컬럼과 접근하여 STORE_ID의 GAME_ID을 받아서 처리 예정  */
+    @Transactional
+    public Reservation updateApprovalStatus(ReservationUpdateResDto dto) {
+        Member admin = memberRepository.findByEmail(dto.getAdminEmail())
+                .orElseThrow(() -> new IllegalArgumentException("ADMIN 이메일이 아닙니다."));
+
+        if (admin.getRole() != Role.ADMIN) {
+            throw new IllegalStateException("ADMIN만 처리할 수 있습니다.");
+        }
+
+        Game game = gameRepository.findById(dto.getGameId())
+                .orElseThrow(() -> new IllegalArgumentException("없는 게임 ID입니다."));
+
+        String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
+        Optional<Reservation> optionalReservation = reservationRepository.findByGameAndResDateAndResDateTime(game, LocalDate.parse(dto.getResDate()), dto.getResDateTime());
+        if (optionalReservation.isEmpty()) {
+            throw new IllegalArgumentException("Invalid reservation key");
+        }
+
+        Reservation reservation = optionalReservation.get();
+        reservation.updateStatus(dto.getApprovalStatus());
+
+        if (dto.getApprovalStatus() == ApprovalStatus.OK) {
+            redisTemplate.opsForValue().set(reservationKey, "RESERVED"); // 예약 확정 시 해당 시간대를 영구적으로 예약 불가 처리
+        } else if (dto.getApprovalStatus() == ApprovalStatus.NO) {
+            redisTemplate.delete(reservationKey); // 예약 거절 시 해당 시간대를 다시 예약 가능하도록 처리
+        }
+        return reservationRepository.save(reservation);
+    }
+
+    public Optional<Reservation> findReservationTime(String resDate, String resDateTime) {
+        // Redis 키를 생성합니다.
+        String reservationKey = RESERVATION_LOCK_PREFIX + resDate + ":" + resDateTime;
+
+        // Redis에 해당 키가 존재하는지 확인합니다.
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(reservationKey))) {
+            // 키가 존재하면 데이터베이스에서 해당 날짜와 시간대의 예약을 찾습니다.
+            return reservationRepository.findByResDateAndResDateTime(LocalDate.parse(resDate), resDateTime);
+        } else {
+            // 키가 존재하지 않으면 빈 결과를 반환합니다.
+            return Optional.empty();
+        }
+    }
+
+    @Transactional
+    public ReservationDetailResDto getReservationDetail(Long id) {
+        Optional<Reservation> findReservation = reservationRepository.findById(id);
+        Reservation reservation = findReservation.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+        return reservation.toDetailDto();
+    }
+
+    public ReservationDetailResDto ReservationDetail(String email, Long reservationId) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("없는 이메일입니다."));
+
+        Reservation reservation = reservationRepository.findByIdAndMember(reservationId, member)
+                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
+
+        return reservation.toDetailDto();
+    }
+
+
     /* 예약하기 */
 //    @Transactional
 //    public Reservation save(ReservationSaveDto dto) {
@@ -70,74 +171,6 @@ public class ReservationService {
 //                .map(ReservationListResDto::listFromEntity)
 //                .collect(Collectors.toList());
 //    }
-    /* 레디스를 통한 예약하기 */
-    @Transactional
-    public Reservation save(ReservationSaveDto dto) {
-        String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
-
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(reservationKey))) {
-            throw new IllegalStateException("선택하신 시간대에 대기자가 있습니다. 예약불가");
-        }
-
-        redisTemplate.opsForValue().set(reservationKey, "LOCKED", 5, TimeUnit.MINUTES);
-
-        try {
-            Member member = memberRepository.findByEmail(dto.getEmail())
-                    .orElseThrow(() -> new IllegalArgumentException("없는 이메일입니다."));
-            Game game = gameRepository.findById(dto.getGameId())
-                    .orElseThrow(() -> new IllegalArgumentException("없는 게잉id 입니다.")); // 후 ) 게임 이름으로 반환객체 변경
-
-            Reservation reservation = dto.toEntity(member, game);
-            System.out.println(reservation.getReservationUuid());
-            reservationRepository.save(reservation);
-
-            redisTemplate.opsForValue().set(reservationKey, "RESERVED");
-
-            return reservation;
-        } catch (Exception e) {
-            redisTemplate.delete(reservationKey);
-            throw e;
-        }
-    }
-
-    /* email을 통한 예약 조회(USER 기준) */
-    @Transactional(readOnly = true)
-    public List<ReservationListResDto> find(String email) {
-        List<Reservation> reservations = reservationRepository.findByMemberEmail(email);
-        return reservations.stream()
-                .map(ReservationListResDto::listFromEntity)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public Reservation updateApprovalStatus(ReservationUpdateResDto dto) {
-        Member admin = memberRepository.findByEmail(dto.getAdminEmail())
-                .orElseThrow(() -> new IllegalArgumentException("ADMIN 이메일이 아닙니다."));
-
-        if (admin.getRole() != Role.ADMIN) {
-            throw new IllegalStateException("ADMIN만 approval을 업데이트 가능함");
-        }
-
-        Game game = gameRepository.findById(dto.getGameId())
-                .orElseThrow(() -> new IllegalArgumentException("없는 게임 ID입니다."));
-
-        String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
-        Optional<Reservation> optionalReservation = reservationRepository.findByGameAndResDateAndResDateTime(game, LocalDate.parse(dto.getResDate()), dto.getResDateTime());
-        if (optionalReservation.isEmpty()) {
-            throw new IllegalArgumentException("Invalid redis key");
-        }
-
-        Reservation reservation = optionalReservation.get();
-        reservation.updateStatus(dto.getApprovalStatus());
-
-        return reservationRepository.save(reservation);
-    }
-    @Transactional
-    public ReservationDetailResDto getReservationDetail(Long id) {
-        Optional<Reservation> findReservation = reservationRepository.findById(id);
-        Reservation reservation = findReservation.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
-        return reservation.toDetailDto();
-    }
 
 //    @Transactional
 //    public Reservation updateApprovalStatus(UUID reservationUuid, String adminEmail, ApprovalStatus status) {

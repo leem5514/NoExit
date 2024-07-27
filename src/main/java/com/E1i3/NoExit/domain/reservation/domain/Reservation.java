@@ -46,11 +46,10 @@ public class Reservation {
     private Member member; // 예약을 한 회원
 
     @Enumerated(EnumType.STRING)
-    private ReservationStatus reservationStatus; // 예약 승인에 대한 확정 상태
+    private ReservationStatus reservationStatus = ReservationStatus.WAITING; // 예약 승인에 대한 확정 상태
 
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus; // 사장님기준 예약 승인 거절 여부
-    private UUID reservationUuid;
 
     @CreationTimestamp
     private LocalDateTime createdAt; // 예약 당시 시간
@@ -59,7 +58,7 @@ public class Reservation {
     @Builder
     public Reservation(Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
                        int numberOfPlayers, ReservationStatus reservationStatus, ApprovalStatus approvalStatus,
-                       UUID reservationUuid, LocalDateTime createdAt) {
+                        LocalDateTime createdAt) {
         this.member = member;
         this.game = game;
         this.resName = resName;
@@ -69,11 +68,8 @@ public class Reservation {
         this.numberOfPlayers = numberOfPlayers;
         this.reservationStatus = reservationStatus;
         this.approvalStatus = approvalStatus;
-        this.reservationUuid = reservationUuid;
         this.createdAt = createdAt;
-        this.reservationUuid = UUID.randomUUID();
     }
-
 
     public void updateStatus(ApprovalStatus approvalStatus) {
         this.approvalStatus = approvalStatus;
@@ -94,7 +90,6 @@ public class Reservation {
                 .resDate(this.resDate)
                 .resDateTime(this.resDateTime)
                 .reservationStatus(this.reservationStatus)
-                .reservationUuid(this.reservationUuid)
                 .createdTime(this.createdAt.format(formatter))
                 .build();
     }
