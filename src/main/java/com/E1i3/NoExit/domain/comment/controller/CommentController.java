@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.comment.dto.CommentUpdateReqDto;
 import com.E1i3.NoExit.domain.board.service.CommentService;
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Api(tags="댓글 서비스")
 public class CommentController {
 
     private final CommentService commentService;

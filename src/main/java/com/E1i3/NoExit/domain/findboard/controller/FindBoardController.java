@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardSaveReqDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
 import com.E1i3.NoExit.domain.findboard.service.FindBoardService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +22,7 @@ import javax.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/findboard")
+@Api(tags="Escape with me 서비스")
 public class FindBoardController {
 
     private final FindBoardService findBoardService;

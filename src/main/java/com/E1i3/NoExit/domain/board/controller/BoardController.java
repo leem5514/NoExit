@@ -8,6 +8,7 @@ import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.board.service.BoardService;
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @RestController
+@Api(tags="게시판 서비스")
 public class BoardController {
 
     private final BoardService boardService;
