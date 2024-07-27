@@ -39,15 +39,15 @@ public class ReservationController {
     @PostMapping("/reservation/create") // 생성
     public ResponseEntity<?> reservationCreate(@RequestBody ReservationSaveDto dto) {
         Reservation reservation = reservationService.save(dto);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "success created", reservation.getId());
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "예약 신청을 완료하였습니다.", reservation.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
     /* 유저별 자신의 예약 조회 */
     @GetMapping("/reservation/{email}") // 이메일로 조회
-    public ResponseEntity<?> reservationByEmailList(@PathVariable String email) {
+    public ResponseEntity<?> reservationList(@PathVariable String email) {
         List<ReservationListResDto> reservationListResDtos = reservationService.find(email);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "success JOIN", reservationListResDtos);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "리스트 조회", reservationListResDtos);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
@@ -56,12 +56,22 @@ public class ReservationController {
     public ResponseEntity<?> updateApprovalStatus(@RequestBody ReservationUpdateResDto dto) {
         try {
             Reservation updatedReservation = reservationService.updateApprovalStatus(dto);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "Approval status updated", updatedReservation.getId());
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "예약 승인이 완료되었습니다.", updatedReservation.getId());
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch (IllegalArgumentException | IllegalStateException e) {
             return new ResponseEntity<>(new CommonResDto(HttpStatus.BAD_REQUEST, e.getMessage(), null), HttpStatus.BAD_REQUEST);
         }
     }
+
+    /*  예약 취소 */
+    @PutMapping("/reservation/delete/{id}")
+    public ResponseEntity<?> cancelReservation(@PathVariable Long id) {
+        Reservation canceledReservation = reservationService.cancelReservation(id);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "예약 취소가 완료되었습니다.", canceledReservation.getId());
+
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
     /* 특정 일 특정 시간대 에 대한 예약 여부 조회 */
     /* 후 일수에 관한 예약 가능 시간대로 변경 */
     @GetMapping("/reservation/time")
@@ -70,9 +80,10 @@ public class ReservationController {
         if (reservation.isPresent()) {
             return new ResponseEntity<>(reservation.get(), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(new CommonResDto(HttpStatus.NOT_FOUND, "Reservation not found", null), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new CommonResDto(HttpStatus.NOT_FOUND, "시간대 별 조회가 불가능합니다.", null), HttpStatus.NOT_FOUND);
         }
     }
+
     /* 이메일과 예약 ID를 기준으로 예약 상세 조회 */
     @GetMapping("/reservation/{email}/{id}")
     public ResponseEntity<?> findReservationDetail(@PathVariable String email, @PathVariable Long id) {

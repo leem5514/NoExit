@@ -11,15 +11,15 @@ import java.util.Set;
 @Component
 public class RedisInitializer {
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, Object> reservationRedisTemplate;
 
     private static final String RESERVATION_LOCK_PREFIX = "reservation:lock:";
 
     @EventListener
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        Set<String> keys = redisTemplate.keys(RESERVATION_LOCK_PREFIX + "*");
+        Set<String> keys = reservationRedisTemplate.keys(RESERVATION_LOCK_PREFIX + "*");
         if (keys != null) {
-            redisTemplate.delete(keys);
+            reservationRedisTemplate.delete(keys);
         }
     }
 }

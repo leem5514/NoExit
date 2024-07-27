@@ -54,11 +54,14 @@ public class Reservation {
     @CreationTimestamp
     private LocalDateTime createdAt; // 예약 당시 시간
 
+    @Enumerated(EnumType.STRING)
+    private DelYN delYN = DelYN.N;
+
 
     @Builder
     public Reservation(Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
                        int numberOfPlayers, ReservationStatus reservationStatus, ApprovalStatus approvalStatus,
-                        LocalDateTime createdAt) {
+                       LocalDateTime createdAt, DelYN delYN) {
         this.member = member;
         this.game = game;
         this.resName = resName;
@@ -69,6 +72,7 @@ public class Reservation {
         this.reservationStatus = reservationStatus;
         this.approvalStatus = approvalStatus;
         this.createdAt = createdAt;
+        this.delYN = delYN.N;
     }
 
     public void updateStatus(ApprovalStatus approvalStatus) {
@@ -78,6 +82,10 @@ public class Reservation {
         } else if (approvalStatus == ApprovalStatus.NO) {
             this.reservationStatus = ReservationStatus.REJECT;
         }
+    }
+
+    public void updateDelYN() {
+        this.delYN = DelYN.Y;
     }
 
     public ReservationDetailResDto toDetailDto() {
@@ -93,6 +101,7 @@ public class Reservation {
                 .createdTime(this.createdAt.format(formatter))
                 .build();
     }
+
 //    public ReservationListResDto listFromEntity() {
 //        return ReservationListResDto.builder()
 //                .id(this.id)

@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
+import com.E1i3.NoExit.domain.reservation.domain.DelYN;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.reservation.domain.ReservationStatus;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
@@ -48,7 +49,7 @@ public class ReservationService {
     }
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, Object> reservationRedisTemplate;
 
     private static final String RESERVATION_LOCK_PREFIX = "reservation:lock:";
 
@@ -58,11 +59,11 @@ public class ReservationService {
     public Reservation save(ReservationSaveDto dto) {
         String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
 
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(reservationKey))) {
+        if (Boolean.TRUE.equals(reservationRedisTemplate.hasKey(reservationKey))) {
             throw new IllegalStateException("(예약불가) 이미 예약 중인 시간대 입니다.");
         }
 
-        redisTemplate.opsForValue().set(reservationKey, "LOCKED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
+        reservationRedisTemplate.opsForValue().set(reservationKey, "LOCKED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
         try {
             Member member = memberRepository.findByEmail(dto.getEmail())
@@ -73,19 +74,25 @@ public class ReservationService {
             Reservation reservation = dto.toEntity(member, game);
             reservationRepository.save(reservation);
 
-            redisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
+            reservationRedisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
             return reservation;
         } catch (Exception e) {
-            redisTemplate.delete(reservationKey);
+            reservationRedisTemplate.delete(reservationKey);
             throw e;
         }
     }
 
     /* email을 통한 예약 조회(USER 기준) */
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
+//    public List<ReservationListResDto> find(String email) {
+//        List<Reservation> reservations = reservationRepository.findByMemberEmail(email);
+//        return reservations.stream()
+//                .map(ReservationListResDto::listFromEntity)
+//                .collect(Collectors.toList());
+//    }
     public List<ReservationListResDto> find(String email) {
-        List<Reservation> reservations = reservationRepository.findByMemberEmail(email);
+        List<Reservation> reservations = reservationRepository.findByMemberEmailAndDelYN(email, DelYN.N);
         return reservations.stream()
                 .map(ReservationListResDto::listFromEntity)
                 .collect(Collectors.toList());
@@ -114,23 +121,33 @@ public class ReservationService {
         reservation.updateStatus(dto.getApprovalStatus());
 
         if (dto.getApprovalStatus() == ApprovalStatus.OK) {
-            redisTemplate.opsForValue().set(reservationKey, "RESERVED"); // 예약 확정 시 해당 시간대를 영구적으로 예약 불가 처리
+            reservationRedisTemplate.opsForValue().set(reservationKey, "RESERVED"); // 예약 확정 시 해당 시간대를 영구적으로 예약 불가 처리
         } else if (dto.getApprovalStatus() == ApprovalStatus.NO) {
-            redisTemplate.delete(reservationKey); // 예약 거절 시 해당 시간대를 다시 예약 가능하도록 처리
+            reservationRedisTemplate.delete(reservationKey); // 예약 거절 시 해당 시간대를 다시 예약 가능하도록 처리
         }
         return reservationRepository.save(reservation);
     }
 
+    /* 예약취소 */
+    @Transactional
+    public Reservation cancelReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
+        reservation.updateDelYN();
+        reservationRepository.save(reservation);
+
+        String reservationKey = RESERVATION_LOCK_PREFIX + reservation.getResDate() + ":" + reservation.getResDateTime();
+        reservationRedisTemplate.delete(reservationKey);
+
+        return reservation;
+    }
+
     public Optional<Reservation> findReservationTime(String resDate, String resDateTime) {
-        // Redis 키를 생성합니다.
         String reservationKey = RESERVATION_LOCK_PREFIX + resDate + ":" + resDateTime;
 
-        // Redis에 해당 키가 존재하는지 확인합니다.
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(reservationKey))) {
-            // 키가 존재하면 데이터베이스에서 해당 날짜와 시간대의 예약을 찾습니다.
+        if (Boolean.TRUE.equals(reservationRedisTemplate.hasKey(reservationKey))) {
             return reservationRepository.findByResDateAndResDateTime(LocalDate.parse(resDate), resDateTime);
         } else {
-            // 키가 존재하지 않으면 빈 결과를 반환합니다.
             return Optional.empty();
         }
     }
@@ -146,11 +163,13 @@ public class ReservationService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("없는 이메일입니다."));
 
-        Reservation reservation = reservationRepository.findByIdAndMember(reservationId, member)
+        Reservation reservation = reservationRepository.findByIdAndMemberAndDelYN(reservationId, member, DelYN.N)
                 .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
 
         return reservation.toDetailDto();
     }
+
+
 
 
     /* 예약하기 */

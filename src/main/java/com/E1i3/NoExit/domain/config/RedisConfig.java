@@ -33,4 +33,15 @@ public class RedisConfig {
 
 		return redisTemplate;
 	}
+
+	@Bean
+	public RedisTemplate<String, Object> reservationRedisTemplate() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(redisConnectionFactory());
+
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new StringRedisSerializer());
+
+		return redisTemplate;
+	}
 }
