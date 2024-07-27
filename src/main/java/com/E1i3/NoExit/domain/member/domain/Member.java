@@ -81,11 +81,10 @@ public class Member {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> boards;
 
-	public Member updateMember(MemberUpdateDto dto, String encodedPassword) {
-	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST) // cascadetype 해야 FK 삭제 가능
-	private List<FindBoard> FindBoards;
+	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+	private List<Board> findBoards;
 
-	public Member updateMember(MemberUpdateDto dto) {
+	public Member updateMember(MemberUpdateDto dto, String encodedPassword) {
 		// 이메일은 수정 x
 		this.username = dto.getUsername();
 		this.password =  encodedPassword;

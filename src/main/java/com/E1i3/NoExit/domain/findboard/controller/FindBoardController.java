@@ -1,6 +1,6 @@
 package com.E1i3.NoExit.domain.findboard.controller;
 
-import com.E1i3.NoExit.domain.common.CommonResDto;
+import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardSaveReqDto;
