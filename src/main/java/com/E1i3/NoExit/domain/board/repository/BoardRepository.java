@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.member.controller.repository;
+package com.E1i3.NoExit.domain.board.repository;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
 import org.springframework.data.domain.Page;

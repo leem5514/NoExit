@@ -81,6 +81,7 @@ public class Member {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> boards;
 
+	// Member객체에 Findboard 객체 추가. : 김민성
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> findBoards;
 
