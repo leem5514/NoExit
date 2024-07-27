@@ -7,6 +7,7 @@ import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
+import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 
 @Service
+@Transactional
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -29,7 +31,7 @@ public class BoardService {
         this.memberRepository = memberRepository;
     }
 
-    @Transactional
+
     public void boardCreate(BoardCreateReqDto dto) { // 게시글 생성
         // Member 엔티티를 memberId로 조회
         Member member = memberRepository.findById(dto.getMemberId())
@@ -53,10 +55,11 @@ public class BoardService {
         if (board.getDelYN().equals(DelYN.Y)) {
             throw new IllegalArgumentException("cannot find board");
         }
+        board.updateBoardHits();
         return board.detailFromEntity();
     }
 
-    @Transactional
+
     public Board boardUpdate(Long id, BoardUpdateReqDto dto) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
@@ -72,5 +75,17 @@ public class BoardService {
             throw new IllegalArgumentException("cannot find board");
         }
         board.deleteEntity();
+    }
+
+    public void boardUpdateLikes(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+        board.updateLikes();
+    }
+
+    public void boardUpdateDislikes(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+        board.updateDislikes();
     }
 }

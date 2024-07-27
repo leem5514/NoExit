@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardCreateReqDto {
-    private Long memberId; // 작성자 멤버 아이디
+    private Long memberId; // 작성자 멤버 아이디 // 로그인하면 필요없음
     private String writer; // 작성자
     private String title; // 제목
     private String content; // 내용
@@ -22,13 +22,12 @@ public class BoardCreateReqDto {
 
     public Board toEntity(Member member) {
         Board board = Board.builder()
-                .member(member) // member를 설정
+                .member(member) // member를 설정 // 로그인하면 필요없음
                 .writer(this.writer)
                 .title(this.title)
                 .content(this.content)
                 .imagePath(this.imagePath)
                 .boardType(this.boardType)
-                .delYN(DelYN.N) // 처음 생성될 때 무조건 삭제X
                 .build();
 
         return board;

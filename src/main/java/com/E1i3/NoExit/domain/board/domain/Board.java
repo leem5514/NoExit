@@ -2,6 +2,7 @@ package com.E1i3.NoExit.domain.board.domain;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
+import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
@@ -20,7 +22,7 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 아이디
 //    private Long memberId; // 작성자 아이디
-    private String writer; // 작성자
+    private String writer; // 작성자 // 굳이 필요할까...
     private String title; //  제목
     private String content; // 내용
     private int boardHits; // 조회수
@@ -45,8 +47,12 @@ public class Board {
     @Enumerated(EnumType.STRING)
     private BoardType boardType; // 게시판 유형 (자유, 공략)
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
+    private List<Comment> comments; // 게시글에 달린 댓글들
+
     @Enumerated(EnumType.STRING)
-    private DelYN delYN; // 삭제여부
+    @Builder.Default
+    private DelYN delYN = DelYN.N; // 삭제여부
 
 
     public BoardListResDto fromEntity(){
@@ -89,7 +95,20 @@ public class Board {
         this.boardType = dto.getBoardType();
     }
 
+
     public void deleteEntity() {
         this.delYN = DelYN.Y;
+    }
+
+    public void updateBoardHits() {
+        this.boardHits++;
+    }
+
+    public void updateLikes() {
+        this.likes++;
+    }
+
+    public void updateDislikes() {
+        this.dislikes++;
     }
 }

@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentUpdateReqDto;
+import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,10 +29,11 @@ public class Comment {
     private Long id; // 댓글 아이디
 
     @ManyToOne
+    @JoinColumn(name = "board_id")
 //    private Long boardId; // 댓글 단 게시글 아이디
     private Board board;
 
-    private Long memberId; // 댓글 작성자 아이디
+    private Long memberId; // 댓글 작성자 아이디 // 로그인하면 필요없음
 
     private String content; // 댓글 내용
 
@@ -52,7 +54,7 @@ public class Comment {
 
     public CommentListResDto fromEntity(){
         CommentListResDto commentListResDto = CommentListResDto.builder()
-                .board(this.board)
+//                .board(this.board)
                 .memberId(this.memberId)
                 .content(this.content)
                 .likes(this.likes)
@@ -70,6 +72,14 @@ public class Comment {
 
     public void deleteEntity() {
         this.delYN = DelYN.Y;
+    }
+
+    public void updateLikes() {
+        this.likes++;
+    }
+
+    public void updateDislikes() {
+        this.dislikes++;
     }
 
 }
