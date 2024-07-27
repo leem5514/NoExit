@@ -3,17 +3,10 @@ package com.E1i3.NoExit.domain.member.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
+import com.E1i3.NoExit.domain.grade.domain.Grade;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
@@ -84,6 +77,11 @@ public class Member {
 	// Member객체에 Findboard 객체 추가. : 김민성
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> findBoards;
+
+	// Grade와 연관 관계 추가 : 김민성
+	@OneToOne
+	@JoinColumn(name = "grade_id", unique = true)
+	private Grade grade;
 
 	public Member updateMember(MemberUpdateDto dto, String encodedPassword) {
 		// 이메일은 수정 x

@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardSaveReqDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
 import com.E1i3.NoExit.domain.findboard.service.FindBoardService;
+import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
