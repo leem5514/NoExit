@@ -21,13 +21,14 @@ import java.util.Random;
 public class FindBoardService {
 
     private final FindBoardRepository findBoardRepository;
-    private final MemberRepository memberRepository;
+    private final MemberRepository memberRepository; //이러면 순환참조 되나?
 
     @Autowired
     public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository) {
         this.findBoardRepository = findBoardRepository;
         this.memberRepository = memberRepository;
     }
+
     @Transactional
     public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
         // 모든 사용자 중 하나를 랜덤으로 선택
@@ -70,9 +71,13 @@ public class FindBoardService {
     public String delete(Long id) {
         FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYn.Y)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 게시글입니다."));
+
         findBoard.markAsDeleted();
-        findBoardRepository.save(findBoard); // 상태를 업데이트하기 위해 저장
-        return "삭제 완료";
+
+        findBoardRepository.save(findBoard);
+        String result = "삭제 완료";
+
+        return result;
     }
 
 
