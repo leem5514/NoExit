@@ -104,7 +104,7 @@ public class ReservationService {
         Member admin = memberRepository.findByEmail(dto.getAdminEmail())
                 .orElseThrow(() -> new IllegalArgumentException("ADMIN 이메일이 아닙니다."));
 
-        if (admin.getRole() != Role.ADMIN) {
+        if (admin.getRole() != Role.OWNER) {
             throw new IllegalStateException("ADMIN만 처리할 수 있습니다.");
         }
 
