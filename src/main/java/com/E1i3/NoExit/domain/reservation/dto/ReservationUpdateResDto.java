@@ -1,6 +1,6 @@
 package com.E1i3.NoExit.domain.reservation.dto;
 
-import com.E1i3.NoExit.domain.game.domain.Game;
+import com.E1i3.NoExit.domain.findboard.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
 @Builder
