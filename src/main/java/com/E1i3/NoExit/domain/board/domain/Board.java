@@ -22,9 +22,14 @@ public class Board {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 아이디
 //    private Long memberId; // 작성자 아이디
+
     private String writer; // 작성자 // 굳이 필요할까...
+
+    @Column(nullable = false)
     private String title; //  제목
+
     private String content; // 내용
+
     private int boardHits; // 조회수
     private int likes; // 좋아요
     private int dislikes; // 싫어요
