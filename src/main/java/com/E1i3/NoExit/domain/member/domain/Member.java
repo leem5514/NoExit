@@ -72,6 +72,7 @@ public class Member {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> boards;
 
+
 	public Member updateMember(MemberUpdateDto dto) {
 		// 이메일은 수정 x
 		this.username = dto.getUsername();

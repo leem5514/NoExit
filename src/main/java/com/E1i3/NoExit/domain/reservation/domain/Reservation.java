@@ -4,6 +4,7 @@ import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationListResDto;
+import com.E1i3.NoExit.domain.review.domain.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +45,9 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member; // 예약을 한 회원
+
+    @OneToOne(mappedBy = "reservation", cascade = CascadeType.PERSIST)
+    private Review review;
 
     @Enumerated(EnumType.STRING)
     private ReservationStatus reservationStatus = ReservationStatus.WAITING; // 예약 승인에 대한 확정 상태
