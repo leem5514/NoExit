@@ -1,33 +1,27 @@
 package com.E1i3.NoExit.domain.reservation.service;
 
-import com.E1i3.NoExit.domain.game.domain.Game;
-import com.E1i3.NoExit.domain.game.repository.GameRepository;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
+import com.E1i3.NoExit.domain.findboard.game.domain.Game;
+import com.E1i3.NoExit.domain.findboard.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
-import com.E1i3.NoExit.domain.reservation.domain.DelYN;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
-import com.E1i3.NoExit.domain.reservation.domain.ReservationStatus;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationListResDto;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationSaveDto;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationUpdateResDto;
 import com.E1i3.NoExit.domain.reservation.repository.ReservationRepository;
-import lombok.extern.slf4j.XSlf4j;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service

@@ -1,13 +1,13 @@
-package com.E1i3.NoExit.domain.game.domain;
+package com.E1i3.NoExit.domain.findboard.game.domain;
 
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Entity
-public class Game {
+public class Game extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

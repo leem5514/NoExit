@@ -1,6 +1,6 @@
 package com.E1i3.NoExit.domain.review.service;
 
-import com.E1i3.NoExit.domain.member.domain.DelYN;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
@@ -35,7 +35,7 @@ public class ReviewService {
         Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new IllegalArgumentException("없는 회원입니다"));
         Reservation reservation = reservationRepository.findById(dto.getReservationId()).orElseThrow(()-> new IllegalArgumentException("존재하지 않은 예약입니다"));
 
-        if (reviewRepository.findByReservationAndDelYn(reservation, DelYN.Y).isPresent()) {
+        if (reviewRepository.findByReservationAndDelYN(reservation, DelYN.Y).isPresent()) {
             throw new IllegalStateException("이미 작성된 리뷰가 있습니다");
         }
         Review review = dto.toEntity(member, reservation);

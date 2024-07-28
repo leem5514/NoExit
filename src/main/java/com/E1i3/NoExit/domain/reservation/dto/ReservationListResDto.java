@@ -1,6 +1,5 @@
 package com.E1i3.NoExit.domain.reservation.dto;
 
-import com.E1i3.NoExit.domain.reservation.domain.DelYN;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.reservation.domain.ReservationStatus;
 import lombok.AllArgsConstructor;

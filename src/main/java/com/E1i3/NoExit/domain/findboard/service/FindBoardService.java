@@ -1,6 +1,6 @@
 package com.E1i3.NoExit.domain.findboard.service;
 
-import com.E1i3.NoExit.domain.findboard.domain.DelYn;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
@@ -51,7 +51,7 @@ public class FindBoardService {
 
 
     public FindBoardResDto getResDto(Long id) {
-        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYn.Y)
+        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYN.Y)
                 .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
         return findBoard.ResDtoFromEntity();
     }
@@ -59,7 +59,7 @@ public class FindBoardService {
     @Transactional(readOnly = true)
     public Page<FindBoardListResDto> findBoardListResDto(Pageable pageable) {
         // DelYn 필터 추가
-        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYn.Y);
+        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYN.Y);
         return findBoards.map(FindBoard::listFromEntity);
     }
 
@@ -78,7 +78,7 @@ public class FindBoardService {
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 게시글입니다."));
 
         // 삭제된 게시글인지 체크
-        if (findBoard.getDelYn() == DelYn.N) {
+        if (findBoard.getDelYn() == DelYN.N) {
             throw new IllegalStateException("삭제된 게시글은 수정할 수 없습니다.");
         }
 
@@ -96,7 +96,7 @@ public class FindBoardService {
     }
 
     public FindBoardResDto incrementParticipantCount(Long id) {
-        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYn.Y)
+        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYN.Y)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         findBoard.incrementCurrentCount();

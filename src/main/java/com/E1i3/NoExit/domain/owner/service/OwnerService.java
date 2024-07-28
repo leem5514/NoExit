@@ -10,9 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.common.service.RedisService;
-import com.E1i3.NoExit.domain.owner.domain.Owner;
+import com.E1i3.NoExit.domain.owner.controller.domain.Owner;
 import com.E1i3.NoExit.domain.owner.dto.OwnerListResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
