@@ -1,8 +1,6 @@
 package com.E1i3.NoExit.domain.reservation.controller;
 
-import com.E1i3.NoExit.domain.common.CommonResDto;
-import com.E1i3.NoExit.domain.member.domain.Member;
-import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
+import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationListResDto;
@@ -12,14 +10,10 @@ import com.E1i3.NoExit.domain.reservation.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 public class ReservationController {

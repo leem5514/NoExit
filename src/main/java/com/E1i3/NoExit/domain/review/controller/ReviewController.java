@@ -1,6 +1,6 @@
 package com.E1i3.NoExit.domain.review.controller;
 
-import com.E1i3.NoExit.domain.common.CommonResDto;
+import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.E1i3.NoExit.domain.review.dto.ReviewSaveDto;
 import com.E1i3.NoExit.domain.review.service.ReviewService;

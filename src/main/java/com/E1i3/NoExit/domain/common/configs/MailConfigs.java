@@ -1,10 +1,10 @@
-package com.E1i3.NoExit.domain.config;
+package com.E1i3.NoExit.domain.common.configs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class MailConfig {
+public class MailConfigs {
 
 	@Value("${spring.mail.host}")
 	private String host;
