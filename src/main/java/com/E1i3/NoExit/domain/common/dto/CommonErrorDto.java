@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.common;
+package com.E1i3.NoExit.domain.common.dto;
 
 import org.springframework.http.HttpStatus;
 

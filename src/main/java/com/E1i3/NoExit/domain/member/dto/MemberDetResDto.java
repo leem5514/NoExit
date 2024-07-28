@@ -1,20 +1,19 @@
 package com.E1i3.NoExit.domain.member.dto;
 
-import com.E1i3.NoExit.domain.member.domain.Member;
-
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberUpdateDto {
-	// 회원정보 수정
+public class MemberDetResDto {
+	// 마이페이지
 	private String username;
 	private String password;
 	private String email;
-	private int age;
-	private String phone_number;
+	private String phoneNumber;
 	private String nickname;
 }

@@ -19,8 +19,6 @@ public class MemberSaveReqDto {
 	private String email;
 
 	private int age;
-	private Role role;
-
 	private String phone_number;
 	private String nickname;
 
@@ -29,7 +27,7 @@ public class MemberSaveReqDto {
 			.username(this.username)
 			.password(this.password)
 			.email(this.email)
-			.role(this.role)
+			.email(this.email)
 			.age(this.age)
 			.phone_number(this.phone_number)
 			.nickname(this.nickname)
