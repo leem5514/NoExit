@@ -1,5 +1,9 @@
 server:
   port: ${MONGODB_PORT}
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
 
 spring:
   datasource:
@@ -21,6 +25,9 @@ spring:
       enabled: true
       max-file-size: 200MB
       max-request-size: 215MB
+  mvc:  # pathmatch 빠지니까 스웨거 null pointer 오류 남
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   mail:
     host: ${MAIL_HOST}
@@ -42,3 +49,6 @@ spring:
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
+jwt:
+  expiration: 30
+  secretKey: my_token_secret

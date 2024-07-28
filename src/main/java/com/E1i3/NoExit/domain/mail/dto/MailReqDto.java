@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.member.dto;
+package com.E1i3.NoExit.domain.mail.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

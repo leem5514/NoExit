@@ -1,24 +1,19 @@
 package com.E1i3.NoExit.domain.member.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
+
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.grade.domain.Grade;
+import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
+import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
+import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.review.domain.Review;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends BaseTimeEntity{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +34,7 @@ public class Member {
 	@Column(length = 50, nullable = false)
 	private String username;
 
-	@Column(length = 50, nullable = false)
+	@Column(length = 255, nullable = false)
 	private String password;
 
 	@Column(length = 100, unique = true)
@@ -49,7 +44,8 @@ public class Member {
 	private int age;
 
 	@Enumerated(EnumType.STRING)
-	private Role role;
+	@Builder.Default
+	private Role role = Role.USER;
 
 	@Column(length = 255, nullable = false)
 	private String phone_number;
@@ -57,11 +53,9 @@ public class Member {
 	@Column(length = 100, nullable = false)
 	private String nickname;
 
-	@CreationTimestamp
-	private LocalDateTime createdTime;
-
-	@UpdateTimestamp
-	private LocalDateTime updateTime;
+	@Enumerated(EnumType.STRING)
+	@Builder.Default
+	private DelYN delYN = DelYN.N;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Review> reviews;
@@ -72,14 +66,55 @@ public class Member {
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> boards;
 
+	// Member객체에 Findboard 객체 추가. : 김민성
+	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+	private List<Board> findBoards;
 
-	public Member updateMember(MemberUpdateDto dto) {
-		// 이메일은 수정 x
+	// Grade와 연관 관계 추가 : 김민성
+	@OneToOne
+	@JoinColumn(name = "grade_id", unique = true)
+	private Grade grade;
+
+	public Member updateMember(MemberUpdateDto dto, String encodedPassword) {
 		this.username = dto.getUsername();
-		this.password = dto.getPassword();
+		this.password =  encodedPassword;
 		this.age = dto.getAge();
 		this.phone_number = dto.getPhone_number();
 		this.nickname = dto.getNickname();
 		return this;
 	}
+
+
+	public Member saveMember(MemberSaveReqDto dto,  String encodedPassword) {
+		this.username = dto.getUsername();
+		this.password = encodedPassword;
+		this.age = dto.getAge();
+		this.phone_number = dto.getPhone_number();
+		this.nickname = dto.getNickname();
+		return this;
+	}
+
+	public Member saveMember(MemberSaveReqDto dto,  String encodedPassword) {
+		this.username = dto.getUsername();
+		this.password = encodedPassword;
+		this.age = dto.getAge();
+		this.phone_number = dto.getPhone_number();
+		this.nickname = dto.getNickname();
+		return this;
+	}
+
+	public Member updateDelYN() {
+		this.delYN = DelYN.Y;
+		return this;
+	}
+
+	public MemberListResDto fromEntity(){
+		return MemberListResDto.builder()
+			.email(this.email)
+			.id(this.id)
+			.nickname(this.nickname)
+			.username(this.username)
+			.build();
+	}
+
 }

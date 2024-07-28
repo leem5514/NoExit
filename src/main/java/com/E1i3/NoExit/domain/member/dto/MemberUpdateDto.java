@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberUpdateDto {
+	// 회원정보 수정
 	private String username;
 	private String password;
 	private String email;
