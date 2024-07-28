@@ -35,7 +35,7 @@ public class ReviewService {
         Member member = memberRepository.findById(dto.getMemberId()).orElseThrow(() -> new IllegalArgumentException("없는 회원입니다"));
         Reservation reservation = reservationRepository.findById(dto.getReservationId()).orElseThrow(()-> new IllegalArgumentException("존재하지 않은 예약입니다"));
 
-        if (reviewRepository.findByReservationAndDelYn(reservation, DelYN.N).isPresent()) {
+        if (reviewRepository.findByReservationAndDelYN(reservation, DelYN.N).isPresent()) {
             throw new IllegalStateException("이미 작성된 리뷰가 있습니다");
         }
         Review review = dto.toEntity(member, reservation);

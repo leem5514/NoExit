@@ -45,7 +45,7 @@ public class FindBoard {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private DelYn delYn = DelYn.Y;
+    private DelYN delYn = DelYN.Y;
 
     @Lob
     @Column(name = "image", nullable = true)
@@ -89,7 +89,7 @@ public class FindBoard {
     }
 
     public void markAsDeleted() {
-        this.delYn = DelYn.N; // delYn을 N으로 변경
+        this.delYn = DelYN.N; // delYn을 N으로 변경
     }
 
     public void incrementCurrentCount() {

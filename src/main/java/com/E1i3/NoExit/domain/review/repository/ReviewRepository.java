@@ -16,6 +16,6 @@ import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findByMemberAndDelYn(Member member, DelYN delYn);
-    Optional<Review> findByReservationAndDelYn(Reservation reservation, DelYN delYn);
+    List<Review> findByMemberAndDelYN(Member member, DelYN delYn);
+    Optional<Review> findByReservationAndDelYN(Reservation reservation, DelYN delYn);
 }
