@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.board.service;
+package com.E1i3.NoExit.domain.comment.service;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
