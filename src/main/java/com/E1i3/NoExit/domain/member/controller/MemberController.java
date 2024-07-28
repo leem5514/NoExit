@@ -3,6 +3,11 @@ package com.E1i3.NoExit.domain.member.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+
+
+import javax.validation.Valid;
+
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,9 +32,13 @@ import com.E1i3.NoExit.domain.owner.service.OwnerService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @RestController
-// @Tag(name = "member", description = "일반 사용자 API"
+
+@Api(tags="회원 서비스")
 public class MemberController {
 
 	@Autowired

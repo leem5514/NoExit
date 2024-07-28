@@ -25,6 +25,9 @@ spring:
       enabled: true
       max-file-size: 200MB
       max-request-size: 215MB
+  mvc:  # pathmatch 빠지니까 스웨거 null pointer 오류 남
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   mail:
     host: ${MAIL_HOST}

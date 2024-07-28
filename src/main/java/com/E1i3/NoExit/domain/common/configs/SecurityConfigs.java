@@ -23,23 +23,27 @@ public class SecurityConfigs {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity
-			.csrf().disable()
-			.cors().and()//CORS 활성화
-			.httpBasic().disable()
-			.authorizeRequests()
-			.antMatchers("/email/requestCode", "/", "/doLogin", "/member/create", "/owner/create")
-			.permitAll()
-			.anyRequest().authenticated()
-			.and()
-			// 세션 로그인이 아닌 stateless한 토큰 로그인을 사용하겠다는 의미
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
-			// 로그인시 사용자는 서버로부터 토큰을 발급받고, 매요청마다 해당 토큰을 http 헤더에 넣어 요청
-			// 사용자로부터 받아온 토큰이 정상인지 아닌지를 검증하는 코드
-			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-			.build();
+
+				.csrf().disable()
+				.cors().and() // CORS 활성화
+				.httpBasic().disable()
+				.authorizeRequests()
+				.antMatchers(
+						"/email/requestCode",
+						"/",
+						"/doLogin","/owner/create",
+						// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
+						"/member/create", "/swagger-ui/**",
+						"/swagger-resources/**",
+						"/swagger-ui.html",
+						"/v2/api-docs",
+						"/webjars/**"
+				).permitAll()
+				.anyRequest().authenticated()
+				.and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and()
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+				.build();
 	}
-
-
-
 }

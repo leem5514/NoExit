@@ -2,6 +2,7 @@ package com.E1i3.NoExit.domain.mail.controller;
 
 import javax.validation.Valid;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import com.E1i3.NoExit.domain.member.service.MemberService;
 
 @RestController
 @RequestMapping("/email")
+@Api(tags="메일 컨트롤러")
 public class MailVerifyController {
 
 	private final MailVerifyService mailVerifyService;
