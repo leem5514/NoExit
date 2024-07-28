@@ -1,11 +1,12 @@
 package com.E1i3.NoExit.domain.member.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.*;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
+
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.grade.domain.Grade;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
@@ -13,9 +14,6 @@ import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.review.domain.Review;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends BaseTimeEntity{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,12 +57,6 @@ public class Member {
 	@Builder.Default
 	private DelYN delYN = DelYN.N;
 
-	@CreationTimestamp
-	private LocalDateTime createdTime;
-
-	@UpdateTimestamp
-	private LocalDateTime updateTime;
-
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Review> reviews;
 
@@ -84,7 +76,6 @@ public class Member {
 	private Grade grade;
 
 	public Member updateMember(MemberUpdateDto dto, String encodedPassword) {
-		// 이메일은 수정 x
 		this.username = dto.getUsername();
 		this.password =  encodedPassword;
 		this.age = dto.getAge();
@@ -92,6 +83,7 @@ public class Member {
 		this.nickname = dto.getNickname();
 		return this;
 	}
+
 
 	public Member saveMember(MemberSaveReqDto dto,  String encodedPassword) {
 		this.username = dto.getUsername();

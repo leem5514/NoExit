@@ -23,6 +23,7 @@ public class SecurityConfigs {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity
+
 				.csrf().disable()
 				.cors().and() // CORS 활성화
 				.httpBasic().disable()
@@ -30,7 +31,7 @@ public class SecurityConfigs {
 				.antMatchers(
 						"/email/requestCode",
 						"/",
-						"/doLogin",
+						"/doLogin","/owner/create",
 						// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
 						"/member/create", "/swagger-ui/**",
 						"/swagger-resources/**",

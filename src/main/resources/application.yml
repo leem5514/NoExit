@@ -1,5 +1,9 @@
 server:
   port: ${MONGODB_PORT}
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
 
 spring:
   datasource:
