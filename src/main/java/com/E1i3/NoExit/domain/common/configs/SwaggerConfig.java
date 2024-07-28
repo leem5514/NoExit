@@ -1,5 +1,5 @@
-package com.E1i3.NoExit.domain.common.configs;
 
+package com.E1i3.NoExit.domain.common.configs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;

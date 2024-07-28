@@ -1,12 +1,13 @@
 package com.E1i3.NoExit.domain.common.service;
 
+import javax.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
+
 
 import javax.persistence.EntityNotFoundException;
 
@@ -42,6 +43,7 @@ public class CommonExceptionHandler {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<CommonErrorDto> methodArgumentNotValidHandler(MethodArgumentNotValidException e) {
+
 		StringBuilder errorMessage = new StringBuilder("입력값이 유효하지 않습니다.");
 		e.getBindingResult().getAllErrors().forEach(error -> {
 			errorMessage.append(" ").append(error.getDefaultMessage());
@@ -50,6 +52,7 @@ public class CommonExceptionHandler {
 				HttpStatus.BAD_REQUEST,
 				errorMessage.toString()
 		);
+
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
 	}
 
