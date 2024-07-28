@@ -63,6 +63,8 @@ public class Board extends BaseTimeEntity {
                 .likes(this.likes)
                 .dislikes(this.dislikes)
                 .boardType(this.boardType)
+                .createdTime(this.getCreatedTime())
+                .updatedTime(this.getUpdateTime())
                 .build();
 
         return boardListResDto;
@@ -79,6 +81,8 @@ public class Board extends BaseTimeEntity {
                 .dislikes(this.dislikes)
                 .imagePath(this.imagePath)
                 .boardType(this.boardType)
+                .createdTime(this.getCreatedTime())
+                .updatedTime(this.getUpdateTime())
                 .build();
 
         return boardDetailResDto;

@@ -7,6 +7,7 @@ import com.E1i3.NoExit.domain.comment.service.CommentService;
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,7 @@ public class CommentController {
     // url은 임의로 대충 붙임
 
 
-
+    @Operation(summary= "댓글 작성")
     @PostMapping("/comment/create") // 댓글 생성
     public ResponseEntity<Object> commentCreate(@RequestBody CommentCreateReqDto dto) {
         try {
@@ -47,7 +48,7 @@ public class CommentController {
 
 
 
-
+    @Operation(summary= "댓글 조회")
     @GetMapping("/comment/list") // 댓글 조회
     public ResponseEntity<Object> commentRead(
             @PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.ASC) Pageable pageable) {
@@ -63,7 +64,7 @@ public class CommentController {
 
 
 
-
+    @Operation(summary= "댓글 수정")
     @PostMapping("/comment/update/{id}") // 댓글 수정
     public ResponseEntity<Object> commentUpdate(@PathVariable Long id, @RequestBody CommentUpdateReqDto dto) {
         try {
@@ -81,12 +82,40 @@ public class CommentController {
 
 
 
-
+    @Operation(summary= "댓글 삭제")
     @PostMapping("/comment/delete/{id}") // 댓글 삭제
     public ResponseEntity<Object> commentDelete(@PathVariable Long id) {
         try {
             commentService.commentDelete(id);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", null);
+            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+            CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(summary= "댓글 좋아요")
+    @PostMapping("/comment/like/{id}")
+    public ResponseEntity<Object> commentLike(@PathVariable Long id) {
+        try {
+            int likes = commentService.commentUpdateLikes(id);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", likes);
+            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+            CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(summary= "댓글 싫어요")
+    @PostMapping("/comment/dislike/{id}")
+    public ResponseEntity<Object> commentDislike(@PathVariable Long id) {
+        try {
+            int dislikes = commentService.commentUpdateDislikes(id);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", dislikes);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {
             e.printStackTrace();

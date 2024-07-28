@@ -85,17 +85,22 @@ public class BoardService {
             throw new IllegalArgumentException("cannot find board");
         }
         board.deleteEntity();
+        boardRepository.save(board);
     }
 
-    public void boardUpdateLikes(Long id) {
+    public int boardUpdateLikes(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
         board.updateLikes();
+        boardRepository.save(board);
+        return board.getLikes();
     }
 
-    public void boardUpdateDislikes(Long id) {
+    public int boardUpdateDislikes(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
         board.updateDislikes();
+        boardRepository.save(board);
+        return board.getDislikes();
     }
 }

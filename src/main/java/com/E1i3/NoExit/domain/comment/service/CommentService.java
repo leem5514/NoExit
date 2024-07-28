@@ -77,20 +77,25 @@ public class CommentService {
     public void commentDelete(Long id) { // 댓글 삭제
         Comment comment = commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException("찾을 수 없습니다."));
         comment.deleteEntity();
+        commentRepository.save(comment);
 //        commentRepository.delete(comment);
     }
 
 
-    public void commetUpdateLikes(Long id) {
+    public int commentUpdateLikes(Long id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("comment not found with id: " + id));
         comment.updateLikes();
+        commentRepository.save(comment);
+        return comment.getLikes();
     }
 
-    public void commentUpdateDislikes(Long id) {
+    public int commentUpdateDislikes(Long id) {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("comment not found with id: " + id));
         comment.updateDislikes();
+        commentRepository.save(comment);
+        return comment.getDislikes();
     }
 }
 

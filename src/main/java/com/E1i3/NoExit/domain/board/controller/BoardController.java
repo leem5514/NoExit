@@ -9,6 +9,7 @@ import com.E1i3.NoExit.domain.board.service.BoardService;
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +35,7 @@ public class BoardController {
         this.boardService = boardService;
     }
 
-
+    @Operation(summary= "게시글 작성")
     @PostMapping("/board/create") // 게시글 생성
     public ResponseEntity<Object> boardCreate(@RequestBody BoardCreateReqDto dto) {
         try {
@@ -52,7 +53,7 @@ public class BoardController {
 
 
 
-
+    @Operation(summary= "게시글 전체 조회")
     @GetMapping("/board/list") // 게시글 전체 조회
     public ResponseEntity<Object> boardRead(
             @PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -66,7 +67,7 @@ public class BoardController {
 
 
 
-
+    @Operation(summary= "게시글 상세 조회")
     @GetMapping("/board/detail/{id}") // 게시글 상세조회
     public ResponseEntity<?> boardDetailRead(@PathVariable Long id) {
         BoardDetailResDto dto = boardService.boardDetail(id);
@@ -79,7 +80,7 @@ public class BoardController {
 
 
 
-
+    @Operation(summary= "게시글 수정")
     @PostMapping("/board/update/{id}") // 게시글 수정
     public ResponseEntity<Object> boardUpdate(@PathVariable Long id, @RequestBody BoardUpdateReqDto dto) {
         try {
@@ -105,11 +106,41 @@ public class BoardController {
 //        return "ok";
 //    }
 
+    @Operation(summary= "게시글 삭제")
     @PostMapping("/board/delete/{id}") // 게시글 삭제
     public ResponseEntity<Object> boardDelete(@PathVariable Long id) {
         try {
             boardService.boardDelete(id);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "board is successfully deleted", null);
+            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+            CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @Operation(summary= "게시글 좋아요")
+    @PostMapping("/board/like/{id}")
+    public ResponseEntity<Object> boardLike(@PathVariable Long id) {
+        try {
+            int likes = boardService.boardUpdateLikes(id);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", likes);
+            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+            CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(summary= "게시글 싫어요")
+    @PostMapping("/board/dislike/{id}")
+    public ResponseEntity<Object> boardDislike(@PathVariable Long id) {
+        try {
+            int dislikes = boardService.boardUpdateDislikes(id);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", dislikes);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
