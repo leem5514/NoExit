@@ -5,6 +5,7 @@ import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationListResDto;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationSaveDto;
 import com.E1i3.NoExit.domain.reservation.service.ReservationService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@Api(tags="예약 서비스")
 public class ReservationController {
 
     @Autowired

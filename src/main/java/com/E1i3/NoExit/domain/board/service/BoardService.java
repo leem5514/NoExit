@@ -1,11 +1,13 @@
 package com.E1i3.NoExit.domain.board.service;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
+import com.E1i3.NoExit.domain.board.domain.DelYN;
 import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
+import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 
 @Service
+@Transactional
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -28,7 +31,7 @@ public class BoardService {
         this.memberRepository = memberRepository;
     }
 
-    @Transactional
+
     public void boardCreate(BoardCreateReqDto dto) { // 게시글 생성
         // Member 엔티티를 memberId로 조회
         Member member = memberRepository.findById(dto.getMemberId())
@@ -40,7 +43,8 @@ public class BoardService {
     }
 
     public Page<BoardListResDto> boardList(Pageable pageable) { // 게시글 전체 조회
-        Page<Board> boards = boardRepository.findAll(pageable);
+        Page<Board> boards = boardRepository.findByDelYN(pageable,"N");
+//        Page<Board> boards = boardRepository.findAll(pageable);
         Page<BoardListResDto> boardListResDtos = boards.map(Board::fromEntity);
         return boardListResDtos;
     }
@@ -48,10 +52,14 @@ public class BoardService {
     public BoardDetailResDto boardDetail(Long id) { // 특정 게시글 조회
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+        if (board.getDelYN().equals(DelYN.Y)) {
+            throw new IllegalArgumentException("cannot find board");
+        }
+        board.updateBoardHits();
         return board.detailFromEntity();
     }
 
-    @Transactional
+
     public Board boardUpdate(Long id, BoardUpdateReqDto dto) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
@@ -62,6 +70,22 @@ public class BoardService {
     public void boardDelete(Long id) {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
-        boardRepository.delete(board);
+//        boardRepository.delete(board);
+        if (board.getDelYN().equals(DelYN.Y)) {
+            throw new IllegalArgumentException("cannot find board");
+        }
+        board.deleteEntity();
+    }
+
+    public void boardUpdateLikes(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+        board.updateLikes();
+    }
+
+    public void boardUpdateDislikes(Long id) {
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+        board.updateDislikes();
     }
 }
