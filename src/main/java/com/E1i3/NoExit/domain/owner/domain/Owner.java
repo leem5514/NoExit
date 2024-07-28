@@ -10,11 +10,7 @@ import javax.persistence.Id;
 
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.member.domain.DelYN;
-import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
-import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
-import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
-import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerListResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
@@ -58,14 +54,6 @@ public class Owner extends BaseTimeEntity {
 	public Owner updateOwner(OwnerUpdateDto dto, String encodedPassword) {
 		this.username = dto.getUsername();
 		this.password =  encodedPassword;
-		return this;
-	}
-
-	public Owner saveOwner(OwnerSaveReqDto dto,  String encodedPassword) {
-		this.username = dto.getUsername();
-		this.password = encodedPassword;
-		this.storeName = dto.getStoreName();
-		this.email = dto.getEmail();
 		return this;
 	}
 

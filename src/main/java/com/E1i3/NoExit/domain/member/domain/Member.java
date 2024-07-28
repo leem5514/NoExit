@@ -80,15 +80,6 @@ public class Member extends BaseTimeEntity{
 		return this;
 	}
 
-	public Member saveMember(MemberSaveReqDto dto,  String encodedPassword) {
-		this.username = dto.getUsername();
-		this.password = encodedPassword;
-		this.age = dto.getAge();
-		this.phone_number = dto.getPhone_number();
-		this.nickname = dto.getNickname();
-		return this;
-	}
-
 	public Member updateDelYN() {
 		this.delYN = DelYN.Y;
 		return this;
