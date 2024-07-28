@@ -4,7 +4,7 @@ import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
-import com.E1i3.NoExit.domain.likes.service.BoardService;
+import com.E1i3.NoExit.domain.board.service.BoardService;
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import io.swagger.annotations.Api;

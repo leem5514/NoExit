@@ -1,6 +1,6 @@
 package com.E1i3.NoExit.domain.owner.dto;
 
-import com.E1i3.NoExit.domain.owner.controller.domain.Owner;
+import com.E1i3.NoExit.domain.owner.domain.Owner;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

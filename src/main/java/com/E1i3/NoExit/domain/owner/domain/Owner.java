@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.owner.controller.domain;
+package com.E1i3.NoExit.domain.owner.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

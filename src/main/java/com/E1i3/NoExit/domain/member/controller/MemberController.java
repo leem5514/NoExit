@@ -22,7 +22,7 @@ import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.service.MemberService;
-import com.E1i3.NoExit.domain.owner.controller.domain.Owner;
+import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
 
 import lombok.extern.slf4j.Slf4j;

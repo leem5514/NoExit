@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.likes.service;
+package com.E1i3.NoExit.domain.board.service;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
