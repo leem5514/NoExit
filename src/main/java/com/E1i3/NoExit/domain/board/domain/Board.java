@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,7 +25,7 @@ public class Board extends BaseTimeEntity {
     private Long id; // 아이디
 //    private Long memberId; // 작성자 아이디
 
-    private String writer; // 작성자 // 굳이 필요할까...
+//    private String writer; // 작성자 // 굳이 필요할까...
 
     @Column(nullable = false)
     private String title; //  제목
@@ -48,7 +49,8 @@ public class Board extends BaseTimeEntity {
     private BoardType boardType; // 게시판 유형 (자유, 공략)
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
-    private List<Comment> comments; // 게시글에 달린 댓글들
+    @Builder.Default
+    private List<Comment> comments = new ArrayList<>(); // 게시글에 달린 댓글들
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -63,11 +65,13 @@ public class Board extends BaseTimeEntity {
                 .likes(this.likes)
                 .dislikes(this.dislikes)
                 .boardType(this.boardType)
-                .createdTime(this.getCreatedTime())
-                .updatedTime(this.getUpdateTime())
                 .build();
 
         return boardListResDto;
+    }
+
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
     }
 
     public BoardDetailResDto detailFromEntity(){

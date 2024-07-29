@@ -34,10 +34,12 @@ public class BoardService {
 
 
     public void boardCreate(BoardCreateReqDto dto) { // 게시글 생성
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
 
         // Member 엔티티를 memberId로 조회
-        Member member = memberRepository.findById(dto.getMemberId())
-                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + dto.getMemberId()));
+//        Member member = memberRepository.findById(dto.getMemberId())
+//                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + dto.getMemberId()));
 
         // DTO를 Entity로 변환하고 Member 설정
         Board board = dto.toEntity(member);
@@ -46,7 +48,7 @@ public class BoardService {
 
 
     public Page<BoardListResDto> boardList(Pageable pageable) { // 게시글 전체 조회
-        Page<Board> boards = boardRepository.findByDelYN(pageable,"N");
+        Page<Board> boards = boardRepository.findByDelYN(pageable,DelYN.N);
 //        Page<Board> boards = boardRepository.findAll(pageable);
         Page<BoardListResDto> boardListResDtos = boards.map(Board::fromEntity);
         return boardListResDtos;
@@ -78,11 +80,15 @@ public class BoardService {
     }
 
     public void boardDelete(Long id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
 //        boardRepository.delete(board);
-        if (board.getDelYN().equals(DelYN.Y)) {
-            throw new IllegalArgumentException("cannot find board");
+        if (!board.getMember().getEmail().equals(email)) {
+            throw new IllegalArgumentException("본인의 게시글만 삭제할 수 있습니다.");
+        } else if (board.getDelYN().equals(DelYN.Y)) {
+            throw new IllegalArgumentException("cannot delete board");
         }
         board.deleteEntity();
         boardRepository.save(board);

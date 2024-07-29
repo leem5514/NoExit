@@ -20,10 +20,11 @@ import java.time.LocalDateTime;
 @Data
 public class CommentListResDto {
 
-//    private Long boardId; // 댓글 단 게시글 아이디
+    private Long boardId; // 댓글 단 게시글 아이디
 //    private Board board;
 
     private Long memberId; // 댓글 작성자 아이디
+//    private String writer; // 댓글 작성자 닉네임
 
     private String content; // 댓글 내용
 

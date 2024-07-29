@@ -34,7 +34,8 @@ public class Comment extends BaseTimeEntity {
 //    private Long boardId; // 댓글 단 게시글 아이디
     private Board board;
 
-    private Long memberId; // 댓글 작성자 아이디 // 로그인하면 필요없음
+    private Long memberId; // 댓글 작성자 아이디
+//    private String writer; // 댓글 작성자 닉네임
 
     private String content; // 댓글 내용
 
@@ -49,11 +50,13 @@ public class Comment extends BaseTimeEntity {
 
     public CommentListResDto fromEntity(){
         CommentListResDto commentListResDto = CommentListResDto.builder()
-//                .board(this.board)
+                .boardId(this.board.getId())
                 .memberId(this.memberId)
                 .content(this.content)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
+                .createdTime(this.getCreatedTime())
+                .updatedTime(this.getUpdateTime())
                 .build();
 
         return commentListResDto;

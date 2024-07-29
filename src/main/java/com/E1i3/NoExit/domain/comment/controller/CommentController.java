@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.comment.controller;
 
+import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentUpdateReqDto;
@@ -52,7 +53,7 @@ public class CommentController {
     @GetMapping("/comment/list") // 댓글 조회
     public ResponseEntity<Object> commentRead(
             @PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<CommentListResDto> dtos =  commentService.commentList(pageable);
+        Page<CommentListResDto> dtos = commentService.commentList(pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "list is successfully found", dtos);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
@@ -64,8 +65,9 @@ public class CommentController {
 
 
 
+
     @Operation(summary= "댓글 수정")
-    @PostMapping("/comment/update/{id}") // 댓글 수정
+    @PatchMapping("/comment/update/{id}") // 댓글 수정
     public ResponseEntity<Object> commentUpdate(@PathVariable Long id, @RequestBody CommentUpdateReqDto dto) {
         try {
             commentService.commentUpdate(id, dto);
@@ -83,7 +85,7 @@ public class CommentController {
 
 
     @Operation(summary= "댓글 삭제")
-    @PostMapping("/comment/delete/{id}") // 댓글 삭제
+    @PatchMapping("/comment/delete/{id}") // 댓글 삭제
     public ResponseEntity<Object> commentDelete(@PathVariable Long id) {
         try {
             commentService.commentDelete(id);

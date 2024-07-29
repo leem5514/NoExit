@@ -81,7 +81,7 @@ public class BoardController {
 
 
     @Operation(summary= "게시글 수정")
-    @PostMapping("/board/update/{id}") // 게시글 수정
+    @PatchMapping("/board/update/{id}") // 게시글 수정
     public ResponseEntity<Object> boardUpdate(@PathVariable Long id, @RequestBody BoardUpdateReqDto dto) {
         try {
             boardService.boardUpdate(id, dto);
@@ -96,10 +96,6 @@ public class BoardController {
 
 
 
-
-
-
-
 //    @DeleteMapping("/board/delete/{id}") // 게시글 삭제
 //    public String boardDelete(@PathVariable Long id) {
 //        boardService.boardDelete(id);
@@ -107,7 +103,7 @@ public class BoardController {
 //    }
 
     @Operation(summary= "게시글 삭제")
-    @PostMapping("/board/delete/{id}") // 게시글 삭제
+    @PatchMapping("/board/delete/{id}") // 게시글 삭제
     public ResponseEntity<Object> boardDelete(@PathVariable Long id) {
         try {
             boardService.boardDelete(id);
@@ -122,7 +118,7 @@ public class BoardController {
 
 
     @Operation(summary= "게시글 좋아요")
-    @PostMapping("/board/like/{id}")
+    @PatchMapping("/board/like/{id}")
     public ResponseEntity<Object> boardLike(@PathVariable Long id) {
         try {
             int likes = boardService.boardUpdateLikes(id);
@@ -136,7 +132,7 @@ public class BoardController {
     }
 
     @Operation(summary= "게시글 싫어요")
-    @PostMapping("/board/dislike/{id}")
+    @PatchMapping("/board/dislike/{id}")
     public ResponseEntity<Object> boardDislike(@PathVariable Long id) {
         try {
             int dislikes = boardService.boardUpdateDislikes(id);
