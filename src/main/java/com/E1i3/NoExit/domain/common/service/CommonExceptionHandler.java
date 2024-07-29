@@ -73,4 +73,5 @@ public class CommonExceptionHandler {
 		);
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.METHOD_NOT_ALLOWED);
 	}
+
 }

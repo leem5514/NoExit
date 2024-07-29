@@ -60,19 +60,21 @@ public class ReservationService {
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public Reservation save(ReservationSaveDto dto) {
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new IllegalArgumentException("없는 이메일입니다."));
+
         String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
 
         if (Boolean.TRUE.equals(reservationRedisTemplate.hasKey(reservationKey))) {
             throw new IllegalStateException("(예약불가) 이미 예약 중인 시간대 입니다.");
         }
 
-        reservationRedisTemplate.opsForValue().set(reservationKey, "LOCKED", 1, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
+        reservationRedisTemplate.opsForValue().set(reservationKey, "LOCKED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
         try {
-            Member member = memberRepository.findByEmail(dto.getEmail())
-                    .orElseThrow(() -> new IllegalArgumentException("없는 이메일입니다."));
             Game game = gameRepository.findById(dto.getGameId())
-                    .orElseThrow(() -> new IllegalArgumentException("없는 게임 ID입니다. 후 게임 이름으로 변경"));
+                    .orElseThrow(() -> new IllegalArgumentException("없는 게임 ID입니다."));
 
             Reservation reservation = dto.toEntity(member, game);
             reservationRepository.save(reservation);
@@ -88,7 +90,8 @@ public class ReservationService {
     @PreAuthorize("hasRole('USER')")
     public List<ReservationListResDto> find() {
         String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
         List<Reservation> reservations = reservationRepository.findByMemberEmailAndDelYN(member.getEmail(), DelYN.N);
 
@@ -96,6 +99,7 @@ public class ReservationService {
                 .map(ReservationListResDto::listFromEntity)
                 .collect(Collectors.toList());
     }
+
 
     /* 예약 상세 보기 */
     @PreAuthorize("hasRole('USER')")

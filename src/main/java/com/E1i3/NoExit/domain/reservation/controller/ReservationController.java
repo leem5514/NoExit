@@ -39,7 +39,7 @@ public class ReservationController {
     @Operation(summary= "[일반 사용자] 예약생성 API")
     public ResponseEntity<?> reservationCreate(@RequestBody ReservationSaveDto dto) {
         Reservation reservation = reservationService.save(dto);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "예약 신청을 완료하였습니다.", reservation.getId());
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "예약 신청을 완료하였습니다.", reservation);
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
