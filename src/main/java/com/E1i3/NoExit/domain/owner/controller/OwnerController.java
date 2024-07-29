@@ -18,6 +18,8 @@ import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping("/owner")
 // @Tag(name = "owner", description = "점주 API")
@@ -33,6 +35,7 @@ public class OwnerController {
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
 
+	@Operation(summary= "[점주 사용자] 회원가입 API")
 	@PostMapping("/create")
 	public ResponseEntity<CommonResDto> ownerCreate(@RequestBody OwnerSaveReqDto dto) {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원가입 성공", ownerService.ownerCreate(dto).getId());
@@ -40,6 +43,7 @@ public class OwnerController {
 	}
 
 	// 상세 내역 수정
+	@Operation(summary= "[점주 사용자] 점주 정보 수정 API")
 	@PostMapping("/update")
 	public ResponseEntity<CommonResDto> updateOwner(@RequestBody OwnerUpdateDto dto) {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 수정", ownerService.ownerUpdate(dto).getId());
@@ -47,6 +51,7 @@ public class OwnerController {
 	}
 
 	// 탈퇴 (?)
+	@Operation(summary= "[일반 사용자] 점주 탈퇴 API")
 	@PostMapping("/delete")
 	public ResponseEntity<CommonResDto> deleteOwner(@RequestBody OwnerUpdateDto dto) {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  ownerService.ownerDelete(dto.getEmail()).getId());

@@ -3,6 +3,8 @@ package com.E1i3.NoExit.domain.mail.controller;
 import javax.validation.Valid;
 
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,7 @@ public class MailVerifyController {
 		this.memberService = memberService;
 	}
 
+	@Operation(summary= "[이메일 인증] 인증 메일 요청 API")
 	@PostMapping("/requestCode")
 	public ResponseEntity<CommonResDto> requestEmail(@RequestParam("email") @Valid String email) {
 		mailVerifyService.sendCodeToEmail(email);
@@ -40,6 +43,7 @@ public class MailVerifyController {
 	}
 
 	// 인증번호 검증 요청
+	@Operation(summary= "[인증번호 인증] 인증 번호 검증 API")
 	@GetMapping("/requestCode")
 	public ResponseEntity<CommonResDto> verificationEmail(@RequestParam("email") @Valid String email,
 		@RequestParam("code") String authCode) {
