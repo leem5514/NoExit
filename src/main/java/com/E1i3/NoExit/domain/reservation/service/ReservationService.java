@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,12 +36,10 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class ReservationService {
-    //private static final Logger logger = LoggerFactory.getLogger(ReservationService.class);
     @Autowired
     private ReservationRepository reservationRepository;
     @Autowired
     private MemberRepository memberRepository;
-
     @Autowired
     private GameRepository gameRepository;
 
@@ -53,11 +53,11 @@ public class ReservationService {
     @Qualifier("2")
     private RedisTemplate<String, Object> reservationRedisTemplate;
 
-
     private static final String RESERVATION_LOCK_PREFIX = "reservation:lock:";
 
 
     /* 레디스를 통한 예약하기 */
+    @PreAuthorize("hasRole('USER')")
     @Transactional
     public Reservation save(ReservationSaveDto dto) {
         String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
@@ -66,7 +66,7 @@ public class ReservationService {
             throw new IllegalStateException("(예약불가) 이미 예약 중인 시간대 입니다.");
         }
 
-        reservationRedisTemplate.opsForValue().set(reservationKey, "LOCKED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
+        reservationRedisTemplate.opsForValue().set(reservationKey, "LOCKED", 1, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
         try {
             Member member = memberRepository.findByEmail(dto.getEmail())
@@ -84,23 +84,39 @@ public class ReservationService {
             throw e;
         }
     }
+    /* 예약한 리스트 */
+    @PreAuthorize("hasRole('USER')")
+    public List<ReservationListResDto> find() {
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
-    /* email을 통한 예약 조회(USER 기준) */
-//    @Transactional(readOnly = true)
-//    public List<ReservationListResDto> find(String email) {
-//        List<Reservation> reservations = reservationRepository.findByMemberEmail(email);
-//        return reservations.stream()
-//                .map(ReservationListResDto::listFromEntity)
-//                .collect(Collectors.toList());
-//    }
-    public List<ReservationListResDto> find(String email) {
-        List<Reservation> reservations = reservationRepository.findByMemberEmailAndDelYN(email, DelYN.N);
+        List<Reservation> reservations = reservationRepository.findByMemberEmailAndDelYN(member.getEmail(), DelYN.N);
+
         return reservations.stream()
                 .map(ReservationListResDto::listFromEntity)
                 .collect(Collectors.toList());
     }
+
+    /* 예약 상세 보기 */
+    @PreAuthorize("hasRole('USER')")
+    @Transactional
+    public ReservationDetailResDto getReservationDetail(Long id) {
+        // 로그인된 사용자의 이메일을 가져옴
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        // 이메일을 통해 회원 정보 조회
+        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+
+        if (!reservation.getMember().equals(member)) {
+            throw new IllegalArgumentException("본인의 예약만 조회할 수 있습니다.");
+        }
+        return reservation.toDetailDto();
+    }
+
     /* ADMIN 기준에서의 업데이트 */
     /* 추가) 후 STORE 컬럼과 접근하여 STORE_ID의 GAME_ID을 받아서 처리 예정  */
+    @PreAuthorize("hasRole('OWNER')")
     @Transactional
     public Reservation updateApprovalStatus(ReservationUpdateResDto dto) {
         Member admin = memberRepository.findByEmail(dto.getAdminEmail())
@@ -131,10 +147,14 @@ public class ReservationService {
     }
 
     /* 예약취소 */
+    @PreAuthorize("hasRole('USER')")
     @Transactional
     public Reservation cancelReservation(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
+        Member member = memberRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new EntityNotFoundException("예약을 찾을 수 없습니다."));
+        if (!reservation.getMember().equals(member)) {
+            throw new IllegalArgumentException("본인의 예약만 취소할 수 있습니다.");
+        }
         reservation.updateDelYN();
         reservationRepository.save(reservation);
 
@@ -144,6 +164,7 @@ public class ReservationService {
         return reservation;
     }
 
+    @PreAuthorize("hasRole('USER')")
     public Optional<Reservation> findReservationTime(String resDate, String resDateTime) {
         String reservationKey = RESERVATION_LOCK_PREFIX + resDate + ":" + resDateTime;
 
@@ -154,24 +175,15 @@ public class ReservationService {
         }
     }
 
-    @Transactional
-    public ReservationDetailResDto getReservationDetail(Long id) {
-        Optional<Reservation> findReservation = reservationRepository.findById(id);
-        Reservation reservation = findReservation.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
-        return reservation.toDetailDto();
-    }
-
-    public ReservationDetailResDto ReservationDetail(String email, Long reservationId) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("없는 이메일입니다."));
-
-        Reservation reservation = reservationRepository.findByIdAndMemberAndDelYN(reservationId, member, DelYN.N)
-                .orElseThrow(() -> new IllegalArgumentException("예약을 찾을 수 없습니다."));
-
-        return reservation.toDetailDto();
-    }
 
 
+
+//    @Transactional
+//    public ReservationDetailResDto getReservationDetail(Long id) {
+//        Optional<Reservation> findReservation = reservationRepository.findById(id);
+//        Reservation reservation = findReservation.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
+//        return reservation.toDetailDto();
+//    }
 
 
     /* 예약하기 */
