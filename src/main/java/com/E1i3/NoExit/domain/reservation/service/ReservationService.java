@@ -17,6 +17,7 @@ import com.E1i3.NoExit.domain.reservation.repository.ReservationRepository;
 import lombok.extern.slf4j.XSlf4j;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +50,9 @@ public class ReservationService {
     }
 
     @Autowired
+    @Qualifier("2")
     private RedisTemplate<String, Object> reservationRedisTemplate;
+
 
     private static final String RESERVATION_LOCK_PREFIX = "reservation:lock:";
 
@@ -73,7 +76,6 @@ public class ReservationService {
 
             Reservation reservation = dto.toEntity(member, game);
             reservationRepository.save(reservation);
-
             reservationRedisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
             return reservation;
