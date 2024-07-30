@@ -51,7 +51,7 @@ public class OwnerController {
 	}
 
 	// 탈퇴 (?)
-	@Operation(summary= "[일반 사용자] 점주 탈퇴 API")
+	@Operation(summary= "[점주 사용자] 점주 탈퇴 API")
 	@PostMapping("/delete")
 	public ResponseEntity<CommonResDto> deleteOwner(@RequestBody OwnerUpdateDto dto) {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  ownerService.ownerDelete(dto.getEmail()).getId());
