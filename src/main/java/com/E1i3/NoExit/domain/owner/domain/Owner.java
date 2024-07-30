@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.member.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Role;
+import com.E1i3.NoExit.domain.owner.dto.OwnerDetResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerListResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
@@ -63,6 +64,14 @@ public class Owner extends BaseTimeEntity {
 	public Owner updateDelYN() {
 		this.delYN = DelYN.Y;
 		return this;
+	}
+
+	public OwnerDetResDto detFromEntity(){
+		return OwnerDetResDto.builder()
+			.username(this.username)
+			.storeName(this.storeName)
+			.email(this.email)
+			.build();
 	}
 
 	public OwnerListResDto fromEntity(){

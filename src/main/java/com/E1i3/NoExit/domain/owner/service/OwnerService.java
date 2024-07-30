@@ -6,6 +6,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.common.service.RedisService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
+import com.E1i3.NoExit.domain.owner.dto.OwnerDetResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerListResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
@@ -75,6 +77,13 @@ public class OwnerService{
 		Owner owner = ownerRepository.findByEmail(ownerUpdateDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
 		String encodedPassword = passwordEncoder.encode(ownerUpdateDto.getPassword());
 		return owner.updateOwner(ownerUpdateDto, encodedPassword);
+	}
+
+	// 회원 상세 조회
+	public OwnerDetResDto myInfo() {
+		String ownerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+		Owner owner = ownerRepository.findByEmail(ownerEmail).orElseThrow(EntityNotFoundException::new);
+		return owner.detFromEntity();
 	}
 
 	public void changeReservationStatus(ReservationSaveDto reservationSaveDto){
