@@ -19,15 +19,14 @@ public class ReviewSaveDto {
 
     private int rating;
 
-    private MultipartFile image;
+    private MultipartFile reviewImage;
     private Long memberId;
     private Long reservationId;
 
-    public Review toEntity(Member member, Reservation reservation, String imagePath) {
+    public Review toEntity(Member member, Reservation reservation) {
         return Review.builder()
                 .content(this.content)
                 .rating(this.rating)
-                .imagePath(imagePath)
                 .member(member)
                 .reservation(reservation)
                 .build();

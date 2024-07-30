@@ -7,6 +7,7 @@ import javax.persistence.*;
 import com.E1i3.NoExit.domain.board.domain.Board;
 
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.grade.domain.Grade;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;

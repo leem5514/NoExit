@@ -1,6 +1,7 @@
 package com.E1i3.NoExit.domain.findboard.domain;
 
 //import com.E1i3.NoExit.domain.findboard.dto.FindBoardDetailResDto;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;

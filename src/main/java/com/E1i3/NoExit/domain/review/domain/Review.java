@@ -2,8 +2,9 @@ package com.E1i3.NoExit.domain.review.domain;
 
 import javax.persistence.*;
 
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
-import com.E1i3.NoExit.domain.reservation.domain.DelYN;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+public class Review extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +32,6 @@ public class Review {
     private int rating;  // 순위
 
     private String imagePath; // 이미지
-
-    @CreationTimestamp
-    private LocalDateTime createdAt; // 생성시간
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt; // 수정시간
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -53,5 +48,15 @@ public class Review {
 
     public void deleteReview() {
         this.delYN = DelYN.Y;
+    }
+    public void updateImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+    @Builder
+    public Review(Long id, String content, int rating, String imagePath, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.content = content;
+        this.rating = rating;
+        this.imagePath = imagePath;
     }
 }

@@ -1,10 +1,10 @@
 package com.E1i3.NoExit.domain.reservation.dto;
 
 
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
-import com.E1i3.NoExit.domain.reservation.domain.DelYN;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.reservation.domain.ReservationStatus;
 import lombok.AllArgsConstructor;
@@ -13,8 +13,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.UUID;
 
 @Data
 @NoArgsConstructor

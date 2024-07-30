@@ -33,11 +33,9 @@ public class ReviewController {
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/review/create")
     @Operation(summary= "[일반 사용자] 리뷰 생성 API")
-    public ResponseEntity<?> createReview(@RequestPart("dto") ReviewSaveDto dto,
-                                          @RequestPart(value = "image", required = false) MultipartFile image) {
-
-        Review review = reviewService.createReview(dto, image);
-        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "리뷰 작성이 완료되었습니다.", review);
+    public ResponseEntity<?> createReview(ReviewSaveDto dto) {
+        Review review = reviewService.createReview(dto);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "리뷰 작성이 완료되었습니다.", review.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 }
