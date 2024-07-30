@@ -55,7 +55,7 @@ public class ReservationController {
 
     /* 이메일과 예약 ID를 기준으로 예약 상세 조회 */
     @PreAuthorize("hasRole('USER')")
-    @GetMapping("/reservation/detail")
+    @GetMapping("/reservation/detail/{id}")
     @Operation(summary= "[일반 사용자] 예약상세조회 API")
     public ResponseEntity<?> getReservationDetail(@PathVariable Long id) {
         ReservationDetailResDto reservationDetailResDto = reservationService.getReservationDetail(id);

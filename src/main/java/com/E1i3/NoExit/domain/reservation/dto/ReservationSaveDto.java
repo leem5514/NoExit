@@ -25,7 +25,7 @@ public class ReservationSaveDto {
     private int numberOfPlayers;
     private LocalDate resDate;
     private String resDateTime;
-    private String email; // 이메일 검증
+    private String email;
     private Long GameId; // 게임 아디 검증
 
     public Reservation toEntity(Member member, Game game) {

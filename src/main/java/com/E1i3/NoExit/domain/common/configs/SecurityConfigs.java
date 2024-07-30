@@ -34,12 +34,13 @@ public class SecurityConfigs {
 						"/doLogin","/owner/create",
 						// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
 						"/member/create", "/swagger-ui/**",
+
 						"/swagger-resources/**",
 						"/swagger-ui.html",
 						"/v2/api-docs",
-						"/webjars/**",
-						"/review/create"
+						"/webjars/**"
 				).permitAll()
+				.antMatchers("/reservation/create").hasRole("USER")
 				.anyRequest().authenticated()
 				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

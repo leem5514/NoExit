@@ -15,7 +15,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ReservationDetailResDto {
     private Long id;
-
     private String resName;
     private String phoneNumber;
     private int numberOfPlayers;

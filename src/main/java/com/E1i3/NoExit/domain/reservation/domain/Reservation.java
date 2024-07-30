@@ -2,6 +2,7 @@ package com.E1i3.NoExit.domain.reservation.domain;
 
 import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationListResDto;
 import com.E1i3.NoExit.domain.review.domain.Review;
@@ -43,6 +44,10 @@ public class Reservation {
     private Game game;
 
     @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private Owner owner; // Owner 필드 추가
+
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member; // 예약을 한 회원
 
@@ -63,9 +68,10 @@ public class Reservation {
 
 
     @Builder
-    public Reservation(Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
+    public Reservation(Owner owner, Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
                        int numberOfPlayers, ReservationStatus reservationStatus, ApprovalStatus approvalStatus,
                        LocalDateTime createdAt, DelYN delYN) {
+        this.owner = owner;
         this.member = member;
         this.game = game;
         this.resName = resName;

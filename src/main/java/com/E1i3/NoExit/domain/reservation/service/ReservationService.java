@@ -5,6 +5,8 @@ import com.E1i3.NoExit.domain.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.owner.domain.Owner;
+import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
 import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
 import com.E1i3.NoExit.domain.reservation.domain.DelYN;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
@@ -36,24 +38,27 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class ReservationService {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ReservationService.class);
     @Autowired
     private ReservationRepository reservationRepository;
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
     private GameRepository gameRepository;
-
-    public ReservationService(ReservationRepository reservationRepository, GameRepository gameRepository, MemberRepository memberRepository) {
-        this.reservationRepository = reservationRepository;
-        this.gameRepository = gameRepository;
-        this.memberRepository = memberRepository;
-    }
-
+    @Autowired
+    private OwnerRepository ownerRepository;
     @Autowired
     @Qualifier("2")
     private RedisTemplate<String, Object> reservationRedisTemplate;
 
     private static final String RESERVATION_LOCK_PREFIX = "reservation:lock:";
+
+    public ReservationService(ReservationRepository reservationRepository, GameRepository gameRepository, MemberRepository memberRepository, OwnerRepository ownerRepository) {
+        this.reservationRepository = reservationRepository;
+        this.gameRepository = gameRepository;
+        this.memberRepository = memberRepository;
+        this.ownerRepository = ownerRepository;
+    }
 
 
     /* 레디스를 통한 예약하기 */
@@ -61,12 +66,19 @@ public class ReservationService {
     @Transactional
     public Reservation save(ReservationSaveDto dto) {
         String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.debug("Authenticated user email: {}", memberEmail);
+
         Member member = memberRepository.findByEmail(memberEmail)
-                .orElseThrow(() -> new IllegalArgumentException("없는 이메일입니다."));
+                .orElseThrow(() -> {
+                    log.error("Invalid email: {}", memberEmail);
+                    return new IllegalArgumentException("없는 이메일입니다.");
+                });
 
         String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
+        log.debug("Reservation key: {}", reservationKey);
 
         if (Boolean.TRUE.equals(reservationRedisTemplate.hasKey(reservationKey))) {
+            log.error("Reservation conflict for key: {}", reservationKey);
             throw new IllegalStateException("(예약불가) 이미 예약 중인 시간대 입니다.");
         }
 
@@ -74,14 +86,19 @@ public class ReservationService {
 
         try {
             Game game = gameRepository.findById(dto.getGameId())
-                    .orElseThrow(() -> new IllegalArgumentException("없는 게임 ID입니다."));
+                    .orElseThrow(() -> {
+                        log.error("Invalid game ID: {}", dto.getGameId());
+                        return new IllegalArgumentException("없는 게임 ID입니다.");
+                    });
 
             Reservation reservation = dto.toEntity(member, game);
+            log.debug("Saving reservation: {}", reservation);
             reservationRepository.save(reservation);
             reservationRedisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
             return reservation;
         } catch (Exception e) {
+            log.error("Exception occurred during reservation save: ", e);
             reservationRedisTemplate.delete(reservationKey);
             throw e;
         }
@@ -123,13 +140,12 @@ public class ReservationService {
     @PreAuthorize("hasRole('OWNER')")
     @Transactional
     public Reservation updateApprovalStatus(ReservationUpdateResDto dto) {
-        Member admin = memberRepository.findByEmail(dto.getAdminEmail())
-                .orElseThrow(() -> new IllegalArgumentException("ADMIN 이메일이 아닙니다."));
+        Owner owner = ownerRepository.findByEmail(dto.getAdminEmail())
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 점장 이메일입니다."));
 
-        if (admin.getRole() != Role.OWNER) {
-            throw new IllegalStateException("ADMIN만 처리할 수 있습니다.");
+        if (owner.getRole() != Role.OWNER) {
+            throw new IllegalStateException("점장만 처리할 수 있습니다.");
         }
-
         Game game = gameRepository.findById(dto.getGameId())
                 .orElseThrow(() -> new IllegalArgumentException("없는 게임 ID입니다."));
 
