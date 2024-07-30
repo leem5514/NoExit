@@ -6,6 +6,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,5 +71,9 @@ public class OwnerService{
 		Owner owner = ownerRepository.findByEmail(ownerUpdateDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
 		String encodedPassword = passwordEncoder.encode(ownerUpdateDto.getPassword());
 		return owner.updateOwner(ownerUpdateDto, encodedPassword);
+	}
+
+	public String getEmailFromToken(){
+		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 }

@@ -24,10 +24,12 @@ import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
+import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.service.MemberService;
+import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
 
@@ -43,14 +45,16 @@ import java.util.Map;
 @Api(tags="회원 서비스")
 public class MemberController {
 
-	@Autowired
 	private final MemberService memberService;
-	@Autowired
 	private final JwtTokenProvider jwtTokenProvider;
+	private final NotificationService notificationService;
 
-	public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider) {
+	@Autowired
+	public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider,
+		NotificationService notificationService) {
 		this.memberService = memberService;
 		this.jwtTokenProvider = jwtTokenProvider;
+		this.notificationService = notificationService;
 	}
 
 	// 회원가입 /member/create
@@ -99,12 +103,14 @@ public class MemberController {
 		if (user instanceof Member) {
 			Member member = (Member) user;
 			String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
+			notificationService.subscribe(Role.USER);
 			loginInfo.put("id", member.getId());
 			loginInfo.put("token", jwtToken);
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "일반 사용자 로그인 성공", loginInfo), HttpStatus.OK);
 		} else if (user instanceof OwnerService) {
 			Owner owner = (Owner) user;
 			String jwtToken = jwtTokenProvider.createToken(owner.getEmail(), owner.getRole().toString());
+			notificationService.subscribe(Role.OWNER);
 			loginInfo.put("id", owner.getId());
 			loginInfo.put("token", jwtToken);
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "사용자 로그인 성공", loginInfo), HttpStatus.OK);

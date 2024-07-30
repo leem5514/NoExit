@@ -6,6 +6,8 @@ import com.E1i3.NoExit.domain.comment.dto.CommentUpdateReqDto;
 import com.E1i3.NoExit.domain.board.service.CommentService;
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
+import com.E1i3.NoExit.domain.notification.service.NotificationService;
+
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,9 +23,12 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
+    private final NotificationService notificationService;
+
     @Autowired
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, NotificationService notificationService) {
         this.commentService = commentService;
+        this.notificationService = notificationService;
     }
 
     // url은 임의로 대충 붙임
@@ -33,6 +38,7 @@ public class CommentController {
     @PostMapping("/comment/create") // 댓글 생성
     public ResponseEntity<Object> commentCreate(@RequestBody CommentCreateReqDto dto) {
         try {
+            notificationService.reserveToOwner(dto);
             commentService.commentCreate(dto);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "comment is successfully created", null);
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
