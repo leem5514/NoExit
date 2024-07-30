@@ -129,9 +129,14 @@ public class ReservationService {
 
         Reservation reservation = reservationRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 예약입니다."));
 
+        if (reservation.getDelYN() != DelYN.N) {
+            throw new IllegalArgumentException("삭제된 예약입니다.");
+        }
+
         if (!reservation.getMember().equals(member)) {
             throw new IllegalArgumentException("본인의 예약만 조회할 수 있습니다.");
         }
+
         return reservation.toDetailDto();
     }
 
