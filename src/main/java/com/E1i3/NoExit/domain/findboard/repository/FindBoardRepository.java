@@ -1,6 +1,8 @@
 package com.E1i3.NoExit.domain.findboard.repository;
 
-import com.E1i3.NoExit.domain.findboard.domain.DelYN;
+
+import com.E1i3.NoExit.domain.common.domain.DelYN;
+
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

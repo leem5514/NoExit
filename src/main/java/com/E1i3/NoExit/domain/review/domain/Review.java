@@ -2,8 +2,9 @@ package com.E1i3.NoExit.domain.review.domain;
 
 import javax.persistence.*;
 
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
-import com.E1i3.NoExit.domain.reservation.domain.DelYN;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+public class Review extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,12 +31,6 @@ public class Review {
     private int rating;  // 순위
 
     private String imagePath; // 이미지
-
-    @CreationTimestamp
-    private LocalDateTime createdAt; // 생성시간
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt; // 수정시간
 
     @Enumerated(EnumType.STRING)
     @Builder.Default

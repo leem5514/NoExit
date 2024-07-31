@@ -1,9 +1,10 @@
 package com.E1i3.NoExit.domain.reservation.domain;
 
-import com.E1i3.NoExit.domain.game.domain.Game;
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
+import com.E1i3.NoExit.domain.findboard.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
-import com.E1i3.NoExit.domain.reservation.dto.ReservationListResDto;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -16,13 +17,12 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Reservation {
+public class Reservation extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 예약 번호
@@ -105,28 +105,4 @@ public class Reservation {
                 .createdTime(this.createdAt.format(formatter))
                 .build();
     }
-
-//    public ReservationListResDto listFromEntity() {
-//        return ReservationListResDto.builder()
-//                .id(this.id)
-//                .resName(this.resName)
-//                .count(this.count)
-//                .build();
-//    }
-//
-//    public ReservationDetailResDto detailFromEntity() {
-//        LocalDateTime createdTime = this.getCreatedTime();
-//        String date1 = createdTime.getYear() + "년 " + createdTime.getMonthValue() + "월 " +
-//                createdTime.getDayOfMonth() + "일";
-//
-//        return ReservationDetailResDto.builder()
-//                .id(this.id)
-//                .resName(this.resName)
-//                .phoneNumber(this.phoneNumber)
-//                .count(this.count)
-//                .resDate(this.resDate)
-//                .resDateTime(this.resDateTime)
-//                .createdTime(date1)
-//                .build();
-//    }
 }
