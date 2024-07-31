@@ -1,6 +1,5 @@
 package com.E1i3.NoExit.domain.owner.dto;
 
-import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.storeInfo.domain.StoreInfo;
 

@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
-import javax.validation.Valid;
-
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,9 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
@@ -34,9 +28,6 @@ import com.E1i3.NoExit.domain.owner.service.OwnerService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RestController

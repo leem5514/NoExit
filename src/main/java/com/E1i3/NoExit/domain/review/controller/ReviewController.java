@@ -19,7 +19,9 @@ public class ReviewController {
     private ReviewService reviewService;
 
     public ReviewController(ReviewService reviewService) {
+
         this.reviewService = reviewService;
+
     }
 
     @PostMapping("/review/create")
@@ -28,4 +30,5 @@ public class ReviewController {
         CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "리뷰 작성이 완료되었습니다.", review.getId());
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
+
 }

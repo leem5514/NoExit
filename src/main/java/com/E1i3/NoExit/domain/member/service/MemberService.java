@@ -1,7 +1,5 @@
 package com.E1i3.NoExit.domain.member.service;
 
-import java.time.Duration;
-
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
