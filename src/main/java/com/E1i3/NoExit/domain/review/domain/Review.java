@@ -48,4 +48,14 @@ public class Review extends BaseTimeEntity {
     public void deleteReview() {
         this.delYN = DelYN.Y;
     }
+    public void updateImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+    @Builder
+    public Review(Long id, String content, int rating, String imagePath, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.content = content;
+        this.rating = rating;
+        this.imagePath = imagePath;
+    }
 }

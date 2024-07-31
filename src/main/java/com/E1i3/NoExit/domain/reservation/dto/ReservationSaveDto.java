@@ -2,7 +2,7 @@ package com.E1i3.NoExit.domain.reservation.dto;
 
 
 import com.E1i3.NoExit.domain.common.domain.DelYN;
-import com.E1i3.NoExit.domain.findboard.game.domain.Game;
+import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
@@ -24,7 +24,7 @@ public class ReservationSaveDto {
     private int numberOfPlayers;
     private LocalDate resDate;
     private String resDateTime;
-    private String email; // 이메일 검증
+    private String email;
     private Long GameId; // 게임 아디 검증
 
     public Reservation toEntity(Member member, Game game) {

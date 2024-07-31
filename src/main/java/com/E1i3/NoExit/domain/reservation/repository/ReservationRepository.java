@@ -1,7 +1,7 @@
 package com.E1i3.NoExit.domain.reservation.repository;
 
 import com.E1i3.NoExit.domain.common.domain.DelYN;
-import com.E1i3.NoExit.domain.findboard.game.domain.Game;
+import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
