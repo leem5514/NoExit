@@ -86,7 +86,6 @@ public class Member extends BaseTimeEntity{
 		return this;
 	}
 
-
 	public Member updateDelYN() {
 		this.delYN = DelYN.Y;
 		return this;
