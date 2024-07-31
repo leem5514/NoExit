@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.findboard.game.domain;
+package com.E1i3.NoExit.domain.game.domain;
 
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import lombok.Data;
