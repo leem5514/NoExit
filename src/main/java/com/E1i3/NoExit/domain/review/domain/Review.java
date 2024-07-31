@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
+import com.E1i3.NoExit.domain.review.dto.ReviewListDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,5 +58,16 @@ public class Review extends BaseTimeEntity {
         this.content = content;
         this.rating = rating;
         this.imagePath = imagePath;
+    }
+
+    public static ReviewListDto fromEntity(Review review) {
+        return ReviewListDto.builder()
+                .id(review.getId())
+                .rating(review.getRating())
+                .imagePath(review.getImagePath())
+                .memberNickname(review.getMember().getNickname())
+                .content(review.getContent())
+                .gameId(review.getReservation().getGame().getId())
+                .build();
     }
 }
