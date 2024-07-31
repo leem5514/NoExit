@@ -6,6 +6,8 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +16,7 @@ import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.common.service.RedisService;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
+import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
@@ -100,4 +103,14 @@ public class MemberService {
 	}
 
 
+	// 회원 상세 조회
+	public MemberDetResDto myInfo() {
+		String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+		Member member = memberRepository.findByEmail(memberEmail).orElseThrow(EntityNotFoundException::new);
+		return member.detFromEntity();
+	}
+
+  public String getEmailFromToken(){
+		return SecurityContextHolder.getContext().getAuthentication().getName();
+	}
 }

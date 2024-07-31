@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 @Data
@@ -18,17 +19,14 @@ public class ReviewSaveDto {
 
     private int rating;
 
-    private String imagePath;
-
+    private MultipartFile reviewImage;
     private Long memberId;
-
     private Long reservationId;
 
     public Review toEntity(Member member, Reservation reservation) {
         return Review.builder()
                 .content(this.content)
                 .rating(this.rating)
-                .imagePath(this.imagePath)
                 .member(member)
                 .reservation(reservation)
                 .build();

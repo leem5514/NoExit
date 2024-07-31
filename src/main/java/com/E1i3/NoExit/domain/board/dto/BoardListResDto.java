@@ -21,8 +21,6 @@ public class BoardListResDto {
     private int boardHits; // 조회수
     private int likes; // 좋아요
     private int dislikes; // 싫어요
-    private LocalDateTime createdTime; // 작성시간
-    private LocalDateTime updatedTime; // 수정시간
     private BoardType boardType; // 게시판 유형 (자유, 전략)
 
 }

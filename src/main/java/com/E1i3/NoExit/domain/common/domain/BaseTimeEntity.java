@@ -10,7 +10,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.Getter;
 
-
 @Data
 @MappedSuperclass
 public abstract class BaseTimeEntity {

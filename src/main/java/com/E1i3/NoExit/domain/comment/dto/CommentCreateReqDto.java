@@ -6,31 +6,22 @@ import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentCreateReqDto {
     private Long boardId; // 댓글 단 게시글 아이디
-//    private Long memberId; // 댓글 작성자 아이디
-    private Long memberId; // 로그인 하면 받아올 필요 없음
+//    private Long memberId; // 댓글 작성자 아이디 // 로그인하면 받아올 필요 없음
     private String content; // 댓글 내용
 
-
-    public Comment toEntity(Board board) {
-        Comment comment = Comment.builder()
-                .board(board)
-                .content(this.content)
-                .build();
-        return comment;
-    }
+//    public Comment toEntity(Board board) {
+//        Comment comment = Comment.builder()
+//                .board(board)
+//                .content(this.content)
+//                .build();
+//        return comment;
+//    }
 
 }
 
