@@ -36,7 +36,6 @@ dependencies {
 	implementation 'javax.servlet:jstl'
 	//	스웨거 사용을 위한 의존성 추가
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-
 	//	google mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'

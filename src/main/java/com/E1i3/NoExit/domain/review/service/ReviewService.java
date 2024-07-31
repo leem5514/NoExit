@@ -61,6 +61,7 @@ public class ReviewService {
 
         if (reviewRepository.findByReservationAndDelYN(reservation, DelYN.N).isPresent()) {
             throw new IllegalStateException("이미 작성된 리뷰가 있습니다.");
+        }
 
         Review review = dto.toEntity(member, reservation);
         review = reviewRepository.save(review);

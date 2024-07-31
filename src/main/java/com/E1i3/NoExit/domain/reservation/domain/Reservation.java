@@ -1,7 +1,8 @@
 package com.E1i3.NoExit.domain.reservation.domain;
 
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
-import com.E1i3.NoExit.domain.game.domain.Game;
+import com.E1i3.NoExit.domain.findboard.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
