@@ -1,8 +1,6 @@
 package com.E1i3.NoExit.domain.findboard.service;
 
-
 import com.E1i3.NoExit.domain.common.domain.DelYN;
-
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
@@ -13,15 +11,12 @@ import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 @Transactional

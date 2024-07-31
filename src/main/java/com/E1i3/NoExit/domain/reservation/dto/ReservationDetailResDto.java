@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -15,7 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ReservationDetailResDto {
     private Long id;
-
     private String resName;
     private String phoneNumber;
     private int numberOfPlayers;

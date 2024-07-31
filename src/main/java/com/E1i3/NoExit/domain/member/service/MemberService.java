@@ -100,7 +100,6 @@ public class MemberService {
 		}
 		return null;
 	}
-
 	// 회원 상세 조회
 	public MemberDetResDto myInfo() {
 		String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();

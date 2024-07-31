@@ -4,7 +4,6 @@ import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.domain.BoardType;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

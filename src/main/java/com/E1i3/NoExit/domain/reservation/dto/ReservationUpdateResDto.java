@@ -2,6 +2,7 @@ package com.E1i3.NoExit.domain.reservation.dto;
 
 import com.E1i3.NoExit.domain.findboard.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.reservation.domain.ReservationStatus;
@@ -24,9 +25,9 @@ public class ReservationUpdateResDto {
     private ApprovalStatus approvalStatus;
 
 
-    public Reservation toApprovalList(Member member, Game game) {
+    public Reservation toApprovalList(Owner owner, Game game) {
         return Reservation.builder()
-                .member(member)
+                .owner(owner)
                 .game(game)
                 .resDate(LocalDate.parse(this.resDate))
                 .resDateTime(this.resDateTime)
