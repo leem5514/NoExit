@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
-import javax.validation.Valid;
-
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,12 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
-
+import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
@@ -30,10 +26,8 @@ import com.E1i3.NoExit.domain.member.service.MemberService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -52,7 +46,7 @@ public class MemberController {
 	}
 
 	// 회원가입 /member/create
-	// @Operation(summary= "[일반 사용자] 회원가입 API")
+	@Operation(summary= "[일반 사용자] 회원가입 API")
 	@PostMapping("/member/create")
 	public ResponseEntity<CommonResDto> memberCreatePost(@RequestBody MemberSaveReqDto dto) {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원가입 성공", memberService.memberCreate(dto).getId());
@@ -61,6 +55,7 @@ public class MemberController {
 
 
 	// 상세 내역 수정
+	@Operation(summary= "[일반 사용자] 사용자 정보 수정 API")
 	@PostMapping("/member/update")
 	public ResponseEntity<CommonResDto> updateMember(@RequestBody MemberUpdateDto dto) {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 수정", memberService.memberUpdate(dto).getId());
@@ -68,24 +63,22 @@ public class MemberController {
 	}
 
 	// 탈퇴 (?)
+	@Operation(summary= "[일반 사용자] 사용자 탈퇴 API")
 	@PostMapping("/member/delete")
 	public ResponseEntity<CommonResDto> deleteMember(@RequestBody MemberUpdateDto dto) {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  memberService.memberDelete(dto.getEmail()).getId());
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
-	// 회원 리스트
-	@GetMapping("/member/list")
-	public ResponseEntity<Object> memberList(Pageable pageable) {
-		Page<MemberListResDto> members = memberService.memberList(pageable);
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "회원 리스트", members.toList()), HttpStatus.OK);
+	// 회원 정보(마이페이지)
+	@Operation(summary= "[일반 사용자] 마이페이지 API")
+	@GetMapping("/member/myInfo")
+	public ResponseEntity<Object> myInfo() {
+		MemberDetResDto member = memberService.myInfo();
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "member List", member), HttpStatus.OK);
 	}
 
-	// 회원 정보(마이페이지) 조회하는 api필요 -> 토큰으로 처리
-	// public ResponseEntity<?> memberDetail(){
-	//
-	// }
-
+	@Operation(summary= "[사용자] 로그인 API")
 	@PostMapping("/doLogin")
 	public ResponseEntity<Object> doLogin(@RequestBody LoginReqDto loginReqDto) {
 		Map<String, Object> loginInfo = new HashMap<>();

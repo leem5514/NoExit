@@ -52,3 +52,15 @@ spring:
 jwt:
   expiration: 30
   secretKey: my_token_secret
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_S3_ACCESS}
+      secret-key: ${AWS_S3_SECRET}
+    region: #S3 지역
+      static: ${AWS_REGION}
+    s3: #버킷이름
+      bucket: ${AWS_BUCKET_NAME}
+    stack:
+      auto: false

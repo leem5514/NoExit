@@ -5,6 +5,7 @@ import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.*;
 import org.apache.ibatis.annotations.One;
@@ -40,7 +41,6 @@ public class Board extends BaseTimeEntity {
 
     private int likes;
     private int dislikes;
-
 
 //    @Builder.Default
 //    private List<String> likeMembers = new ArrayList<>(); // 좋아요 누른 회원들
