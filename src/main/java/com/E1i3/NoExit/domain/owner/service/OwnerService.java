@@ -6,16 +6,20 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.E1i3.NoExit.domain.common.service.RedisService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
+import com.E1i3.NoExit.domain.owner.dto.OwnerDetResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerListResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
 import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
+import com.E1i3.NoExit.domain.reservation.dto.ReservationSaveDto;
+import com.E1i3.NoExit.domain.storeInfo.repository.StoreInfoRepository;
 
 @Service
 public class OwnerService{
@@ -23,15 +27,18 @@ public class OwnerService{
 	private final OwnerRepository ownerRepository;
 	private final RedisService redisService;
 	private final PasswordEncoder passwordEncoder;
+	private final StoreInfoRepository storeInfoRepository;
+
 
 	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
 
 	@Autowired
 	public OwnerService(OwnerRepository ownerRepository,
-		RedisService redisService, PasswordEncoder passwordEncoder) {
+		RedisService redisService, PasswordEncoder passwordEncoder, StoreInfoRepository storeInfoRepository) {
 		this.ownerRepository = ownerRepository;
 		this.redisService = redisService;
 		this.passwordEncoder = passwordEncoder;
+		this.storeInfoRepository = storeInfoRepository;
 	}
 
 	@Transactional
@@ -70,4 +77,17 @@ public class OwnerService{
 		String encodedPassword = passwordEncoder.encode(ownerUpdateDto.getPassword());
 		return owner.updateOwner(ownerUpdateDto, encodedPassword);
 	}
+
+	// 회원 상세 조회
+	public OwnerDetResDto myInfo() {
+		String ownerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+		Owner owner = ownerRepository.findByEmail(ownerEmail).orElseThrow(EntityNotFoundException::new);
+		return owner.detFromEntity();
+	}
+
+	public void changeReservationStatus(ReservationSaveDto reservationSaveDto){
+		// 	예약 상태 변경
+
+	}
 }
+
