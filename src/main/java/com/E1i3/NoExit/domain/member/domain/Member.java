@@ -9,6 +9,7 @@ import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.grade.domain.Grade;
+import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
@@ -97,6 +98,16 @@ public class Member extends BaseTimeEntity{
 			.id(this.id)
 			.nickname(this.nickname)
 			.username(this.username)
+			.build();
+	}
+
+	// 사용자 상세 정보
+	public MemberDetResDto detFromEntity(){
+		return MemberDetResDto.builder()
+			.username(this.username)
+			.nickname(this.nickname)
+			.email(this.email)
+			.phoneNumber(this.phone_number)
 			.build();
 	}
 

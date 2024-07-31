@@ -1,6 +1,7 @@
 package com.E1i3.NoExit.domain.reservation.service;
 
 import com.E1i3.NoExit.domain.common.domain.DelYN;
+
 import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
@@ -24,7 +25,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;

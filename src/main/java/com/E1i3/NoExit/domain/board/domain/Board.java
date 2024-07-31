@@ -3,6 +3,7 @@ import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.comment.domain.Comment;
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.*;
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Board {
+public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 아이디
@@ -38,12 +39,6 @@ public class Board {
     @ManyToOne //추가 7-25
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @CreationTimestamp
-    private LocalDateTime createdTime; // 작성시간
-
-    @UpdateTimestamp
-    private LocalDateTime updatedTime; // 수정시간
 
     @Column(name = "imagePath")
     private String imagePath; // 이미지
@@ -68,8 +63,8 @@ public class Board {
                 .boardHits(this.boardHits)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
-                .createdTime(this.createdTime)
-                .updatedTime(this.updatedTime)
+                .createdTime(this.getCreatedTime())
+                .updatedTime(this.getUpdateTime())
                 .boardType(this.boardType)
                 .build();
 
@@ -85,8 +80,8 @@ public class Board {
                 .boardHits(this.boardHits)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
-                .createdTime(this.createdTime)
-                .updatedTime(this.updatedTime)
+                .createdTime(this.getCreatedTime())
+                .updatedTime(this.getUpdateTime())
                 .imagePath(this.imagePath)
                 .boardType(this.boardType)
                 .build();

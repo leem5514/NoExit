@@ -58,9 +58,9 @@ public class ReviewService {
         Reservation reservation = reservationRepository.findById(dto.getReservationId())
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않은 예약입니다."));
 
+
         if (reviewRepository.findByReservationAndDelYN(reservation, DelYN.N).isPresent()) {
             throw new IllegalStateException("이미 작성된 리뷰가 있습니다.");
-        }
 
         Review review = dto.toEntity(member, reservation);
         review = reviewRepository.save(review);
