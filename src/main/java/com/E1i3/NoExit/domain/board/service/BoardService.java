@@ -95,18 +95,26 @@ public class BoardService {
     }
 
     public int boardUpdateLikes(Long id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
         board.updateLikes();
+//        board.updateLikes(member.getEmail());
         boardRepository.save(board);
+//        return board.getLikeMembers().size();
         return board.getLikes();
     }
 
     public int boardUpdateDislikes(Long id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+//        board.updateDislikes(member.getEmail());
         board.updateDislikes();
         boardRepository.save(board);
+//        return board.getDislikeMembers().size();
         return board.getDislikes();
     }
 }

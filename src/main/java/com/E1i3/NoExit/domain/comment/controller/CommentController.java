@@ -50,15 +50,13 @@ public class CommentController {
 
 
     @Operation(summary= "댓글 조회")
-    @GetMapping("/comment/list") // 댓글 조회
-    public ResponseEntity<Object> commentRead(
+    @GetMapping("/comment/list/{id}") // 댓글 조회
+    public ResponseEntity<Object> commentRead(@PathVariable Long id,
             @PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<CommentListResDto> dtos = commentService.commentList(pageable);
+        Page<CommentListResDto> dtos = commentService.commentList(id, pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "list is successfully found", dtos);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
-
-
 
 
 
@@ -103,7 +101,7 @@ public class CommentController {
     public ResponseEntity<Object> commentLike(@PathVariable Long id) {
         try {
             int likes = commentService.commentUpdateLikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", likes);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you liked this comment", likes);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
@@ -117,7 +115,7 @@ public class CommentController {
     public ResponseEntity<Object> commentDislike(@PathVariable Long id) {
         try {
             int dislikes = commentService.commentUpdateDislikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", dislikes);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this comment", dislikes);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {
             e.printStackTrace();

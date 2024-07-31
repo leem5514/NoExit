@@ -122,7 +122,7 @@ public class BoardController {
     public ResponseEntity<Object> boardLike(@PathVariable Long id) {
         try {
             int likes = boardService.boardUpdateLikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", likes);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you liked this board", likes);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
@@ -136,7 +136,7 @@ public class BoardController {
     public ResponseEntity<Object> boardDislike(@PathVariable Long id) {
         try {
             int dislikes = boardService.boardUpdateDislikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully deleted", dislikes);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this board", dislikes);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
