@@ -78,6 +78,9 @@ public class OwnerService{
 		return owner.updateOwner(ownerUpdateDto, encodedPassword);
 	}
 
+	public String getEmailFromToken(){
+		return SecurityContextHolder.getContext().getAuthentication().getName();
+
 	// 회원 상세 조회
 	public OwnerDetResDto myInfo() {
 		String ownerEmail = SecurityContextHolder.getContext().getAuthentication().getName();

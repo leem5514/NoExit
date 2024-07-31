@@ -8,6 +8,7 @@ import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.reservation.domain.ReservationStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

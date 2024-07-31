@@ -6,6 +6,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -100,6 +101,8 @@ public class MemberService {
 		}
 		return null;
 	}
+
+
 	// 회원 상세 조회
 	public MemberDetResDto myInfo() {
 		String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -107,4 +110,7 @@ public class MemberService {
 		return member.detFromEntity();
 	}
 
+  public String getEmailFromToken(){
+		return SecurityContextHolder.getContext().getAuthentication().getName();
+	}
 }
