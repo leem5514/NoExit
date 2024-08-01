@@ -6,10 +6,13 @@ import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.reservation.repository.ReservationRepository;
 import com.E1i3.NoExit.domain.review.domain.Review;
+import com.E1i3.NoExit.domain.review.dto.ReviewListDto;
 import com.E1i3.NoExit.domain.review.dto.ReviewSaveDto;
 import com.E1i3.NoExit.domain.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -46,6 +51,7 @@ public class ReviewService {
     }
 
 
+    /*  */
     @Transactional
     public Review createReview(ReviewSaveDto dto) {
         MultipartFile image = dto.getReviewImage();
@@ -93,4 +99,11 @@ public class ReviewService {
         }
         return review;
     }
+
+    /* 리뷰 리스트(전체 사용자 기준 전체 리스트) */
+    public Page<ReviewListDto> pageReview(Pageable pageable) {
+        Page<Review> reviews = reviewRepository.findByDelYN(DelYN.N, pageable);
+        return reviews.map(Review::fromEntity);
+    }
+
 }
