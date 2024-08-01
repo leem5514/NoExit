@@ -24,6 +24,7 @@ public class OwnerSaveReqDto {
 			.password(encodedPassword)
 			.storeName(this.storeName)
 			.email(this.email)
+			.phoneNumber(this.phoneNumber)
 			.build();
 	}
 

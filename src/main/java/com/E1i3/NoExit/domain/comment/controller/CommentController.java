@@ -41,7 +41,7 @@ public class CommentController {
     @PostMapping("/comment/create") // 댓글 생성
     public ResponseEntity<Object> commentCreate(@RequestBody CommentCreateReqDto dto) {
         try {
-            notificationService.notifyComment(dto);
+//            notificationService.notifyComment(dto); 0801 테스트 떄 잠시 주석처리
             commentService.commentCreate(dto);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "comment is successfully created", null);
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
