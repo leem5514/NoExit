@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.Entity;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 
 @Service
 @Transactional
@@ -100,7 +101,6 @@ public class CommentService {
         }
         Comment comment = commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException("찾을 수 없습니다."));
         Board board = boardRepository.findById(comment.getBoard().getId()).orElse(null);
-        board.getComments().remove(comment);
         comment.deleteEntity();
 //        commentRepository.delete(comment);
         boardRepository.save(board);
@@ -147,5 +147,6 @@ public class CommentService {
 //        return board.getDislikeMembers().size();
         return comment.getDislikes();
     }
+
 }
 
