@@ -66,8 +66,8 @@ public class BoardService {
 
 
     public Board boardUpdate(Long id, BoardUpdateReqDto dto) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
 

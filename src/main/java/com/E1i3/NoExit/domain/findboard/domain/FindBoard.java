@@ -49,7 +49,7 @@ public class FindBoard extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY) //참조 안 하면 안 나가게.
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member member; //이게 필요가 없다? 아니지 saveReqDto에만 필요없지.
 
     public FindBoardResDto ResDtoFromEntity() {
         return FindBoardResDto.builder()

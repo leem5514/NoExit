@@ -12,12 +12,10 @@ import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.Random;
 
 @Transactional
 @Service
@@ -32,47 +30,35 @@ public class FindBoardService {
         this.memberRepository = memberRepository;
     }
 
-    // 나중에 스프링시큐리티 토큰을 통한 인증 처리를 추가해서 새롭게 작성해야할 것 같다. 현재는 테스트를 위해 임시작성 7.27 , 김민성
     public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
-        // 모든 사용자 중 하나를 랜덤으로 선택
-        List<Member> members = memberRepository.findAll();
-        if (members.isEmpty()) {
-            throw new EntityNotFoundException("등록된 사용자가 없습니다.");
-        }
 
-        Member member = members.get(new Random().nextInt(members.size())); // 랜덤으로 사용자 선택
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원 가입 후 글 작성이 가능합니다."));
 
         FindBoard findBoard = findBoardSaveReqDto.toEntity(member);
         findBoardRepository.save(findBoard);
     }
 
-
-    public FindBoardResDto getResDto(Long id) {
-        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYN.Y)
-                .orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않거나 삭제된 게시글입니다."));
-        return findBoard.ResDtoFromEntity();
-    }
-
     @Transactional(readOnly = true)
     public Page<FindBoardListResDto> findBoardListResDto(Pageable pageable) {
-        // DelYn 필터 추가
+
         Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYN.Y);
         return findBoards.map(FindBoard::listFromEntity);
     }
 
-//    @Transactional(readOnly = true)
-//    public Page<FindBoardListResDto> findBoardListResDto(int page) {
-//        //페이징 처리 5
-//        Pageable pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, "createdTime"));
-//        return findBoardRepository.findAll(pageable)
-//                .map(FindBoard::listFromEntity);
-//    }
-
 
     @Transactional
     public FindBoardResDto update(Long id, FindBoardUpdateReqDto dto) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
         FindBoard findBoard = findBoardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 게시글입니다."));
+                .orElseThrow(() -> new EntityNotFoundException("not found id : " + id));
+
+        if ( !findBoard.getMember().getEmail().equals(email)) {
+            throw new IllegalArgumentException("본인의 게시글만 수정할 수 있습니다.");
+        }
 
         // 삭제된 게시글인지 체크
         if (findBoard.getDelYn() == DelYN.N) {
@@ -84,19 +70,33 @@ public class FindBoardService {
     }
 
 
+    @Transactional
     public String delete(Long id) {
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         FindBoard findBoard = findBoardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
+        if ( !findBoard.getMember().getEmail().equals(email)) {
+            throw new IllegalArgumentException("본인의 게시글만 삭제할 수 있습니다.");
+        }
+
         findBoard.markAsDeleted();
-        return "게시글이 삭제되었습니다.";
+        return "게시글 삭제 완료";
     }
 
     public FindBoardResDto incrementParticipantCount(Long id) {
+
         FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYN.Y)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("참가 신청은 로그인 후 가능합니다."));
 
         findBoard.incrementCurrentCount();
         return findBoard.ResDtoFromEntity();
     }
+
 }
