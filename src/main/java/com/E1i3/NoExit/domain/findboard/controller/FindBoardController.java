@@ -44,15 +44,6 @@ public class FindBoardController {
         return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
     }
 
-
-    // 필요없을 것 같다
-//    @GetMapping("/{id}")
-//    public ResponseEntity<CommonResDto> getFindBoard(@PathVariable Long id) {
-//        FindBoardResDto findBoardResDto = findBoardService.getResDto(id);
-//        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "게시글 조회 성공", findBoardResDto);
-//        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-//    }
-
     @Operation(summary= "[일반 사용자] 번개 글 게시판 API")
     @GetMapping("/list")
     public ResponseEntity<CommonResDto> getFindBoardList(

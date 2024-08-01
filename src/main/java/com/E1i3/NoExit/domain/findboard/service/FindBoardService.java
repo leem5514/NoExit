@@ -43,7 +43,7 @@ public class FindBoardService {
     @Transactional(readOnly = true)
     public Page<FindBoardListResDto> findBoardListResDto(Pageable pageable) {
 
-        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYN.Y);
+        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYN.N);
         return findBoards.map(FindBoard::listFromEntity);
     }
 
@@ -61,7 +61,7 @@ public class FindBoardService {
         }
 
         // 삭제된 게시글인지 체크
-        if (findBoard.getDelYn() == DelYN.N) {
+        if (findBoard.getDelYn() == DelYN.Y) {
             throw new IllegalStateException("삭제된 게시글은 수정할 수 없습니다.");
         }
 
@@ -87,7 +87,7 @@ public class FindBoardService {
 
     public FindBoardResDto incrementParticipantCount(Long id) {
 
-        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYN.Y)
+        FindBoard findBoard = findBoardRepository.findByIdAndDelYn(id, DelYN.N)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
