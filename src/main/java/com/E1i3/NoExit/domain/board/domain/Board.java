@@ -86,7 +86,7 @@ public class Board extends BaseTimeEntity {
         List<Comment> comments = this.getComments();
         List<CommentListResDto> dtos = new ArrayList<>();
         for(Comment c : comments) {
-            if(c.getDelYN().equals(com.E1i3.NoExit.domain.comment.domain.DelYN.Y)) {
+            if(c.getDelYN().equals(DelYN.Y)) {
                 continue;
             }
             dtos.add(c.fromEntity());

@@ -129,5 +129,4 @@ public class CommentController {
             return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
         }
     }
-
 }
