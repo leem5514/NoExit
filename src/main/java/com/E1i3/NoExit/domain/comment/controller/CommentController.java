@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.comment.controller;
 
+import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
@@ -40,7 +41,7 @@ public class CommentController {
     @PostMapping("/comment/create") // 댓글 생성
     public ResponseEntity<Object> commentCreate(@RequestBody CommentCreateReqDto dto) {
         try {
-            notificationService.reserveToOwner(dto);
+            notificationService.notifyComment(dto);
             commentService.commentCreate(dto);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "comment is successfully created", null);
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
