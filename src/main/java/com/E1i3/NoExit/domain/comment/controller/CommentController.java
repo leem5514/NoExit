@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.comment.controller;
 
+import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
@@ -40,7 +41,7 @@ public class CommentController {
     @PostMapping("/comment/create") // 댓글 생성
     public ResponseEntity<Object> commentCreate(@RequestBody CommentCreateReqDto dto) {
         try {
-            notificationService.reserveToOwner(dto);
+            notificationService.notifyComment(dto);
             commentService.commentCreate(dto);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "comment is successfully created", null);
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
@@ -103,7 +104,7 @@ public class CommentController {
     }
 
     @Operation(summary= "댓글 좋아요")
-    @PostMapping("/comment/like/{id}")
+    @PatchMapping("/comment/like/{id}")
     public ResponseEntity<Object> commentLike(@PathVariable Long id) {
         try {
             int likes = commentService.commentUpdateLikes(id);
@@ -117,7 +118,7 @@ public class CommentController {
     }
 
     @Operation(summary= "댓글 싫어요")
-    @PostMapping("/comment/dislike/{id}")
+    @PatchMapping("/comment/dislike/{id}")
     public ResponseEntity<Object> commentDislike(@PathVariable Long id) {
         try {
             int dislikes = commentService.commentUpdateDislikes(id);
@@ -129,5 +130,4 @@ public class CommentController {
             return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
         }
     }
-
 }

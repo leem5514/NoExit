@@ -52,7 +52,7 @@ public class Member extends BaseTimeEntity{
 	@Column(length = 255, nullable = false)
 	private String phone_number;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100, nullable = false, unique = true)
 	private String nickname;
 
 	@Enumerated(EnumType.STRING)
