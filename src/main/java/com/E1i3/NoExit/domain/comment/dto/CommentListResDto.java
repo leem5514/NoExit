@@ -1,17 +1,10 @@
 package com.E1i3.NoExit.domain.comment.dto;
 
-import com.E1i3.NoExit.domain.board.domain.Board;
-import com.E1i3.NoExit.domain.comment.domain.DelYN;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 @Builder

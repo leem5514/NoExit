@@ -1,31 +1,61 @@
 package com.E1i3.NoExit.domain.review.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
+
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Review {
+public class Review extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String content; // 리뷰 내용 등 필요한 필드 추가
+    @Column(length = 50, nullable = false)
+    private String content; // 한줄평
+
+    private int rating;  // 순위
+
+    private String imagePath; // 이미지
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private DelYN delYN = DelYN.N;  // 삭제 여부
+
+    @OneToOne
+    @JoinColumn(name = "reservation_id", nullable = false)
+    private Reservation reservation;
 
     @ManyToOne
-    private Member member; // Review는 Member와 Many-to-One 관계를 가짐
+    @JoinColumn(name = "member_id" , nullable = false)
+    private Member member;
 
-    // 다른 필드 및 메소드
+
+    public void deleteReview() {
+        this.delYN = DelYN.Y;
+    }
+    public void updateImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+    @Builder
+    public Review(Long id, String content, int rating, String imagePath, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.content = content;
+        this.rating = rating;
+        this.imagePath = imagePath;
+    }
 }

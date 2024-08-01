@@ -1,7 +1,7 @@
 package com.E1i3.NoExit.domain.wishlist.domain;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
-import com.E1i3.NoExit.domain.comment.domain.DelYN;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

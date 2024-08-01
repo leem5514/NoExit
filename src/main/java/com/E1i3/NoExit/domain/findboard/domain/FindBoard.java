@@ -1,6 +1,8 @@
 package com.E1i3.NoExit.domain.findboard.domain;
 
 //import com.E1i3.NoExit.domain.findboard.dto.FindBoardDetailResDto;
+import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
@@ -17,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class FindBoard {
+public class FindBoard extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,19 +35,13 @@ public class FindBoard {
     @Column(length = 3000)
     private String contents;
 
-    @CreationTimestamp
-    private LocalDateTime createdTime;
-
-    @UpdateTimestamp
-    private LocalDateTime updateTime;
-
     private LocalDateTime expirationTime;
     private int currentCount;
     private int totalCapacity;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private DelYn delYn = DelYn.Y;
+    private DelYN delYn = DelYN.Y;
 
     @Lob
     @Column(name = "image", nullable = true)
@@ -62,8 +58,8 @@ public class FindBoard {
                 .writer(this.member.getNickname())
                 .title(this.title)
                 .contents(this.contents)
-                .createdTime(this.createdTime)
-                .updateTime(this.updateTime)
+                .createdTime(this.getCreatedTime())
+                .updateTime(this.getUpdateTime())
                 .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
@@ -80,7 +76,7 @@ public class FindBoard {
                 .writer(this.member.getNickname())
                 .title(this.title)
                 .contents(this.contents)
-                .createdTime(this.createdTime)
+                .createdTime(this.getCreatedTime())
                 .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
@@ -89,7 +85,7 @@ public class FindBoard {
     }
 
     public void markAsDeleted() {
-        this.delYn = DelYn.N; // delYn을 N으로 변경
+        this.delYn = DelYN.N; // delYn을 N으로 변경
     }
 
     public void incrementCurrentCount() {
@@ -102,6 +98,6 @@ public class FindBoard {
         this.expirationTime = dto.getExpirationDate();
         this.totalCapacity = dto.getTotalCapacity();
         this.image = dto.getImage();
-        this.updateTime = LocalDateTime.now();
+        this.getUpdateTime(); // 데이터 값 이상한지 확인하기.
     }
 }
