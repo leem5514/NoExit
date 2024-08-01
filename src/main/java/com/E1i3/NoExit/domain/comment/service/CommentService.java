@@ -10,6 +10,8 @@ import com.E1i3.NoExit.domain.comment.repository.CommentRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.service.NotificationService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Entity;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 
@@ -26,11 +29,15 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
+    private final NotificationService notificationService;
+
     @Autowired
-    public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository) {
+    public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository,
+        NotificationService notificationService) {
         this.commentRepository = commentRepository;
         this.memberRepository = memberRepository;
         this.boardRepository = boardRepository;
+        this.notificationService = notificationService;
     }
 
 
@@ -125,6 +132,7 @@ public class CommentService {
 //        board.updateLikes(member.getEmail());gv
         commentRepository.save(comment);
 //        return board.getLikeMembers().size();
+        notificationService.notifyLikeComment(comment);
         return comment.getLikes();
     }
 

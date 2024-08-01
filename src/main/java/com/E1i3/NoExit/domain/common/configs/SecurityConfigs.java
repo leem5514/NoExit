@@ -31,10 +31,9 @@ public class SecurityConfigs {
 				.antMatchers(
 						"/email/requestCode",
 						"/",
-						"/doLogin","/owner/create",
-						// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
-						"/member/create", "/swagger-ui/**",
-
+						"/doLogin","/owner/create",	"/member/create", "/swagger-ui/**",
+					// 	게시글, 후기 조회하는 페이지는 모두 로그인하지 않아도 가능하도록
+					// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
 						"/swagger-resources/**",
 						"/swagger-ui.html",
 						"/v2/api-docs",
