@@ -97,7 +97,7 @@ public class CommentController {
     }
 
     @Operation(summary= "댓글 좋아요")
-    @PostMapping("/comment/like/{id}")
+    @PatchMapping("/comment/like/{id}")
     public ResponseEntity<Object> commentLike(@PathVariable Long id) {
         try {
             int likes = commentService.commentUpdateLikes(id);
@@ -111,7 +111,7 @@ public class CommentController {
     }
 
     @Operation(summary= "댓글 싫어요")
-    @PostMapping("/comment/dislike/{id}")
+    @PatchMapping("/comment/dislike/{id}")
     public ResponseEntity<Object> commentDislike(@PathVariable Long id) {
         try {
             int dislikes = commentService.commentUpdateDislikes(id);
