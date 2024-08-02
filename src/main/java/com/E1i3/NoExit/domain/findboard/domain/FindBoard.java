@@ -41,7 +41,7 @@ public class FindBoard extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private DelYN delYn = DelYN.Y;
+    private DelYN delYn = DelYN.N;
 
     @Lob
     @Column(name = "image", nullable = true)
@@ -85,7 +85,7 @@ public class FindBoard extends BaseTimeEntity {
     }
 
     public void markAsDeleted() {
-        this.delYn = DelYN.N; // delYn을 N으로 변경
+        this.delYn = DelYN.Y;
     }
 
     public void incrementCurrentCount() {
