@@ -42,6 +42,9 @@ public class CommentService {
         Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
 
         Board board = boardRepository.findById(dto.getBoardId()).orElse(null); // 보드 아이디로 보드 조회
+        if(board.getDelYN().equals(DelYN.Y)) {
+            throw new IllegalArgumentException("이미 삭제된 게시글입니다.");
+        }
         Comment comment = Comment.builder()
                 .board(board)
 //                .memberId(member.getId())
