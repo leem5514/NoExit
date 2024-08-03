@@ -43,10 +43,10 @@ public class MemberController {
 
 	@Autowired
 	public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider,
-		NotificationService notificationService) {
+		NotificationService notificationService, NotificationService notificationService1) {
 		this.memberService = memberService;
 		this.jwtTokenProvider = jwtTokenProvider;
-		this.notificationService = notificationService;
+		this.notificationService = notificationService1;
 	}
 
 	// 회원가입 /member/create
