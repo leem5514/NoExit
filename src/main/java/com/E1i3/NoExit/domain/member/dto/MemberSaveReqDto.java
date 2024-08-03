@@ -23,16 +23,14 @@ public class MemberSaveReqDto {
 	private int age;
 	private String phone_number;
 	private String nickname;
-	private MultipartFile profileImage;
 
 	public Member toEntity(String encodedPassword, String imageUrl){
 		return Member.builder()
 			.username(this.username)
 			.password(encodedPassword)
 			.email(this.email)
-			.email(this.email)
 			.age(this.age)
-			.profileIamge(imageUrl)
+			.profileImage(imageUrl)
 			.phone_number(this.phone_number)
 			.nickname(this.nickname)
 			.build();

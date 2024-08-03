@@ -44,7 +44,7 @@ public class Member extends BaseTimeEntity{
 
 	private int point;
 	private int age;
-	private String profileIamge;
+	private String profileImage;
 
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
@@ -93,7 +93,7 @@ public class Member extends BaseTimeEntity{
 	}
 
 	public void updateImgPath(String imgPath) {
-		this.profileIamge = imgPath;
+		this.profileImage = imgPath;
 	}
 
 	public MemberListResDto fromEntity(){

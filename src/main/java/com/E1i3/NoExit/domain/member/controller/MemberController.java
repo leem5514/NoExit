@@ -52,9 +52,7 @@ public class MemberController {
 	// 회원가입 /member/create
 	@Operation(summary = "[일반 사용자] 회원가입 API")
 	@PostMapping("/member/create")
-	public ResponseEntity<CommonResDto> memberCreatePost(@RequestPart(value = "dto") MemberSaveReqDto dto,
-		@RequestPart(value = "file")
-		MultipartFile imgFile) {
+	public ResponseEntity<CommonResDto> memberCreatePost(@RequestPart(value = "data") MemberSaveReqDto dto, @RequestPart(value = "file") MultipartFile imgFile) {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원가입 성공",
 			memberService.memberCreate(dto, imgFile).getId());
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
