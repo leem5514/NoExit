@@ -142,22 +142,25 @@ public class ReservationService {
     @PreAuthorize("hasRole('OWNER')")
     @Transactional
     public Reservation updateApprovalStatus(ReservationUpdateResDto dto) {
-        Owner owner = ownerRepository.findByEmail(dto.getAdminEmail())
+        String ownerEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Owner owner = ownerRepository.findByEmail(ownerEmail)
                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 점장 이메일입니다."));
 
-        if (owner.getRole() != Role.OWNER) {
-            throw new IllegalStateException("점장만 처리할 수 있습니다.");
-        }
         Game game = gameRepository.findById(dto.getGameId())
                 .orElseThrow(() -> new IllegalArgumentException("없는 게임 ID입니다."));
 
         String reservationKey = RESERVATION_LOCK_PREFIX + dto.getResDate() + ":" + dto.getResDateTime();
+
         Optional<Reservation> optionalReservation = reservationRepository.findByGameAndResDateAndResDateTime(game, LocalDate.parse(dto.getResDate()), dto.getResDateTime());
         if (optionalReservation.isEmpty()) {
-            throw new IllegalArgumentException("Invalid reservation key");
+            throw new IllegalArgumentException("해당 시간대에 예약한 손님이 없습니다.");
         }
 
         Reservation reservation = optionalReservation.get();
+        if (!reservation.getOwner().equals(owner)) {
+            throw new IllegalArgumentException("해당 예약을 처리할 권한이 없습니다.");
+        }
+
         reservation.updateStatus(dto.getApprovalStatus());
 
         if (dto.getApprovalStatus() == ApprovalStatus.OK) {
