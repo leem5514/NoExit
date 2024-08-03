@@ -2,6 +2,7 @@ package com.E1i3.NoExit.domain.review.controller;
 
 import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
+import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.E1i3.NoExit.domain.review.dto.ReviewListDto;
 import com.E1i3.NoExit.domain.review.dto.ReviewSaveDto;
@@ -53,5 +54,13 @@ public class ReviewController {
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/review/myall")
+    @Operation(summary= "[일반 사용자] 리뷰 목록 조회 API")
+    public ResponseEntity<?> getUserReviews(Pageable pageable) {
+        Page<ReviewListDto> reviews = reviewService.getUserReviews(pageable);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "리뷰 목록 조회가 완료되었습니다.", reviews);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
 
 }

@@ -119,4 +119,14 @@ public class ReviewService {
         return reviews.map(Review::fromEntity);
     }
 
+    /* 리뷰리스트(내가 쓴 글 리스트 ) */
+    public Page<ReviewListDto> getUserReviews(Pageable pageable) {
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Page<Review> reviews = reviewRepository.findByMemberAndDelYN(member, DelYN.N, pageable);
+        return reviews.map(Review::fromEntity);
+    }
+
 }
