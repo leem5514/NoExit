@@ -11,9 +11,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.common.service.RedisService;
+import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
@@ -31,23 +33,25 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final RedisService redisService;
+	private final S3Service s3Service;
 	private final PasswordEncoder passwordEncoder;
 
 	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
 	private final OwnerRepository ownerRepository;
 
 	@Autowired
-	public MemberService(MemberRepository memberRepository, RedisService redisService, PasswordEncoder passwordEncoder,
+	public MemberService(MemberRepository memberRepository, RedisService redisService, S3Service s3Service, PasswordEncoder passwordEncoder,
 		OwnerRepository ownerRepository) {
 		this.memberRepository = memberRepository;
 		this.redisService = redisService;
+		this.s3Service = s3Service;
 		this.passwordEncoder = passwordEncoder;
 		this.ownerRepository = ownerRepository;
 	}
 
 	// 회원 등록
 	@Transactional
-	public Member memberCreate(MemberSaveReqDto memberSaveReqDto) {
+	public Member memberCreate(MemberSaveReqDto memberSaveReqDto, MultipartFile imgFile) {
 		// 레디스에 인증이 된 상태인지 확인
 		String chkVerified = redisService.getValues(AUTH_EMAIL_PREFIX + memberSaveReqDto.getEmail());
 		if (chkVerified == null || !chkVerified.equals("true")) {
@@ -59,7 +63,8 @@ public class MemberService {
 			throw new EntityExistsException("이미 존재하는 이메일입니다.");
 		});
 		String encodedPassword = passwordEncoder.encode(memberSaveReqDto.getPassword());
-		return memberRepository.save(memberSaveReqDto.toEntity(encodedPassword));
+		String imageUrl = s3Service.uploadFile(imgFile, "member");
+		return memberRepository.save(memberSaveReqDto.toEntity(encodedPassword, imageUrl));
 	}
 
 	// 회원 조회
