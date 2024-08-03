@@ -4,6 +4,7 @@ import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
+import com.E1i3.NoExit.domain.reservation.domain.ReservationStatus;
 import com.E1i3.NoExit.domain.reservation.repository.ReservationRepository;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.E1i3.NoExit.domain.review.dto.ReviewListDto;
@@ -28,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,6 +70,15 @@ public class ReviewService {
         Reservation reservation = reservationRepository.findById(dto.getReservationId())
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않은 예약입니다."));
 
+        // 예약 상태가 ACCEPT인지 확인
+        if (reservation.getReservationStatus() != ReservationStatus.ACCEPT) {
+            throw new IllegalStateException("리뷰를 작성할 수 없는 상태입니다. 예약이 승인되지 않았습니다.");
+        }
+
+        // 예약 상태가 ACCEPT인 후 일주일이 지났는지 확인
+        if (reservation.getResDate().isAfter(LocalDate.now().minusWeeks(1))) {
+            throw new IllegalStateException("리뷰는 예약 상태가 ACCEPT된 후 일주일이 지난 후에만 작성할 수 있습니다.");
+        }
 
         if (reviewRepository.findByReservationAndDelYN(reservation, DelYN.N).isPresent()) {
             throw new IllegalStateException("이미 작성된 리뷰가 있습니다.");
