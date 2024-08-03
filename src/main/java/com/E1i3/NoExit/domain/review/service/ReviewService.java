@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,6 +60,7 @@ public class ReviewService {
 
 
     /*  */
+    @PreAuthorize("hasRole('USER')")
     @Transactional
     public Review createReview(ReviewSaveDto dto) {
 
@@ -120,6 +122,7 @@ public class ReviewService {
     }
 
     /* 리뷰리스트(내가 쓴 글 리스트 ) */
+    @PreAuthorize("hasRole('USER')")
     public Page<ReviewListDto> getUserReviews(Pageable pageable) {
         String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(memberEmail)
@@ -127,6 +130,25 @@ public class ReviewService {
 
         Page<Review> reviews = reviewRepository.findByMemberAndDelYN(member, DelYN.N, pageable);
         return reviews.map(Review::fromEntity);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @Transactional
+    public Review cancelReview(Long reviewId) {
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다."));
+
+        if (!review.getMember().equals(member)) {
+            throw new IllegalArgumentException("본인이 작성한 리뷰만 삭제할 수 있습니다.");
+        }
+
+        review.updateDelYN();
+        reviewRepository.save(review);
+        return review;
     }
 
 }
