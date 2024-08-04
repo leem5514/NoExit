@@ -62,5 +62,10 @@ cloud:
       static: ${AWS_REGION}
     s3: #버킷이름
       bucket: ${AWS_BUCKET_NAME}
+      folder:
+        folderName1: member/
+        folderName2: review/
+        folderName3: game/
+        folderName4: storeInfo/
     stack:
       auto: false
