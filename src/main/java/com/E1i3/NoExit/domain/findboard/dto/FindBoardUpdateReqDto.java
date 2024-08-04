@@ -13,13 +13,13 @@ public class FindBoardUpdateReqDto {
     private String contents;
     private LocalDateTime expirationDate;
     private int totalCapacity;
-    private byte[] image;
+    private String imagePath;
 
-    public FindBoardUpdateReqDto(String title, String contents, LocalDateTime expirationDate, int totalCapacity, byte[] image) {
+    public FindBoardUpdateReqDto(String title, String contents, LocalDateTime expirationDate, int totalCapacity, String imagePath) {
         this.title = title;
         this.contents = contents;
         this.expirationDate = expirationDate;
         this.totalCapacity = totalCapacity;
-        this.image = image;
+        this.imagePath = imagePath;
     }
 }
