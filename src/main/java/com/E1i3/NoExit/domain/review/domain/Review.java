@@ -46,9 +46,10 @@ public class Review extends BaseTimeEntity {
     private Member member;
 
 
-    public void deleteReview() {
+    public void updateDelYN() {
         this.delYN = DelYN.Y;
     }
+
     public void updateImagePath(String imagePath) {
         this.imagePath = imagePath;
     }

@@ -6,21 +6,21 @@ import java.util.Map;
 
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
-import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.service.MemberService;
@@ -43,17 +43,18 @@ public class MemberController {
 
 	@Autowired
 	public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider,
-		NotificationService notificationService) {
+		NotificationService notificationService, NotificationService notificationService1) {
 		this.memberService = memberService;
 		this.jwtTokenProvider = jwtTokenProvider;
-		this.notificationService = notificationService;
+		this.notificationService = notificationService1;
 	}
 
 	// 회원가입 /member/create
-	@Operation(summary= "[일반 사용자] 회원가입 API")
+	@Operation(summary = "[일반 사용자] 회원가입 API")
 	@PostMapping("/member/create")
-	public ResponseEntity<CommonResDto> memberCreatePost(@RequestBody MemberSaveReqDto dto) {
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원가입 성공", memberService.memberCreate(dto).getId());
+	public ResponseEntity<CommonResDto> memberCreatePost(@RequestPart(value = "data") MemberSaveReqDto dto, @RequestPart(value = "file") MultipartFile imgFile) {
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원가입 성공",
+			memberService.memberCreate(dto, imgFile).getId());
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 

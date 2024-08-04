@@ -76,7 +76,7 @@ public class FindBoardService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         FindBoard findBoard = findBoardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
-
+// 아래 예외를 위로 옮기는것 고려
         if ( !findBoard.getMember().getEmail().equals(email)) {
             throw new IllegalArgumentException("본인의 게시글만 삭제할 수 있습니다.");
         }

@@ -20,4 +20,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Optional<Review> findByReservationAndDelYN(Reservation reservation, DelYN delYn);
 
     Page<Review> findByDelYN(DelYN delYN, Pageable pageable);
+
+    Page<Review> findByMemberAndDelYN(Member member, DelYN delYN, Pageable pageable);
 }

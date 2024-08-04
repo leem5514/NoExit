@@ -58,6 +58,7 @@ public class CommentService {
 
         board.getComments().add(comment); // 게시글 댓글 목록에 추가
         commentRepository.save(comment);
+        notificationService.notifyComment(board, dto);  // 댓글 작성 시 게시글 작성자에게 알림
     }
 
 

@@ -33,7 +33,9 @@ public class RedisConfig {
 	// 이메일 인증 (0번 데이터베이스)
 	@Bean
 	@Primary
-	LettuceConnectionFactory connectionFactoryEmail() { return redisConnectionFactory(0); }
+	LettuceConnectionFactory connectionFactoryEmail() {
+		return redisConnectionFactory(0);
+	}
 
 	@Bean
 	@Primary
@@ -49,11 +51,31 @@ public class RedisConfig {
 	// 예약 시스템 (1번 데이터베이스)
 	@Bean
 	@Qualifier("2")
-	LettuceConnectionFactory connectionFactoryNotification() { return redisConnectionFactory(1); }
+	LettuceConnectionFactory connectionFactoryReservation() {
+		return redisConnectionFactory(1);
+	}
 
 	@Bean
 	@Qualifier("2")
 	public RedisTemplate<String, Object> redisTemplate1() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(connectionFactoryReservation());
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+		return redisTemplate;
+	}
+
+	// 	알림 서비스 (2번 데이터베이스)
+	@Bean
+	@Qualifier("3")
+	LettuceConnectionFactory connectionFactoryNotification() {
+		return redisConnectionFactory(2);
+	}
+
+	@Bean
+	@Qualifier("3")
+	public RedisTemplate<String, Object> redisTemplate2() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactoryNotification());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
@@ -62,31 +84,6 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
-	// @Bean
-	// public RedisConnectionFactory redisConnectionFactory() {
-	// 	// 추후에 알림처리에서 데이터베이스를 사용하니깐 데이터베이스 설정하는 식으로 코드 수정
-	// 	return new LettuceConnectionFactory(host, port);
-	// }
-	//
-	// @Bean
-	// public RedisConnectionFactory redisConnectionFactory(int dbIndex) {
-	// 	RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-	// 	configuration.setHostName(host);
-	// 	configuration.setPort(port);
-	// 	configuration.setDatabase(dbIndex);
-	// 	// configuration.setPassword("123456");
-	// 	return new LettuceConnectionFactory(configuration);
-	// }
-	//
-	// @Bean
-	// public RedisTemplate<String, Object> redisTemplate() {
-	// 	RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-	// 	redisTemplate.setConnectionFactory(redisConnectionFactory(0));
-	//
-	// 	redisTemplate.setKeySerializer(new StringRedisSerializer());
-	// 	redisTemplate.setValueSerializer(new StringRedisSerializer());
-	//
-	// 	return redisTemplate;
-	// }
+
 
 }
