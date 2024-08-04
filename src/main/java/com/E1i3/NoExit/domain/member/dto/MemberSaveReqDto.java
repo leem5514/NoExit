@@ -1,5 +1,7 @@
 package com.E1i3.NoExit.domain.member.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 
@@ -22,16 +24,17 @@ public class MemberSaveReqDto {
 	private String phone_number;
 	private String nickname;
 
-	public Member toEntity(String encodedPassword){
+	public Member toEntity(String encodedPassword, String imageUrl){
 		return Member.builder()
 			.username(this.username)
 			.password(encodedPassword)
 			.email(this.email)
-			.email(this.email)
 			.age(this.age)
+			.profileImage(imageUrl)
 			.phone_number(this.phone_number)
 			.nickname(this.nickname)
 			.build();
 	}
+
 }
 

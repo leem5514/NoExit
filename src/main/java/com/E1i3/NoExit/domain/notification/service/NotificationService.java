@@ -40,6 +40,7 @@ public class NotificationService {
 		} catch (IOException e) {
 			log.info(e.getMessage());
 		}
+		/* 503 Service Unavailable 방지용 dummy event 전송 */
 
 		NotificationController.sseEmitters.put(sseEmitterKey, sseEmitter);
 		sseEmitter.onCompletion(() -> NotificationController.sseEmitters.remove(sseEmitterKey));
@@ -49,8 +50,14 @@ public class NotificationService {
 	}
 
 	// 	1. 알림 요청시 사용자 -> 점주 예약내역 알림 (ReservationSaveDto)
+	public void notifyResToOwner(){
+
+	}
 
 	// 	2. 알림 승인/거절시 점주 -> 사용자 알림 (ReservationStatus, ApprovalStatus) / (ACCEPT, Y) (REJECT, Y)
+	public void notifyResToMember(){
+
+	}
 
 	// 	3. 내가 쓴 게시글에 댓글 (작성자, 댓글 내용)
 	public void notifyComment(Board board, CommentCreateReqDto comment) {
@@ -64,8 +71,8 @@ public class NotificationService {
 
 		try {
 			sseEmitter.send(sseEmitter.event()
-				.name(senderEmail + "님이 보내는 답글")	// xx님이 보내는 답글
-				.data(comment.getContent()));
+				.name("댓글")    // xx님이 보내는 답글
+				.data(senderEmail + "님이 보내는 답글"));
 			log.info("코멘트 작성 이벤트 보내는 중");
 		} catch (IOException e) {
 			log.info(e.getMessage());
@@ -89,17 +96,16 @@ public class NotificationService {
 		try {
 			sseEmitter.send(sseEmitter.event()
 				// xx님이 내 게시글을 추천합니다.
-				.name(senderEmail + "님이 내 게시글을 추천합니다.")
-				.data(null));
+				.name("게시글 추천")
+				.data(senderEmail + "님이 내 게시글을 추천합니다."));
 			log.info("게시글 추천 이벤트 보내는 중");
 		} catch (IOException e) {
 			log.info(e.getMessage());
 		}
 		log.info("게시글 추천 이벤트 보내기 완료");
 	}
-	// 	5. 내가 쓴 게시글에 비추천
 
-	// 	6. 내가 쓴 댓글 추천
+	// 	5. 내가 쓴 댓글 추천
 	public void notifyLikeComment(Comment comment) {
 		String senderEmail = memberService.getEmailFromToken();
 		String receiverEmail = comment.getMember().getEmail();
@@ -112,15 +118,36 @@ public class NotificationService {
 		try {
 			sseEmitter.send(sseEmitter.event()
 				// xx님이 내 게시글을 추천합니다.
-				.name(senderEmail + "님이 내 답글을 추천합니다.")
-				.data(comment.getContent()));
+				.name("댓글 추천")
+				.data(senderEmail + "님이 내 답글을 추천합니다."));
 
 			log.info("코멘트 추천 이벤트 보내는 중");
 		} catch (IOException e) {
 			log.info(e.getMessage());
 		}
 		log.info("코멘트 추천 이벤트 보내기 완료");
-		return;
 	}
-	// 	7. 내가 쓴 댓글 비추천
+
+	// 	6. findBoard 참여 인원 가득차면
+	public void notifyFullCount(){
+		String email = memberService.getEmailFromToken();
+		SseEmitters sseEmitterKey = SseEmitters.builder().email(email).role(Role.USER).build();
+		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
+
+		log.info(sseEmitterKey.toString());
+		log.info(NotificationController.sseEmitters.get(sseEmitterKey).toString());
+
+		try {
+			sseEmitter.send(sseEmitter.event()
+				// xx님이 내 게시글을 추천합니다.
+				.name("참여 불가")
+				.data("참여인원이 가득찼습니다."));
+
+			log.info("참여인원 제한 이벤트 보내는 중");
+		} catch (IOException e) {
+			log.info(e.getMessage());
+		}
+		log.info("참여인원 제한 이벤트 보내기 완료");
+	}
+
 }

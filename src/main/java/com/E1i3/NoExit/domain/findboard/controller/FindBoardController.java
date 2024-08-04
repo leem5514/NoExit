@@ -7,6 +7,8 @@ import com.E1i3.NoExit.domain.findboard.dto.FindBoardSaveReqDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
 import com.E1i3.NoExit.domain.findboard.service.FindBoardService;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
+import com.E1i3.NoExit.domain.notification.service.NotificationService;
+
 import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +30,13 @@ import javax.persistence.EntityNotFoundException;
 public class FindBoardController {
 
     private final FindBoardService findBoardService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public FindBoardController(FindBoardService findBoardService) {
-
+    public FindBoardController(FindBoardService findBoardService, NotificationService notificationService) {
         this.findBoardService = findBoardService;
-    }
+		this.notificationService = notificationService;
+	}
 
     @Operation(summary= "[일반 사용자] 번개 글 작성 API")
     @PostMapping("/create")
@@ -81,16 +84,16 @@ public class FindBoardController {
     @Operation(summary= "[일반 사용자] 번개 글 참석 API")
     @PutMapping("/participate/{id}")
     public ResponseEntity<CommonResDto> incrementParticipantCount(@PathVariable Long id) {
-
-        try { //나중에 서비스단으로 옮길지 고려하기.
-            FindBoardResDto updatedFindBoardResDto = findBoardService.incrementParticipantCount(id);
-            if (updatedFindBoardResDto.getCurrentCount() >= updatedFindBoardResDto.getTotalCapacity()) {
-                return new ResponseEntity<>(new CommonResDto(HttpStatus.BAD_REQUEST, "참가자가 이미 가득 찼습니다.", null), HttpStatus.BAD_REQUEST);
-            }
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "참가자 수 증가 성공", updatedFindBoardResDto);
-            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.NOT_FOUND, "게시글이 존재하지 않거나 삭제된 게시글입니다.", HttpStatus.NOT_FOUND);
+            try {
+                FindBoardResDto updatedFindBoardResDto = findBoardService.incrementParticipantCount(id);
+                if (updatedFindBoardResDto.getCurrentCount() > updatedFindBoardResDto.getTotalCapacity()) {
+                    notificationService.notifyFullCount();
+                    return new ResponseEntity<>(new CommonResDto(HttpStatus.BAD_REQUEST, "참가자가 이미 가득 찼습니다.", null), HttpStatus.BAD_REQUEST);
+                }
+                CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "참가자 수 증가 성공", updatedFindBoardResDto);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            } catch (EntityNotFoundException e) {
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.NOT_FOUND, "게시글이 존재하지 않거나 삭제된 게시글입니다.", null);
             return new ResponseEntity<>(commonResDto, HttpStatus.NOT_FOUND);
         }
     }
