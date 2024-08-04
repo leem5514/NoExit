@@ -16,14 +16,12 @@ import java.time.LocalDateTime;
 public class FindBoardSaveReqDto {
 
     private String title;
-    private String writer; // 추가된 필드
+    private String writer;
     private String contents;
-    private LocalDateTime expirationTime; //이건 프론트에서 넘어오는 데이터 아닌가?
+    private LocalDateTime expirationTime;
 
     private int totalCapacity;
-    private byte[] image;
-    //여기서 Role을 정해줘야하나? 아니지 role은 회원가입때 정해서 넘어온다.
-
+    private String imagePath;
 
     public FindBoard toEntity(Member member) {
         return FindBoard.builder()
@@ -32,7 +30,7 @@ public class FindBoardSaveReqDto {
                 .contents(this.contents)
                 .expirationTime(this.expirationTime)
                 .totalCapacity(this.totalCapacity)
-                .image(this.image)
+                .imagePath(member.getProfileImage()) // 수정
                 .member(member)
                 .build();
     }

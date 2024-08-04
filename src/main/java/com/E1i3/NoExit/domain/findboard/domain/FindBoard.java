@@ -1,6 +1,7 @@
 package com.E1i3.NoExit.domain.findboard.domain;
 
 //import com.E1i3.NoExit.domain.findboard.dto.FindBoardDetailResDto;
+import com.E1i3.NoExit.domain.attendance.domain.Attendance;
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
@@ -13,6 +14,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Getter
@@ -45,11 +48,16 @@ public class FindBoard extends BaseTimeEntity {
 
     @Lob
     @Column(name = "image", nullable = true)
-    private byte[] image;
+    private String imagePath;
 
     @ManyToOne(fetch = FetchType.LAZY) //참조 안 하면 안 나가게.
     @JoinColumn(name = "member_id")
     private Member member; //이게 필요가 없다? 아니지 saveReqDto에만 필요없지.
+
+    //참석자 연관관계 추가
+    @OneToMany(mappedBy = "findBoard", cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private List<Attendance> attendances = new ArrayList<>();
 
     public FindBoardResDto ResDtoFromEntity() {
         return FindBoardResDto.builder()
@@ -63,7 +71,7 @@ public class FindBoard extends BaseTimeEntity {
                 .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .image(this.image)
+                .imagePath(this.imagePath)
                 .build();
     }
 
@@ -80,7 +88,7 @@ public class FindBoard extends BaseTimeEntity {
                 .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .image(this.image)
+                .imagePath(this.imagePath)
                 .build();
     }
 
@@ -97,7 +105,7 @@ public class FindBoard extends BaseTimeEntity {
         this.contents = dto.getContents();
         this.expirationTime = dto.getExpirationDate();
         this.totalCapacity = dto.getTotalCapacity();
-        this.image = dto.getImage();
+        this.imagePath = dto.getImagePath();
         this.getUpdateTime(); // 데이터 값 이상한지 확인하기.
     }
 }
