@@ -10,6 +10,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+
+//테스트 용이성을 위한 InitialDataLoader
 @Component
 public class InitialDataLoader implements CommandLineRunner {
 
