@@ -11,6 +11,10 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+@Builder // Loader 사용을 위한 임시 추가. : 김민성
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,6 +27,11 @@ public class MemberSaveReqDto {
 	private int age;
 	private String phone_number;
 	private String nickname;
+
+	// Loader 사용을 위한 임시 추가. : 김민성
+	@Enumerated(EnumType.STRING)
+	@Builder.Default
+	private Role role = Role.USER;
 
 	public Member toEntity(String encodedPassword, String imageUrl){
 		return Member.builder()

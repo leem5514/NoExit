@@ -1,5 +1,7 @@
 package com.E1i3.NoExit.domain.findboard.service;
 
+import com.E1i3.NoExit.domain.attendance.domain.Attendance;
+import com.E1i3.NoExit.domain.attendance.repositroy.AttendanceRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
@@ -23,11 +25,13 @@ public class FindBoardService {
 
     private final FindBoardRepository findBoardRepository;
     private final MemberRepository memberRepository;
+    private final AttendanceRepository attendanceRepository;
 
     @Autowired
-    public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository) {
+    public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository, AttendanceRepository attendanceRepository) {
         this.findBoardRepository = findBoardRepository;
         this.memberRepository = memberRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
     public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
@@ -95,7 +99,24 @@ public class FindBoardService {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("참가 신청은 로그인 후 가능합니다."));
 
+        // 게시글 작성자와 로그인한 사용자가 동일한지 확인
+        if (findBoard.getMember().getEmail().equals(memberEmail)) {
+            throw new IllegalStateException("자신의 게시글에 참가 신청을 할 수 없습니다.");
+        }
+
         findBoard.incrementCurrentCount();
+
+        Attendance attendance = Attendance.builder() // Attendance 엔티티에 참가신청 버튼을 누른 회원의 정보를 id로 추가
+                .findBoard(findBoard) // 게시글 id
+                .member(member) // 참석자 id
+                .build();
+        attendanceRepository.save(attendance); // 참가자 정보 저장
+
+        if ( findBoard.getCurrentCount() == findBoard.getTotalCapacity()){
+            findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
+        }
+
+
         return findBoard.ResDtoFromEntity();
     }
 

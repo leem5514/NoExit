@@ -96,7 +96,7 @@ public class MemberController {
 			loginInfo.put("id", member.getId());
 			loginInfo.put("token", jwtToken);
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "일반 사용자 로그인 성공", loginInfo), HttpStatus.OK);
-		} else if (user instanceof OwnerService) {
+		} else if (user instanceof Owner) {
 			Owner owner = (Owner) user;
 			String jwtToken = jwtTokenProvider.createToken(owner.getEmail(), owner.getRole().toString());
 			notificationService.subscribe(Role.OWNER);
