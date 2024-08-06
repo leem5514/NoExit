@@ -9,12 +9,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 
 import com.E1i3.NoExit.domain.common.auth.JwtAuthFilter;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Configuration
-@EnableWebSecurity	// security 관련한 코드
-@EnableGlobalMethodSecurity(prePostEnabled = true)	// pre: 사전 검증, post: 사후 검증
+@EnableWebSecurity    // security 관련한 코드
+@EnableGlobalMethodSecurity(prePostEnabled = true)    // pre: 사전 검증, post: 사후 검증
 public class SecurityConfigs {
 
 	@Autowired
@@ -24,29 +28,36 @@ public class SecurityConfigs {
 	public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 		return httpSecurity
 
-				.csrf().disable()
-				.cors().and() // CORS 활성화
-				.httpBasic().disable()
-				.authorizeRequests()
-				.antMatchers(
-						"/email/requestCode",
-						"/",
-					// 	게시글, 후기 조회하는 페이지는 모두 로그인하지 않아도 가능하도록
-						"/doLogin","/owner/create",
-						// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
-						"/member/create", "/swagger-ui/**",
-						"/review/all",
-						"/swagger-resources/**",
-						"/swagger-ui.html",
-						"/v2/api-docs",
-						"/webjars/**"
-				).permitAll()
-				.antMatchers("/reservation/create").hasRole("USER")
-				.anyRequest().authenticated()
-				.and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				.and()
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-				.build();
+			.csrf().disable()
+			.cors().and() // CORS 활성화
+			.httpBasic().disable()
+			.authorizeRequests()
+			.antMatchers(
+				"/email/requestCode",
+				"/",
+				// 	게시글, 후기 조회하는 페이지는 모두 로그인하지 않아도 가능하도록
+				"/doLogin", "/owner/create",
+				// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
+				"/member/create", "/swagger-ui/**", "/login/oauth2/code/google", "/app/accounts/auth/google/redirect"
+				, "/review/all",
+				"/swagger-resources/**",
+				"/swagger-ui.html",
+				"/v2/api-docs",
+				"/webjars/**"
+			).permitAll()
+			.antMatchers("/reservation/create").hasRole("USER")
+			.anyRequest().authenticated()
+			.and()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+			.oauth2Login()
+			.and()
+			.formLogin()
+			.loginPage("/loginForm")
+			.loginProcessingUrl("/login")
+			.defaultSuccessUrl("/")
+			.and()
+			.build();
 	}
 }

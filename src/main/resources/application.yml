@@ -6,6 +6,18 @@ server:
       force: true
 
 spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            url: ${GOOGLE_SNS_LOGIN_URL}
+            client-id: ${GOOGLE_SNS_CLIENT_ID}
+            client-secret: ${GOOGLE_SNS_CLIENT_SECRET}
+            scope: ${GOOGLE_DATA_ACCESS_SCOPE}
+            redirect-uri: ${GOOGLE_SNS_CALLBACK_URL}
+##            token-uri: http://oauth2.googleapis.com/token
+##            resource-uri: http://www.googleapis.com/oauth2/v2/userinfo
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: ${MONGODB_URL}
@@ -44,11 +56,12 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
-#          5 * 60 * 1000 == 5분
+    #          5 * 60 * 1000 == 5분
     auth-code-expiration-millis: 300000
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
+
 jwt:
   expiration: 30
   secretKey: my_token_secret
