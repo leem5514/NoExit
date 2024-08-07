@@ -111,6 +111,10 @@ public class Board extends BaseTimeEntity {
         return boardDetailResDto;
     }
 
+    public void updateImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
 
     public void updateEntity(BoardUpdateReqDto dto) {
         this.title = dto.getTitle();

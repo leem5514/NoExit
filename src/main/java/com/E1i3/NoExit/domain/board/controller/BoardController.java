@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.board.controller;
 
+import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
@@ -33,8 +34,8 @@ public class BoardController {
     @PostMapping("/board/create") // 게시글 생성
     public ResponseEntity<Object> boardCreate(@RequestBody BoardCreateReqDto dto) {
         try {
-            boardService.boardCreate(dto);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "board is successfully created", null);
+            Board board = boardService.boardCreate(dto);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "board is successfully created", board.getId());
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
         } catch(IllegalArgumentException e) {
             e.printStackTrace();

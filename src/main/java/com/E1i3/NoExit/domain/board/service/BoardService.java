@@ -15,14 +15,27 @@ import com.E1i3.NoExit.domain.notification.service.NotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -31,31 +44,60 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
+    private final S3Client s3Client;
 
     @Autowired
     public BoardService(BoardRepository boardRepository, MemberRepository memberRepository,
-		NotificationService notificationService) {
+		NotificationService notificationService, S3Client s3Client) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
 		this.notificationService = notificationService;
+        this.s3Client = s3Client;
 	}
 
-    @Autowired
-    @Qualifier("2")
-    private RedisTemplate<String, Object> boardLike;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${cloud.aws.s3.folder}")
+    private String folder;
 
 
-    public void boardCreate(BoardCreateReqDto dto) { // 게시글 생성
+
+    public Board boardCreate(BoardCreateReqDto dto) { // 게시글 생성
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
 
-        // Member 엔티티를 memberId로 조회
-//        Member member = memberRepository.findById(dto.getMemberId())
-//                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + dto.getMemberId()));
+        List<MultipartFile> images = new ArrayList<>();
+        images = dto.getBoardImages();
+        Board board = null;
 
-        // DTO를 Entity로 변환하고 Member 설정
-        Board board = dto.toEntity(member);
-        boardRepository.save(board);
+        try {
+            board = boardRepository.save(dto.toEntity(member));
+            for(MultipartFile img : images) {
+                byte[] bytes = img.getBytes();
+                String fileName = board.getId() + "_" + img.getOriginalFilename();
+                Path path = Paths.get("C:/Users/Playdata1/Desktop/temp/", fileName);
+
+                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);//저 경로에 bytes(이미지파일)을 저장하겠다.
+                PutObjectRequest putObjectRequest = PutObjectRequest
+                        .builder()
+                        .bucket(bucket)
+                        .key(fileName)
+                        .build();
+
+                PutObjectResponse putObjectResponse
+                        = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
+
+                String S3Path // a에서 값을 꺼내는 것. filename으로 찾아와라.  그럼 파일이 저장되어있는 s3 경로가 S3Path 변수에 저장된다.
+                        = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(fileName)).toExternalForm();
+                board.updateImagePath(S3Path);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException("이미지 저장에 실패했습니다.");
+        }
+        return board;
+
     }
 
 

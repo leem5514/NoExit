@@ -6,6 +6,9 @@ import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +18,7 @@ public class BoardCreateReqDto {
 //    private String writer; // 작성자
     private String title; // 제목
     private String content; // 내용
-    private String imagePath; // 이미지
+    private List<MultipartFile> boardImages; // 이미지
     private BoardType boardType; // 게시판 유형 (자유, 전략)
 
     public Board toEntity(Member member) {
@@ -24,7 +27,6 @@ public class BoardCreateReqDto {
 //                .writer(this.writer)
                 .title(this.title)
                 .content(this.content)
-                .imagePath(this.imagePath)
                 .boardType(this.boardType)
                 .build();
 
