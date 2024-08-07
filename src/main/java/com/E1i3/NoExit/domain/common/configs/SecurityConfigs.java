@@ -39,7 +39,10 @@ public class SecurityConfigs {
 						"/swagger-resources/**",
 						"/swagger-ui.html",
 						"/v2/api-docs",
-						"/webjars/**"
+						"/webjars/**",
+						//웹소켓 test 403 해결
+						"/ws/chat/**",
+						"/chat/**"
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.anyRequest().authenticated()
