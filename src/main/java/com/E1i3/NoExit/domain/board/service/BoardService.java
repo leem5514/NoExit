@@ -8,11 +8,14 @@ import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
 import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
+import com.E1i3.NoExit.domain.common.service.RedisService;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +34,10 @@ public class BoardService {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
     }
+
+    @Autowired
+    @Qualifier("2")
+    private RedisTemplate<String, Object> boardLike;
 
 
     public void boardCreate(BoardCreateReqDto dto) { // 게시글 생성
