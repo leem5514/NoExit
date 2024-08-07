@@ -9,5 +9,5 @@ reviewers:
 
 numberOfReviewers: 1
 
- skipKeywords:
+skipKeywords:
    - wip
