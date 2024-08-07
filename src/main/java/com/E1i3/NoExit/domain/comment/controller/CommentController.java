@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.comment.controller;
 
+import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
@@ -30,8 +31,8 @@ public class CommentController {
     @Autowired
     public CommentController(CommentService commentService, NotificationService notificationService) {
         this.commentService = commentService;
-        this.notificationService = notificationService;
-    }
+		this.notificationService = notificationService;
+	}
 
     // url은 임의로 대충 붙임
 
@@ -40,7 +41,6 @@ public class CommentController {
     @PostMapping("/comment/create") // 댓글 생성
     public ResponseEntity<Object> commentCreate(@RequestBody CommentCreateReqDto dto) {
         try {
-            notificationService.reserveToOwner(dto);
             commentService.commentCreate(dto);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "comment is successfully created", null);
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);

@@ -11,6 +11,8 @@ import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.common.service.RedisService;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.service.NotificationService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -28,12 +30,15 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public BoardService(BoardRepository boardRepository, MemberRepository memberRepository) {
+    public BoardService(BoardRepository boardRepository, MemberRepository memberRepository,
+		NotificationService notificationService) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
-    }
+		this.notificationService = notificationService;
+	}
 
     @Autowired
     @Qualifier("2")
@@ -73,8 +78,8 @@ public class BoardService {
 
 
     public Board boardUpdate(Long id, BoardUpdateReqDto dto) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
 
@@ -109,6 +114,7 @@ public class BoardService {
         board.updateLikes();
 //        board.updateLikes(member.getEmail());
         boardRepository.save(board);
+        notificationService.notifyLikeBoard(board);
 //        return board.getLikeMembers().size();
         return board.getLikes();
     }

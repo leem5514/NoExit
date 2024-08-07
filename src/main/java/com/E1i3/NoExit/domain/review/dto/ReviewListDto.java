@@ -13,16 +13,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewListDto {
     private Long id;
-    private String content;
     private int rating;
     private String imagePath;
-
-    public static ReviewListDto listFromEntity(Review review) {
-        return ReviewListDto.builder()
-                .id(review.getId())
-                .content(review.getContent())
-                .rating(review.getRating())
-                .imagePath(review.getImagePath())
-                .build();
-    }
+    private String content;
+    private String memberNickname; // 작성자 닉네임
+    private Long gameId; // 게임 ID
 }

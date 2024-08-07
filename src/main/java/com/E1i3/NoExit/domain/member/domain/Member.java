@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.E1i3.NoExit.domain.attendance.domain.Attendance;
 import com.E1i3.NoExit.domain.board.domain.Board;
 
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
@@ -44,6 +45,7 @@ public class Member extends BaseTimeEntity{
 
 	private int point;
 	private int age;
+	private String profileImage;
 
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
@@ -52,12 +54,17 @@ public class Member extends BaseTimeEntity{
 	@Column(length = 255, nullable = false)
 	private String phone_number;
 
-	@Column(length = 100, nullable = false)
+	@Column(length = 100, nullable = false, unique = true)
 	private String nickname;
 
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
 	private DelYN delYN = DelYN.N;
+
+
+	// 참석자 연관계 추가
+	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+	private List<Attendance> attendances;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Review> reviews;
@@ -89,6 +96,10 @@ public class Member extends BaseTimeEntity{
 	public Member updateDelYN() {
 		this.delYN = DelYN.Y;
 		return this;
+	}
+
+	public void updateImgPath(String imgPath) {
+		this.profileImage = imgPath;
 	}
 
 	public MemberListResDto fromEntity(){
