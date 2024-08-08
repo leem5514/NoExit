@@ -3,6 +3,7 @@ package com.E1i3.NoExit.domain.notification.service;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -12,7 +13,7 @@ import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.service.MemberService;
 import com.E1i3.NoExit.domain.notification.controller.NotificationController;
-import com.E1i3.NoExit.domain.notification.dto.SseEmitters;
+import com.E1i3.NoExit.domain.notification.dto.UserInfo;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +33,9 @@ public class NotificationService {
 
 	public SseEmitter subscribe(Role role) {
 		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-		String email = (role == Role.USER) ? memberService.getEmailFromToken() : ownerService.getEmailFromToken();
-		SseEmitters sseEmitterKey = SseEmitters.builder().email(email).role(role).build();
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		// String email = (role == Role.USER) ? memberService.getEmailFromToken() : ownerService.getEmailFromToken();
+		UserInfo sseEmitterKey = UserInfo.builder().email(email).role(role).build();
 
 		try {
 			sseEmitter.send(SseEmitter.event().name("connect"));
@@ -63,7 +65,7 @@ public class NotificationService {
 	public void notifyComment(Board board, CommentCreateReqDto comment) {
 		String senderEmail = memberService.getEmailFromToken();
 		String receiverEmail = board.getMember().getEmail();
-		SseEmitters sseEmitterKey = SseEmitters.builder().email(receiverEmail).role(Role.USER).build();
+		UserInfo sseEmitterKey = UserInfo.builder().email(receiverEmail).role(Role.USER).build();
 		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
 
 		log.info(sseEmitterKey.toString());
@@ -87,7 +89,7 @@ public class NotificationService {
 		// board 작성자에게 이벤트 발생
 		String senderEmail = memberService.getEmailFromToken();
 		String receiverEmail = board.getMember().getEmail();
-		SseEmitters sseEmitterKey = SseEmitters.builder().email(receiverEmail).role(Role.USER).build();
+		UserInfo sseEmitterKey = UserInfo.builder().email(receiverEmail).role(Role.USER).build();
 		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
 
 		log.info(sseEmitterKey.toString());
@@ -109,7 +111,7 @@ public class NotificationService {
 	public void notifyLikeComment(Comment comment) {
 		String senderEmail = memberService.getEmailFromToken();
 		String receiverEmail = comment.getMember().getEmail();
-		SseEmitters sseEmitterKey = SseEmitters.builder().email(receiverEmail).role(Role.USER).build();
+		UserInfo sseEmitterKey = UserInfo.builder().email(receiverEmail).role(Role.USER).build();
 		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
 
 		log.info(sseEmitterKey.toString());
@@ -131,7 +133,7 @@ public class NotificationService {
 	// 	6. findBoard 참여 인원 가득차면
 	public void notifyFullCount(){
 		String email = memberService.getEmailFromToken();
-		SseEmitters sseEmitterKey = SseEmitters.builder().email(email).role(Role.USER).build();
+		UserInfo sseEmitterKey = UserInfo.builder().email(email).role(Role.USER).build();
 		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
 
 		log.info(sseEmitterKey.toString());

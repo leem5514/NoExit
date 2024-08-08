@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SseEmitters {
+public class UserInfo {
 	private String email;
 	private Role role;
 }
