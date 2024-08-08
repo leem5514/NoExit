@@ -1,12 +1,14 @@
-name: 'Auto Assign'
+name: Review Assign Action
+
 on:
   pull_request:
     types: [opened, ready_for_review]
-
+    
 jobs:
-  add-reviews:
+  assign:
     runs-on: ubuntu-latest
     steps:
-      - uses: kentaro-m/auto-assign-action@v2.0.0
+      - uses: hkusu/review-assign-action@v1
         with:
-          configuration-path: '.github/auto-assign.yml'
+          assignees: ${{ github.actor }}
+          reviewers: 34suuuuu, epiuwiruiw, leem5514, Windowmincastle
