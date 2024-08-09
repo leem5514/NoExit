@@ -30,6 +30,7 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+
     @Operation(summary= "게시글 작성")
     @PostMapping("/board/create") // 게시글 생성
     public ResponseEntity<Object> boardCreate(@RequestBody BoardCreateReqDto dto) {
@@ -125,6 +126,8 @@ public class BoardController {
             return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
         }
     }
+
+
 
     @Operation(summary= "게시글 싫어요")
     @PatchMapping("/board/dislike/{id}")

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,11 +56,17 @@ public class BoardService {
         this.s3Client = s3Client;
 	}
 
+    @Autowired
+    @Qualifier("4")
+    private RedisTemplate<String, Object> boardRedisTemplate;
+
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-
-    @Value("${cloud.aws.s3.folder}")
+    @Value("${cloud.aws.s3.folder.folderName5}")
     private String folder;
+
+    private static final String LIKE_PREFIX = "like:";
+    private static final String BOARD_PREFIX = "board:";
 
 
 
@@ -78,7 +85,7 @@ public class BoardService {
                 String fileName = board.getId() + "_" + img.getOriginalFilename();
                 Path path = Paths.get("C:/Users/Playdata1/Desktop/temp/", fileName);
 
-                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);//저 경로에 bytes(이미지파일)을 저장하겠다.
+                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
                 PutObjectRequest putObjectRequest = PutObjectRequest
                         .builder()
                         .bucket(bucket)
@@ -88,11 +95,10 @@ public class BoardService {
                 PutObjectResponse putObjectResponse
                         = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
 
-                String S3Path // a에서 값을 꺼내는 것. filename으로 찾아와라.  그럼 파일이 저장되어있는 s3 경로가 S3Path 변수에 저장된다.
+                String S3Path
                         = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(fileName)).toExternalForm();
                 board.updateImagePath(S3Path);
             }
-
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장에 실패했습니다.");
         }
@@ -148,28 +154,78 @@ public class BoardService {
         boardRepository.save(board);
     }
 
+    @Transactional
     public int boardUpdateLikes(Long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+
+        String key = "board:" + id + ":likesOrDislikes";
+        String memberKey = "member:"+ member.getId() + ":likesOrDislikes:" + id;
+
+        Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
+        if(isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
+            throw new IllegalArgumentException("이미 좋아요를 누른 게시글입니다.");
+        }
+
+        boardRedisTemplate.opsForValue().set(memberKey,true);
+        boardRedisTemplate.opsForSet().add(key, member.getId());
         board.updateLikes();
-//        board.updateLikes(member.getEmail());
-        boardRepository.save(board);
-        notificationService.notifyLikeBoard(board);
-//        return board.getLikeMembers().size();
+
         return board.getLikes();
+
     }
 
+
+    @Transactional
     public int boardUpdateDislikes(Long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
-//        board.updateDislikes(member.getEmail());
+
+        String key = "board:" + id + ":likesOrDislikes";
+        String memberKey = "member:"+ member.getId() + ":likesOrDislikes:" + id;
+
+        Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
+        if(isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
+            throw new IllegalArgumentException("이미 싫어요를 누른 게시글입니다.");
+        }
+
+        boardRedisTemplate.opsForValue().set(memberKey,true);
+        boardRedisTemplate.opsForSet().add(key, member.getId());
         board.updateDislikes();
-        boardRepository.save(board);
-//        return board.getDislikeMembers().size();
+
         return board.getDislikes();
+
     }
+
+
+
+
+//    public int boardUpdateLikes1(Long id) {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+//        Board board = boardRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+//        board.updateLikes();
+////        board.updateLikes(member.getEmail());
+//        boardRepository.save(board);
+//        notificationService.notifyLikeBoard(board);
+////        return board.getLikeMembers().size();
+//        return board.getLikes();
+//    }
+//
+//    public int boardUpdateDislikes1(Long id) {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+//        Board board = boardRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+////        board.updateDislikes(member.getEmail());
+//        board.updateDislikes();
+//        boardRepository.save(board);
+////        return board.getDislikeMembers().size();
+//        return board.getDislikes();
+//    }
 }
