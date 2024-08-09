@@ -19,7 +19,7 @@ import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
 import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationSaveDto;
-import com.E1i3.NoExit.domain.storeInfo.repository.StoreInfoRepository;
+import com.E1i3.NoExit.domain.store.repository.StoreInfoRepository;
 
 @Service
 public class OwnerService{

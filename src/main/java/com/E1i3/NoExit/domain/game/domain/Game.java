@@ -1,6 +1,8 @@
 package com.E1i3.NoExit.domain.game.domain;
 
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.store.domain.Store;
+
 import lombok.Data;
 
 import javax.persistence.*;
@@ -37,9 +39,9 @@ public class Game extends BaseTimeEntity {
     //@Column(name = "image_path", nullable = false)
     private String imagePath; // 사진 경로
 
-//    @ManyToOne
-//    @JoinColumn(name = "store_id")
-//    private Store store;
+   @ManyToOne
+   @JoinColumn(name = "store_id")
+   private Store store;
 //
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
 //    private List<Review> reviews;
