@@ -17,5 +17,5 @@ public class ReviewListDto {
     private String imagePath;
     private String content;
     private String memberNickname; // 작성자 닉네임
-    private Long gameId; // 게임 ID
+    private String gameName;
 }
