@@ -52,7 +52,7 @@ public class MailVerifyController {
 		if(response){
 			CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 성공", response);
 			return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-		}else {
+		}else{
 			CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST, "인증번호 불일치");
 			return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
 		}

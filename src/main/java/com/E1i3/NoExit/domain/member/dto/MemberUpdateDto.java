@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 public class MemberUpdateDto {
 	// 회원정보 수정
 	private String username;
-	private String password;
-	private String email;
+	// private String password;
+	// private String email;
 	private int age;
 	private String phone_number;
 	private String nickname;

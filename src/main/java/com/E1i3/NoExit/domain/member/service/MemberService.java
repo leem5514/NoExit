@@ -75,7 +75,9 @@ public class MemberService {
 
 	// 회원 삭제
 	@Transactional
-	public Member memberDelete(String email) {
+	public Member memberDelete() {
+		// 토큰을 통해 이메일 가져오기
+		String email = getEmailFromToken();
 		Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
 		return member.updateDelYN();
 	}
@@ -83,9 +85,11 @@ public class MemberService {
 	// 회원 정보 수정
 	@Transactional
 	public Member memberUpdate(MemberUpdateDto memberUpdateDto) {
-		Member member = memberRepository.findByEmail(memberUpdateDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
-		String encodedPassword = passwordEncoder.encode(memberUpdateDto.getPassword());
-		return member.updateMember(memberUpdateDto, encodedPassword);
+		// 이메일과 비밀번호는 바뀌지않음
+		String email = getEmailFromToken();
+		Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		String encodedPassword = passwordEncoder.encode(member.getPassword());
+		return member.updateMember(memberUpdateDto, email, encodedPassword);
 	}
 
 	// 로그인
