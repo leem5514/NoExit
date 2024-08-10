@@ -1,7 +1,7 @@
 package com.E1i3.NoExit.domain.owner.dto;
 
 import com.E1i3.NoExit.domain.owner.domain.Owner;
-import com.E1i3.NoExit.domain.storeInfo.domain.StoreInfo;
+import com.E1i3.NoExit.domain.store.domain.Store;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,8 +28,8 @@ public class OwnerSaveReqDto {
 			.build();
 	}
 
-	public StoreInfo toStoreInfoEntity() {
-		return StoreInfo.builder()
+	public Store toStoreInfoEntity() {
+		return Store.builder()
 			.storeName(this.storeName)
 			.storeRating(0)
 			.phoneNumber(this.phoneNumber)
