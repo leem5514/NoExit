@@ -33,6 +33,8 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final NotificationService notificationService;
+    private static final String COMMENT_PREFIX = "comment:";
+    private static final String MEMBER_PREFIX = "member:";
 
     @Autowired
     public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository,
@@ -125,8 +127,8 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
 
-        String key = "comment:" + id + ":likesOrDislikes";
-        String memberKey = "member:"+ member.getId() + ":likesOrDislikes:" + id;
+        String key = COMMENT_PREFIX + id + ":likesOrDislikes";
+        String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
 
         Boolean isAlreadyLikedOrDisliked = commentRedisTemplate.hasKey(memberKey);
         if(isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {

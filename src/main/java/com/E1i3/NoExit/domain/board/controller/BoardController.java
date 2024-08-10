@@ -18,6 +18,9 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @Api(tags="게시판 서비스")
@@ -33,9 +36,11 @@ public class BoardController {
 
     @Operation(summary= "게시글 작성")
     @PostMapping("/board/create") // 게시글 생성
-    public ResponseEntity<Object> boardCreate(@RequestBody BoardCreateReqDto dto) {
+    public ResponseEntity<Object> boardCreate(@RequestPart(value = "data") BoardCreateReqDto dto,
+                                              @RequestPart(value = "file") List<MultipartFile> imgFiles
+                                              ) {
         try {
-            Board board = boardService.boardCreate(dto);
+            Board board = boardService.boardCreate(dto, imgFiles);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "board is successfully created", board.getId());
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
         } catch(IllegalArgumentException e) {

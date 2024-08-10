@@ -1,14 +1,14 @@
 package com.E1i3.NoExit.domain.board.service;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
+import com.E1i3.NoExit.domain.board.domain.BoardImage;
 import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
-import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
-import com.E1i3.NoExit.domain.common.service.RedisService;
+import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
@@ -19,23 +19,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SetOperations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
-import javax.persistence.EntityNotFoundException;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
+import javax.persistence.*;
 import java.util.List;
 
 @Service
@@ -45,15 +34,17 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
-    private final S3Client s3Client;
+    private final S3Service s3Service;
+    private static final String BOARD_PREFIX = "board:";
+    private static final String MEMBER_PREFIX = "member:";
 
     @Autowired
     public BoardService(BoardRepository boardRepository, MemberRepository memberRepository,
-		NotificationService notificationService, S3Client s3Client) {
+		NotificationService notificationService, S3Service s3Service) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
 		this.notificationService = notificationService;
-        this.s3Client = s3Client;
+        this.s3Service = s3Service;
 	}
 
     @Autowired
@@ -65,45 +56,29 @@ public class BoardService {
     @Value("${cloud.aws.s3.folder.folderName5}")
     private String folder;
 
-    private static final String LIKE_PREFIX = "like:";
-    private static final String BOARD_PREFIX = "board:";
 
 
-
-    public Board boardCreate(BoardCreateReqDto dto) { // 게시글 생성
+    public Board boardCreate(BoardCreateReqDto dto, List<MultipartFile> imgFiles) { // 게시글 생성
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
 
-        List<MultipartFile> images = new ArrayList<>();
-        images = dto.getBoardImages();
-        Board board = null;
+        Board board = Board.builder()
+                .member(member)
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .boardType(dto.getBoardType())
+                .build();
 
-        try {
-            board = boardRepository.save(dto.toEntity(member));
-            for(MultipartFile img : images) {
-                byte[] bytes = img.getBytes();
-                String fileName = board.getId() + "_" + img.getOriginalFilename();
-                Path path = Paths.get("C:/Users/Playdata1/Desktop/temp/", fileName);
-
-                Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-                PutObjectRequest putObjectRequest = PutObjectRequest
-                        .builder()
-                        .bucket(bucket)
-                        .key(fileName)
-                        .build();
-
-                PutObjectResponse putObjectResponse
-                        = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
-
-                String S3Path
-                        = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(fileName)).toExternalForm();
-                board.updateImagePath(S3Path);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("이미지 저장에 실패했습니다.");
+        for(MultipartFile f : imgFiles) {
+            BoardImage img = BoardImage.builder()
+                    .board(board)
+                    .imageUrl(s3Service.uploadFile(f, "board"))
+                    .build();
+            board.getImgs().add(img);
         }
-        return board;
 
+        boardRepository.save(board);
+        return board;
     }
 
 
@@ -161,8 +136,9 @@ public class BoardService {
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
 
-        String key = "board:" + id + ":likesOrDislikes";
-        String memberKey = "member:"+ member.getId() + ":likesOrDislikes:" + id;
+        String key = BOARD_PREFIX + id + ":likesOrDislikes";
+        String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
+
 
         Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
         if(isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
