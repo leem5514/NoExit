@@ -1,14 +1,21 @@
 package com.E1i3.NoExit.domain.game.domain;
 
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
+import com.E1i3.NoExit.domain.game.dto.GameResDto;
 import com.E1i3.NoExit.domain.store.domain.Store;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Data
+@Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Game extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,13 +43,23 @@ public class Game extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private AgeLimit ageLimit; // 나이제한( 성인 / 미성년자 )
 
-    //@Column(name = "image_path", nullable = false)
+    @Column(name = "image_path", nullable = true)
     private String imagePath; // 사진 경로
 
-   @ManyToOne
-   @JoinColumn(name = "store_id")
-   private Store store;
+   // @ManyToOne
+   // @JoinColumn(name = "store_id")
+   // private Store store;
 //
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
 //    private List<Review> reviews;
+
+    public GameResDto fromEntity(){
+        return GameResDto.builder()
+            .gameName(this.gameName)
+            .difficult(this.difficult)
+            .price(this.price)
+            // .store(this.store)
+            .imagePath(this.imagePath)
+            .build();
+    }
 }

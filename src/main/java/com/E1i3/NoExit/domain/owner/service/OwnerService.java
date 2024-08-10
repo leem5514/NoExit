@@ -19,7 +19,7 @@ import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
 import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationSaveDto;
-import com.E1i3.NoExit.domain.store.repository.StoreInfoRepository;
+import com.E1i3.NoExit.domain.store.repository.StoreRepository;
 
 @Service
 public class OwnerService{
@@ -27,18 +27,18 @@ public class OwnerService{
 	private final OwnerRepository ownerRepository;
 	private final RedisService redisService;
 	private final PasswordEncoder passwordEncoder;
-	private final StoreInfoRepository storeInfoRepository;
+	private final StoreRepository storeRepository;
 
 
 	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
 
 	@Autowired
 	public OwnerService(OwnerRepository ownerRepository,
-		RedisService redisService, PasswordEncoder passwordEncoder, StoreInfoRepository storeInfoRepository) {
+		RedisService redisService, PasswordEncoder passwordEncoder, StoreRepository storeRepository) {
 		this.ownerRepository = ownerRepository;
 		this.redisService = redisService;
 		this.passwordEncoder = passwordEncoder;
-		this.storeInfoRepository = storeInfoRepository;
+		this.storeRepository = storeRepository;
 	}
 
 	@Transactional
