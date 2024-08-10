@@ -77,6 +77,7 @@ public class BoardService {
             board.getImgs().add(img);
         }
 
+
         boardRepository.save(board);
         return board;
     }
