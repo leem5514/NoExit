@@ -1,7 +1,5 @@
 package com.E1i3.NoExit.domain.comment.controller;
 
-import com.E1i3.NoExit.domain.board.domain.Board;
-import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentUpdateReqDto;
@@ -120,7 +118,7 @@ public class CommentController {
     @PatchMapping("/comment/dislike/{id}")
     public ResponseEntity<Object> commentDislike(@PathVariable Long id) {
         try {
-            int dislikes = commentService.commentUpdateDislikes(id);
+            int dislikes = commentService.commentUpdateDisikes(id);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this comment", dislikes);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {

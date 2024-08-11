@@ -13,8 +13,10 @@ import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,8 @@ public class CommentService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final NotificationService notificationService;
+    private static final String COMMENT_PREFIX = "comment:";
+    private static final String MEMBER_PREFIX = "member:";
 
     @Autowired
     public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository,
@@ -41,6 +45,10 @@ public class CommentService {
         this.notificationService = notificationService;
     }
 
+    @Autowired
+    @Qualifier("5")
+    private RedisTemplate<String, Object> commentRedisTemplate;
+
 
 
     public void commentCreate(CommentCreateReqDto dto) { // 댓굴 생성 보드아이디, 멤버아이디, 내용 받아옴
@@ -49,6 +57,9 @@ public class CommentService {
         Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
 
         Board board = boardRepository.findById(dto.getBoardId()).orElse(null); // 보드 아이디로 보드 조회
+        if(board.getDelYN().equals(DelYN.Y)) {
+            throw new IllegalArgumentException("이미 삭제된 게시글입니다.");
+        }
         Comment comment = Comment.builder()
                 .board(board)
 //                .memberId(member.getId())
@@ -109,6 +120,53 @@ public class CommentService {
     }
 
 
+    @Transactional
+    public int commentUpdateLikes(Long id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
+
+        String key = COMMENT_PREFIX + id + ":likesOrDislikes";
+        String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
+
+        Boolean isAlreadyLikedOrDisliked = commentRedisTemplate.hasKey(memberKey);
+        if(isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
+            throw new IllegalArgumentException("이미 좋아요를 누른 댓글입니다.");
+        }
+
+        commentRedisTemplate.opsForValue().set(memberKey,true);
+        commentRedisTemplate.opsForSet().add(key, member.getId());
+        comment.updateLikes();
+
+        return comment.getLikes();
+
+    }
+
+    @Transactional
+    public int commentUpdateDisikes(Long id) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
+
+        String key = "comment:" + id + ":likesOrDislikes";
+        String memberKey = "member:"+ member.getId() + ":likesOrDislikes:" + id;
+
+        Boolean isAlreadyLikedOrDisliked = commentRedisTemplate.hasKey(memberKey);
+        if(isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
+            throw new IllegalArgumentException("이미 싫어요를 누른 댓글입니다.");
+        }
+
+        commentRedisTemplate.opsForValue().set(memberKey,true);
+        commentRedisTemplate.opsForSet().add(key, member.getId());
+        comment.updateDislikes();
+
+        return comment.getDislikes();
+
+    }
+
+
 //    public int commentUpdateLikes(Long id) {
 //        Comment comment = commentRepository.findById(id)
 //                .orElseThrow(() -> new EntityNotFoundException("comment not found with id: " + id));
@@ -124,30 +182,30 @@ public class CommentService {
 //    }
 
 
-    public int commentUpdateLikes(Long id) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
-        comment.updateLikes();
-//        board.updateLikes(member.getEmail());gv
-        commentRepository.save(comment);
-//        return board.getLikeMembers().size();
-        notificationService.notifyLikeComment(comment);
-        return comment.getLikes();
-    }
-
-    public int commentUpdateDislikes(Long id) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
-        Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
-//        board.updateDislikes(member.getEmail());
-        comment.updateDislikes();
-        commentRepository.save(comment);
-//        return board.getDislikeMembers().size();
-        return comment.getDislikes();
-    }
+//    public int commentUpdateLikes(Long id) {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+//        Comment comment = commentRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
+//        comment.updateLikes();
+////        board.updateLikes(member.getEmail());gv
+//        commentRepository.save(comment);
+////        return board.getLikeMembers().size();
+//        notificationService.notifyLikeComment(comment);
+//        return comment.getLikes();
+//    }
+//
+//    public int commentUpdateDislikes(Long id) {
+//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+//        Comment comment = commentRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
+////        board.updateDislikes(member.getEmail());
+//        comment.updateDislikes();
+//        commentRepository.save(comment);
+////        return board.getDislikeMembers().size();
+//        return comment.getDislikes();
+//    }
 
 }
 
