@@ -108,6 +108,8 @@ public class Reservation extends BaseTimeEntity {
                 .resDate(this.resDate)
                 .resDateTime(this.resDateTime)
                 .reservationStatus(this.reservationStatus)
+                .gameName(this.game.getGameName())
+                .storeName(this.game.getStore().getStoreName())
                 .createdTime(this.createdAt.format(formatter))
                 .build();
     }

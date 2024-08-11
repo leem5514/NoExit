@@ -20,6 +20,8 @@ public class ReservationListResDto {
     private LocalDate resDate;
     private String resDateTime;
     private ReservationStatus reservationStatus;
+    private String gameName;
+    private String storeName;
 
 
     public static ReservationListResDto listFromEntity(Reservation reservation) {
@@ -30,6 +32,8 @@ public class ReservationListResDto {
                 .resDate(reservation.getResDate())
                 .resDateTime(reservation.getResDateTime())
                 .reservationStatus(reservation.getReservationStatus())
+                .gameName(reservation.getGame().getGameName())
+                .storeName(reservation.getGame().getStore().getStoreName())
                 .build();
     }
 }

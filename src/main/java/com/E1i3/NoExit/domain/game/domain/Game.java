@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 
 @Getter
@@ -46,10 +45,9 @@ public class Game extends BaseTimeEntity {
     @Column(name = "image_path", nullable = true)
     private String imagePath; // 사진 경로
 
-   // @ManyToOne
-   // @JoinColumn(name = "store_id")
-   // private Store store;
-//
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id", nullable = false)
+    private Store store; // StoreInfo와의 관계 설정
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
 //    private List<Review> reviews;
     public GameResDto fromEntity(){

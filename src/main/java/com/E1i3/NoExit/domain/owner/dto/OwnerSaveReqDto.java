@@ -28,7 +28,7 @@ public class OwnerSaveReqDto {
 			.build();
 	}
 
-	public Store toStoreEntity() {
+	public Store toStoreInfoEntity() {
 		return Store.builder()
 			.storeName(this.storeName)
 			.storeRating(0)
