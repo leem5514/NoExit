@@ -17,5 +17,5 @@ public class GameResDto {
 	private Difficult difficult; // 난이도
 	private int price;
 	private String imagePath; // 사진 경로
-	private Store store;
+	// private Store store;
 }

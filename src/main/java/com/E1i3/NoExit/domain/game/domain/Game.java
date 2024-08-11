@@ -27,7 +27,7 @@ public class Game extends BaseTimeEntity {
     @Column(nullable = false)
     private String runningTime; // 러닝 타임
 
-    //@Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private Difficult difficult; // 난이도
 
     // (수정) 인원수에 따른 가격 차이 有
@@ -52,7 +52,6 @@ public class Game extends BaseTimeEntity {
 //
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
 //    private List<Review> reviews;
-
     public GameResDto fromEntity(){
         return GameResDto.builder()
             .gameName(this.gameName)
