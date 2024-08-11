@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.review.dto;
 
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.review.domain.Review;
@@ -18,7 +19,6 @@ public class ReviewSaveDto {
     private String content;
 
     private int rating;
-
     private MultipartFile reviewImage;
     private Long memberId;
     private Long reservationId;

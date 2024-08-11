@@ -39,8 +39,8 @@ public class Board extends BaseTimeEntity {
 
     private int boardHits; // 조회수
 
-    private int likes;
-    private int dislikes;
+    private int likes; // 좋아요 수
+    private int dislikes; // 싫어요 수
 
 //    @Builder.Default
 //    private List<String> likeMembers = new ArrayList<>(); // 좋아요 누른 회원들
@@ -64,7 +64,6 @@ public class Board extends BaseTimeEntity {
     @Builder.Default
     private DelYN delYN = DelYN.N; // 삭제여부
 
-
     public BoardListResDto fromEntity(){
         BoardListResDto boardListResDto = BoardListResDto.builder()
                 .writer(this.member.getNickname())
@@ -87,9 +86,11 @@ public class Board extends BaseTimeEntity {
         List<Comment> comments = this.getComments();
         List<CommentListResDto> dtos = new ArrayList<>();
         for(Comment c : comments) {
+            if(c.getDelYN().equals(DelYN.Y)) {
+                continue;
+            }
             dtos.add(c.fromEntity());
         }
-
         BoardDetailResDto boardDetailResDto = BoardDetailResDto.builder()
                 .id(this.id)
                 .writer(this.member.getNickname()) //

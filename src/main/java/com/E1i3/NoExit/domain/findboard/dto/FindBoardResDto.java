@@ -20,6 +20,6 @@ public class FindBoardResDto {
     private LocalDateTime expirationTime;
     private int totalCapacity;
     private int currentCount;
-    private byte[] image;
+    private String imagePath;
 
 }

@@ -16,5 +16,4 @@ public interface FindBoardRepository extends JpaRepository<FindBoard, Long> {
     Page<FindBoard> findByDelYn(Pageable pageable, DelYN delYn);
     Optional<FindBoard> findByIdAndDelYn(Long id, DelYN delYn);
 
-
 }

@@ -16,11 +16,12 @@ import java.time.LocalDateTime;
 public class FindBoardSaveReqDto {
 
     private String title;
-    private String writer; // 추가된 필드
+    private String writer;
     private String contents;
     private LocalDateTime expirationTime;
+
     private int totalCapacity;
-    private byte[] image;
+    private String imagePath;
 
     public FindBoard toEntity(Member member) {
         return FindBoard.builder()
@@ -29,7 +30,7 @@ public class FindBoardSaveReqDto {
                 .contents(this.contents)
                 .expirationTime(this.expirationTime)
                 .totalCapacity(this.totalCapacity)
-                .image(this.image)
+                .imagePath(member.getProfileImage()) // 수정
                 .member(member)
                 .build();
     }
