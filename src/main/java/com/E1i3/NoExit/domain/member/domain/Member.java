@@ -17,6 +17,7 @@ import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.review.domain.Review;
+import com.E1i3.NoExit.domain.wishlist.domain.WishList;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +46,7 @@ public class Member extends BaseTimeEntity{
 
 	private int point;
 	private int age;
+	@Column(nullable = true)
 	private String profileImage;
 
 	@Enumerated(EnumType.STRING)
@@ -78,6 +80,9 @@ public class Member extends BaseTimeEntity{
 	// Member객체에 Findboard 객체 추가. : 김민성
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> findBoards;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+	private List<WishList> wishList;
 
 	// Grade와 연관 관계 추가 : 김민성
 	@OneToOne

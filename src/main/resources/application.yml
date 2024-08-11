@@ -67,7 +67,7 @@ cloud:
         folderName2: review/
         folderName3: game/
         folderName4: storeInfo/
-
+        folderName5: board/
     stack:
       auto: false
 #logging:

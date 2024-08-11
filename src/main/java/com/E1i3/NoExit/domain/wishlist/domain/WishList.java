@@ -1,7 +1,8 @@
 package com.E1i3.NoExit.domain.wishlist.domain;
 
-import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
+import com.E1i3.NoExit.domain.member.domain.Member;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,9 +23,13 @@ public class WishList {
 
     private Long gameId;
 
-    private Long memberId;
+    // private Long memberId;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private DelYN delYN = DelYN.N;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }
