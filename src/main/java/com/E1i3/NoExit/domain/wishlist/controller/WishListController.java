@@ -35,6 +35,6 @@ public class WishListController {
 	@GetMapping("/wishlist")
 	public ResponseEntity<?> getWishList() {
 		List<GameResDto> gemeList = wishListService.getWishList();
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "위시리스트에 추가 성공", gemeList), HttpStatus.OK);
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "위시리스트에 조회 성공", gemeList), HttpStatus.OK);
 	}
 }

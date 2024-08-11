@@ -55,8 +55,8 @@ public class WishListService {
 
 		return wishLists.stream()
 			.map(wishList -> gameRepository.findById(wishList.getGameId())
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 정보가 존재하지 않습니다."))) // 게임 정보 조회
-			.map(Game::fromEntity) // Game 객체를 GameResDto로 변환
+				.orElseThrow(() -> new EntityNotFoundException("일치하는 정보가 존재하지 않습니다.")))
+			.map(Game::fromEntity)
 			.collect(Collectors.toList());
 	}
 }
