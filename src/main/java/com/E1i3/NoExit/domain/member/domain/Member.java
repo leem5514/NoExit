@@ -89,8 +89,9 @@ public class Member extends BaseTimeEntity{
 	@JoinColumn(name = "grade_id", unique = true)
 	private Grade grade;
 
-	public Member updateMember(MemberUpdateDto dto, String encodedPassword) {
+	public Member updateMember(MemberUpdateDto dto, String email, String encodedPassword) {
 		this.username = dto.getUsername();
+		this.email = email;
 		this.password =  encodedPassword;
 		this.age = dto.getAge();
 		this.phone_number = dto.getPhone_number();
@@ -122,7 +123,8 @@ public class Member extends BaseTimeEntity{
 			.username(this.username)
 			.nickname(this.nickname)
 			.email(this.email)
-			.phoneNumber(this.phone_number)
+			.age(this.age)
+			.phone_number(this.phone_number)
 			.build();
 	}
 
