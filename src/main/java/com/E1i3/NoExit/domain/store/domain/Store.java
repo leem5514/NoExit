@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.storeInfo.domain;
+package com.E1i3.NoExit.domain.store.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class StoreInfo {
+public class Store {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
