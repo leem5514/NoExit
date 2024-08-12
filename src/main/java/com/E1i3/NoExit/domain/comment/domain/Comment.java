@@ -45,12 +45,9 @@ public class Comment extends BaseTimeEntity {
 
     private String content; // 댓글 내용
 
-    private int likes; // 좋아요 // 엔티티에서는 삭제하고 dto에만 likeMembers size로
-    private int dislikes; // 싫어요 // like와 이하동문
-//    @Builder.Default
-//    private List<Member> likeMembers = new ArrayList<>(); // 좋아요 누른 회원들
-//    @Builder.Default
-//    private List<Member> dislikeMembers = new ArrayList<>(); // 싫어요 누른 회원들
+    private int likes; // 좋아요
+    private int dislikes; // 싫어요
+
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
