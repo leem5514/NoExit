@@ -29,7 +29,7 @@ public class GameController {
 		List<GameResDto> games = gameService.gameList();
 		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
 	}
-	@GetMapping("/game/{id}")
+	@GetMapping("/game/detail/{id}")
 	@Operation(summary = "게임 상세 정보 조회 API")
 	public ResponseEntity<CommonResDto> getGameDetail(@PathVariable Long id) {
 		GameDetailResDto gameDetailResDto = gameService.getGameDetail(id);

@@ -115,6 +115,13 @@ public class ReviewService {
         }
         return review;
     }
+    /* 게임 아이디를 통한 리뷰 리스트(전체사용자 기준 gameId 별) */
+    public Page<ReviewListDto> getReviewsByGameId(Long gameId, Pageable pageable) {
+        Page<Review> reviews = reviewRepository.findByReservation_GameIdAndDelYN(gameId, DelYN.N, pageable);
+        // 로그를 통해 반환된 리뷰의 내용을 확인합니다.
+        reviews.forEach(review -> System.out.println("Review ID: " + review.getId() + ", Game ID: " + review.getReservation().getGame().getId()));
+        return reviews.map(Review::fromEntity);
+    }
 
     /* 리뷰 리스트(전체 사용자 기준 전체 리스트) */
     public Page<ReviewListDto> pageReview(Pageable pageable) {
