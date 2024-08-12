@@ -9,6 +9,7 @@ import com.E1i3.NoExit.domain.reservation.repository.ReservationRepository;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.E1i3.NoExit.domain.review.dto.ReviewListDto;
 import com.E1i3.NoExit.domain.review.dto.ReviewSaveDto;
+import com.E1i3.NoExit.domain.review.dto.ReviewUpdateDto;
 import com.E1i3.NoExit.domain.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,9 +79,9 @@ public class ReviewService {
         }
 
         // 예약 상태가 ACCEPT인 후 일주일이 지났는지 확인
-        if (reservation.getResDate().isAfter(LocalDate.now().minusWeeks(1))) {
-            throw new IllegalStateException("리뷰는 예약 상태가 ACCEPT된 후 일주일이 지난 후에만 작성할 수 있습니다.");
-        }
+//        if (reservation.getResDate().isAfter(LocalDate.now().minusWeeks(1))) {
+//            throw new IllegalStateException("리뷰는 예약 상태가 ACCEPT된 후 일주일이 지난 후에만 작성할 수 있습니다.");
+//        }
 
         if (reviewRepository.findByReservationAndDelYN(reservation, DelYN.N).isPresent()) {
             throw new IllegalStateException("이미 작성된 리뷰가 있습니다.");
@@ -132,6 +133,7 @@ public class ReviewService {
         return reviews.map(Review::fromEntity);
     }
 
+    /* 리뷰 삭제 */
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public Review cancelReview(Long reviewId) {
