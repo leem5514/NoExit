@@ -46,9 +46,9 @@ public class Game extends BaseTimeEntity {
     @Column(name = "image_path", nullable = true)
     private String imagePath; // 사진 경로
 
-   // @ManyToOne
-   // @JoinColumn(name = "store_id")
-   // private Store store;
+   @ManyToOne
+   @JoinColumn(name = "store_id")
+   private Store store;
 //
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
 //    private List<Review> reviews;
