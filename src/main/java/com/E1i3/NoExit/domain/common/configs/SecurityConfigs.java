@@ -39,7 +39,8 @@ public class SecurityConfigs {
 						"/swagger-resources/**",
 						"/swagger-ui.html",
 						"/v2/api-docs",
-						"/webjars/**"
+						"/webjars/**",
+						"/board/list", "board/detail/**"
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.anyRequest().authenticated()
