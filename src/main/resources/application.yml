@@ -70,3 +70,8 @@ cloud:
         folderName5: board/
     stack:
       auto: false
+#logging:
+#  level:
+#    root: DEBUG
+#  org:
+#    springframework: DEBUG

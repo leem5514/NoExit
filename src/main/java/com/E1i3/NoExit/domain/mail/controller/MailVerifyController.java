@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import com.E1i3.NoExit.domain.mail.service.MailVerifyService;
 import com.E1i3.NoExit.domain.member.domain.Member;
@@ -45,10 +46,16 @@ public class MailVerifyController {
 	// 인증번호 검증 요청
 	@Operation(summary= "[인증번호 인증] 인증 번호 검증 API")
 	@GetMapping("/requestCode")
-	public ResponseEntity<CommonResDto> verificationEmail(@RequestParam("email") @Valid String email,
+	public ResponseEntity<?> verificationEmail(@RequestParam("email") @Valid String email,
 		@RequestParam("code") String authCode) {
 		boolean response = mailVerifyService.verifiedCode(email, authCode);	// 레디스의 정보와 입력한 정보를 비교
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 성공", response);
-		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+		if(response){
+			CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 성공", response);
+			return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+		}else{
+			CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST, "인증번호 불일치");
+			return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
+		}
+
 	}
 }

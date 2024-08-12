@@ -71,7 +71,7 @@ public class MemberController {
 	@Operation(summary= "[일반 사용자] 사용자 탈퇴 API")
 	@PostMapping("/member/delete")
 	public ResponseEntity<CommonResDto> deleteMember(@RequestBody MemberUpdateDto dto) {
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  memberService.memberDelete(dto.getEmail()).getId());
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  memberService.memberDelete());
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
@@ -80,7 +80,7 @@ public class MemberController {
 	@GetMapping("/member/myInfo")
 	public ResponseEntity<Object> myInfo() {
 		MemberDetResDto member = memberService.myInfo();
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "member List", member), HttpStatus.OK);
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "회원 정보 상세 조회", member), HttpStatus.OK);
 	}
 
 	@Operation(summary= "[사용자] 로그인 API")
