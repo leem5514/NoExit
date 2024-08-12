@@ -48,8 +48,32 @@ public class ReviewController {
 
     @GetMapping("/review/all")
     @Operation(summary = "[전체 사용자] 리뷰 목록 조회 API")
-    public ResponseEntity<CommonResDto> getReviews(@PageableDefault(size = 10, page = 0) Pageable pageable) {
-        Page<ReviewListDto> reviews = reviewService.pageReview(pageable);
+    public ResponseEntity<CommonResDto> getReviews(
+            @RequestParam(required = false) Long gameId, // 게임 ID를 쿼리 파라미터로 받음
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+
+        Page<ReviewListDto> reviews;
+
+        if (gameId != null) {
+            // 특정 게임 ID가 주어졌을 때 해당 게임의 리뷰만 조회
+            reviews = reviewService.getReviewsByGameId(gameId, pageable);
+        } else {
+            // 게임 ID가 없으면 모든 리뷰 조회
+            reviews = reviewService.pageReview(pageable);
+        }
+
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "리뷰 목록 조회가 완료되었습니다.", reviews);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/review/all/{gameId}")
+    @Operation(summary = "[전체 사용자] 특정 게임 리뷰 목록 조회 API")
+    public ResponseEntity<CommonResDto> getReviewsByGameId(
+            @PathVariable Long gameId, // 경로 변수로 게임 ID를 받음
+            @PageableDefault(size = 10, page = 0) Pageable pageable) {
+
+        Page<ReviewListDto> reviews = reviewService.getReviewsByGameId(gameId, pageable);
+
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "리뷰 목록 조회가 완료되었습니다.", reviews);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
