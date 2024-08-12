@@ -2,10 +2,13 @@ package com.E1i3.NoExit.domain.game.controller;
 
 import java.util.List;
 
+import com.E1i3.NoExit.domain.game.dto.GameDetailResDto;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
@@ -26,5 +29,11 @@ public class GameController {
 		List<GameResDto> games = gameService.gameList();
 		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
 	}
-
+	@GetMapping("/game/{id}")
+	@Operation(summary = "게임 상세 정보 조회 API")
+	public ResponseEntity<CommonResDto> getGameDetail(@PathVariable Long id) {
+		GameDetailResDto gameDetailResDto = gameService.getGameDetail(id);
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "게임 상세 조회 완료", gameDetailResDto);
+		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+	}
 }
