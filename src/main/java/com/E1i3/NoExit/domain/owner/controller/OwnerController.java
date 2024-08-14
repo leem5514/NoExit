@@ -43,7 +43,7 @@ public class OwnerController {
 	@PostMapping("/create")
 	public ResponseEntity<CommonResDto> ownerCreate(@RequestPart(value = "data") OwnerSaveReqDto dto, @RequestPart(value = "file") MultipartFile imgFile) {
 	// public ResponseEntity<CommonResDto> ownerCreate(@RequestBody OwnerSaveReqDto dto) {
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "점주 회원가입 성공", ownerService.ownerCreate(dto).getId());
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "점주 회원가입 성공", ownerService.ownerCreate(dto, imgFile).getId());
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
