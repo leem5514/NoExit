@@ -58,20 +58,16 @@ public class CommentService {
         if(board.getDelYN().equals(DelYN.Y)) {
             throw new IllegalArgumentException("이미 삭제된 게시글입니다.");
         }
-        System.out.println("4 ok");
 
         Comment comment = Comment.builder()
                 .board(board)
                 .member(member)
                 .content(dto.getContent())
                 .build();
-        System.out.println("5 ok");
 
         board.getComments().add(comment); // 게시글 댓글 목록에 추가
-        System.out.println("6 ok");
 
         commentRepository.save(comment);
-        System.out.println("7 ok");
 
 //        notificationService.notifyComment(board, dto);  // 댓글 작성 시 게시글 작성자에게 알림
     }

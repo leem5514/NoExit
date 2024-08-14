@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
+import com.E1i3.NoExit.domain.board.repository.BoardImageRepository;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.common.service.S3Service;
@@ -35,17 +36,19 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
     private final S3Service s3Service;
+    private final BoardImageRepository boardImageRepository;
     private static final String BOARD_PREFIX = "board:";
     private static final String MEMBER_PREFIX = "member:";
 
     @Autowired
     public BoardService(BoardRepository boardRepository, MemberRepository memberRepository,
-		NotificationService notificationService, S3Service s3Service) {
+		NotificationService notificationService, S3Service s3Service, BoardImageRepository boardImageRepository) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
-		this.notificationService = notificationService;
+        this.notificationService = notificationService;
         this.s3Service = s3Service;
-	}
+        this.boardImageRepository = boardImageRepository;
+    }
 
     @Autowired
     @Qualifier("4")
@@ -60,7 +63,7 @@ public class BoardService {
 
     public Board boardCreate(BoardCreateReqDto dto, List<MultipartFile> imgFiles) { // 게시글 생성
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("없는 회원입니다."));
 
         Board board = Board.builder()
                 .member(member)
@@ -69,18 +72,22 @@ public class BoardService {
                 .boardType(dto.getBoardType())
                 .build();
 
-        for(MultipartFile f : imgFiles) {
-            BoardImage img = BoardImage.builder()
-                    .board(board)
-                    .imageUrl(s3Service.uploadFile(f, "board"))
-                    .build();
-            board.getImgs().add(img);
+        // 파일이 있는 경우 처리
+        if (imgFiles != null && !imgFiles.isEmpty()) {
+            for (MultipartFile f : imgFiles) {
+                BoardImage img = BoardImage.builder()
+                        .board(board)
+                        .imageUrl(s3Service.uploadFile(f, "board"))
+                        .build();
+                board.getImgs().add(img);
+                boardImageRepository.save(img);
+            }
         }
-
-
         boardRepository.save(board);
         return board;
     }
+
+
 
 
     public Page<BoardListResDto> boardList(Pageable pageable) { // 게시글 전체 조회
@@ -192,70 +199,5 @@ public class BoardService {
 
         return board.getDislikes();
     }
-
-//    @Transactional
-//    public int boardUpdateLikes(Long id) {
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Member member = memberRepository.findByEmail(email)
-//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
-//
-//        Board board = boardRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
-//
-//        String key = BOARD_PREFIX + id + ":likesOrDislikes";
-//        String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
-//
-//        Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
-//
-//        if (isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
-//            // If already liked, remove the like and update Redis and the board
-//            boardRedisTemplate.delete(memberKey);
-//            boardRedisTemplate.opsForSet().remove(key, member.getId());
-//            board.updateLikes(true);
-//        } else {
-//            // If not liked yet, add the like and update Redis and the board
-//            boardRedisTemplate.opsForValue().set(memberKey, true);
-//            boardRedisTemplate.opsForSet().add(key, member.getId());
-//            board.updateLikes(false);
-//        }
-//
-//        // Save the board with the updated likes count
-//        boardRepository.save(board);
-//
-//        // Return the updated likes count
-//        return board.getLikes();
-//    }
-//
-//
-//    @Transactional
-//    public int boardUpdateDislikes(Long id) {
-//
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Member member = memberRepository.findByEmail(email)
-//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
-//
-//        Board board = boardRepository.findById(id)
-//                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
-//
-//        String key = BOARD_PREFIX + id + ":likesOrDislikes";
-//        String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
-//
-//        Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
-//
-//        if (isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
-//
-//            boardRedisTemplate.delete(memberKey);
-//            boardRedisTemplate.opsForSet().remove(key, member.getId());
-//            board.updateDislikes(true);
-//        } else {
-//            boardRedisTemplate.opsForValue().set(memberKey, true);
-//            boardRedisTemplate.opsForSet().add(key, member.getId());
-//            board.updateDislikes(false);
-//        }
-//
-//        boardRepository.save(board);
-//
-//        return board.getDislikes();
-//    }
 
 }

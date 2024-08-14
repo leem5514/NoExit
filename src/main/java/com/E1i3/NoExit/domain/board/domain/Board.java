@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.board.domain;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
+import com.E1i3.NoExit.domain.board.dto.BoardImageDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.comment.domain.Comment;
@@ -60,19 +61,30 @@ public class Board extends BaseTimeEntity {
     private DelYN delYN = DelYN.N; // 삭제여부
 
     public BoardListResDto fromEntity(){
-        BoardListResDto boardListResDto = BoardListResDto.builder()
-                .id(this.id)
-                .writer(this.member.getNickname())
-                .title(this.title)
-                .boardHits(this.boardHits)
-                .likes(this.likes)
-                .dislikes(this.dislikes)
-                .comments(this.comments.size())
-                .thumbnail(this.imgs.get(0).getImageUrl())
-                .boardType(this.boardType)
-                .build();
-
-        return boardListResDto;
+        if (this.imgs != null && !this.imgs.isEmpty()) {
+            return BoardListResDto.builder()
+                    .id(this.id)
+                    .writer(this.member.getNickname())
+                    .title(this.title)
+                    .boardHits(this.boardHits)
+                    .likes(this.likes)
+                    .dislikes(this.dislikes)
+                    .comments(this.comments.size())
+                    .thumbnail(this.imgs.get(0).getImageUrl())
+                    .boardType(this.boardType)
+                    .build();
+        }else{
+            return BoardListResDto.builder()
+                    .id(this.id)
+                    .writer(this.member.getNickname())
+                    .title(this.title)
+                    .boardHits(this.boardHits)
+                    .likes(this.likes)
+                    .dislikes(this.dislikes)
+                    .comments(this.comments.size())
+                    .boardType(this.boardType)
+                    .build();
+        }
     }
 
 
@@ -80,13 +92,21 @@ public class Board extends BaseTimeEntity {
     public BoardDetailResDto detailFromEntity(){
 
         List<Comment> comments = this.getComments();
-        List<CommentListResDto> dtos = new ArrayList<>();
+        List<CommentListResDto> cDtos = new ArrayList<>();
         for(Comment c : comments) {
             if(c.getDelYN().equals(DelYN.Y)) {
                 continue;
             }
-            dtos.add(c.fromEntity());
+            cDtos.add(c.fromEntity());
         }
+
+        List<BoardImage> images = this.getImgs();
+        List<BoardImageDto> iDtos = new ArrayList<>();
+        for(BoardImage i : images) {
+
+            iDtos.add(i.fromEntity());
+        }
+
         BoardDetailResDto boardDetailResDto = BoardDetailResDto.builder()
                 .id(this.id)
                 .writer(this.member.getNickname()) //
@@ -96,7 +116,8 @@ public class Board extends BaseTimeEntity {
                 .likes(this.likes)
                 .dislikes(this.dislikes)
                 .boardType(this.boardType)
-                .comments(dtos)
+                .comments(cDtos)
+                .images(iDtos)
                 .createdDate(this.getCreatedTime().toLocalDate())
                 .build();
 

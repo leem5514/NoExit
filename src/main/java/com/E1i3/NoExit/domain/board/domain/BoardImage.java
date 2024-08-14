@@ -1,5 +1,7 @@
 package com.E1i3.NoExit.domain.board.domain;
 
+import com.E1i3.NoExit.domain.board.dto.BoardImageDto;
+import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,4 +21,11 @@ public class BoardImage {
     private Board board;
 
     private String imageUrl;
+
+    public BoardImageDto fromEntity(){
+        BoardImageDto dto = BoardImageDto.builder()
+                .imageUrl(this.imageUrl)
+                .build();
+        return dto;
+    }
 }

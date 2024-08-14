@@ -37,7 +37,7 @@ public class BoardController {
     @Operation(summary= "게시글 작성")
     @PostMapping("/board/create") // 게시글 생성
     public ResponseEntity<Object> boardCreate(@RequestPart(value = "data") BoardCreateReqDto dto,
-                                              @RequestPart(value = "file") List<MultipartFile> imgFiles
+                                              @RequestPart(value = "file", required = false) List<MultipartFile> imgFiles
                                               ) {
         try {
             Board board = boardService.boardCreate(dto, imgFiles);
@@ -49,7 +49,6 @@ public class BoardController {
             return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
         }
     }
-
 
 
 
