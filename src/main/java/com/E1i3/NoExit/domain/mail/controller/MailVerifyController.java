@@ -50,10 +50,10 @@ public class MailVerifyController {
 		@RequestParam("code") String authCode) {
 		boolean response = mailVerifyService.verifiedCode(email, authCode);	// 레디스의 정보와 입력한 정보를 비교
 		if(response){
-			CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 성공", response);
+			CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증을 성공하였습니다", response);
 			return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 		}else{
-			CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST, "인증번호 불일치");
+			CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST, "인증번호가 일치하지 않습니다.");
 			return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
 		}
 

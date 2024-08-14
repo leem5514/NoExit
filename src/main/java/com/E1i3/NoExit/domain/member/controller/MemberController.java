@@ -92,6 +92,8 @@ public class MemberController {
 		if (user instanceof Member) {
 			Member member = (Member) user;
 			String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
+			String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole().toString());
+
 			notificationService.subscribe(Role.USER);
 			loginInfo.put("id", member.getId());
 			loginInfo.put("token", jwtToken);
@@ -99,6 +101,8 @@ public class MemberController {
 		} else if (user instanceof Owner) {
 			Owner owner = (Owner) user;
 			String jwtToken = jwtTokenProvider.createToken(owner.getEmail(), owner.getRole().toString());
+			String refreshToken = jwtTokenProvider.createRefreshToken(owner.getEmail(), owner.getRole().toString());
+
 			notificationService.subscribe(Role.OWNER);
 			loginInfo.put("id", owner.getId());
 			loginInfo.put("token", jwtToken);

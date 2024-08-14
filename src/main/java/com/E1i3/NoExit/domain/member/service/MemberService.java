@@ -36,7 +36,7 @@ public class MemberService {
 	private final S3Service s3Service;
 	private final PasswordEncoder passwordEncoder;
 
-	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
+	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE : ";
 	private final OwnerRepository ownerRepository;
 
 	@Autowired

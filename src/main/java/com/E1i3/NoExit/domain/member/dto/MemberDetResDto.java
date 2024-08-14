@@ -16,5 +16,6 @@ public class MemberDetResDto {
 	private String email;
 	private String phone_number;
 	private String nickname;
+	private String profile_image;
 	private int age;
 }

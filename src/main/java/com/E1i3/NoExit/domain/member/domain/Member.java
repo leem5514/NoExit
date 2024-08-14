@@ -86,7 +86,7 @@ public class Member extends BaseTimeEntity{
 
 	// Grade와 연관 관계 추가 : 김민성
 	@OneToOne
-	@JoinColumn(name = "grade_id", unique = true)
+	@JoinColumn(name = "grade_id")
 	private Grade grade;
 
 	public Member updateMember(MemberUpdateDto dto, String email, String encodedPassword) {
@@ -125,6 +125,7 @@ public class Member extends BaseTimeEntity{
 			.email(this.email)
 			.age(this.age)
 			.phone_number(this.phone_number)
+			.profile_image(this.profileImage)
 			.build();
 	}
 

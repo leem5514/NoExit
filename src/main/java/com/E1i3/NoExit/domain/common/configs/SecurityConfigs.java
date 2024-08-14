@@ -29,7 +29,7 @@ public class SecurityConfigs {
 				.httpBasic().disable()
 				.authorizeRequests()
 				.antMatchers(
-						"/email/requestCode",
+						"/email/**",
 						"/",
 					// 	게시글, 후기 조회하는 페이지는 모두 로그인하지 않아도 가능하도록
 						"/doLogin","/owner/create", "/game/list",
