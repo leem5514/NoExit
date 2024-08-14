@@ -56,12 +56,11 @@ public class Comment extends BaseTimeEntity {
 
     public CommentListResDto fromEntity(){
         CommentListResDto commentListResDto = CommentListResDto.builder()
-                .memberId(this.member.getId())
+                .writer(this.member.getNickname())
                 .content(this.content)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
                 .createdTime(this.getCreatedTime())
-                .updatedTime(this.getUpdateTime())
                 .build();
 
         return commentListResDto;

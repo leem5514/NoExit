@@ -39,6 +39,8 @@ public class SecurityConfigs {
 						"/swagger-ui.html",
 						"/v2/api-docs",
 						"/webjars/**",
+						"/board/list", "/board/detail/**",
+						"/webjars/**",
 						//웹소켓 test 403 해결
 						"/ws/chat/**",
 						"/chat/**",

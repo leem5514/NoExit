@@ -65,7 +65,7 @@ public class BoardService {
         Board board = Board.builder()
                 .member(member)
                 .title(dto.getTitle())
-                .content(dto.getContent())
+                .contents(dto.getContents())
                 .boardType(dto.getBoardType())
                 .build();
 
@@ -130,79 +130,132 @@ public class BoardService {
         boardRepository.save(board);
     }
 
+
     @Transactional
     public int boardUpdateLikes(Long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
 
-        String key = BOARD_PREFIX + id + ":likesOrDislikes";
-        String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
+        String likesKey = BOARD_PREFIX + id + ":likes";
+        String memberLikesKey = MEMBER_PREFIX + member.getId() + ":likes:" + id;
 
+        Boolean isLiked = boardRedisTemplate.hasKey(memberLikesKey);
 
-        Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
-        if(isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
-            throw new IllegalArgumentException("이미 좋아요를 누른 게시글입니다.");
+        if (isLiked != null && isLiked) {
+            // If already liked, remove the like
+            boardRedisTemplate.delete(memberLikesKey);
+            boardRedisTemplate.opsForSet().remove(likesKey, member.getId());
+            board.updateLikes(false);
+        } else {
+            // If not liked yet, add the like
+            boardRedisTemplate.opsForValue().set(memberLikesKey, true);
+            boardRedisTemplate.opsForSet().add(likesKey, member.getId());
+            board.updateLikes(true);
         }
 
-        boardRedisTemplate.opsForValue().set(memberKey,true);
-        boardRedisTemplate.opsForSet().add(key, member.getId());
-        board.updateLikes();
+        boardRepository.save(board);
 
         return board.getLikes();
-
     }
-
 
     @Transactional
     public int boardUpdateDislikes(Long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
 
-        String key = "board:" + id + ":likesOrDislikes";
-        String memberKey = "member:"+ member.getId() + ":likesOrDislikes:" + id;
+        String dislikesKey = BOARD_PREFIX + id + ":dislikes";
+        String memberDislikesKey = MEMBER_PREFIX + member.getId() + ":dislikes:" + id;
 
-        Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
-        if(isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
-            throw new IllegalArgumentException("이미 싫어요를 누른 게시글입니다.");
+        Boolean isDisliked = boardRedisTemplate.hasKey(memberDislikesKey);
+
+        if (isDisliked != null && isDisliked) {
+            // If already disliked, remove the dislike
+            boardRedisTemplate.delete(memberDislikesKey);
+            boardRedisTemplate.opsForSet().remove(dislikesKey, member.getId());
+            board.updateDislikes(false);
+        } else {
+            // If not disliked yet, add the dislike
+            boardRedisTemplate.opsForValue().set(memberDislikesKey, true);
+            boardRedisTemplate.opsForSet().add(dislikesKey, member.getId());
+            board.updateDislikes(true);
         }
 
-        boardRedisTemplate.opsForValue().set(memberKey,true);
-        boardRedisTemplate.opsForSet().add(key, member.getId());
-        board.updateDislikes();
+        boardRepository.save(board);
 
         return board.getDislikes();
-
     }
 
-
-
-
-//    public int boardUpdateLikes1(Long id) {
+//    @Transactional
+//    public int boardUpdateLikes(Long id) {
 //        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+//        Member member = memberRepository.findByEmail(email)
+//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+//
 //        Board board = boardRepository.findById(id)
 //                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
-//        board.updateLikes();
-////        board.updateLikes(member.getEmail());
+//
+//        String key = BOARD_PREFIX + id + ":likesOrDislikes";
+//        String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
+//
+//        Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
+//
+//        if (isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
+//            // If already liked, remove the like and update Redis and the board
+//            boardRedisTemplate.delete(memberKey);
+//            boardRedisTemplate.opsForSet().remove(key, member.getId());
+//            board.updateLikes(true);
+//        } else {
+//            // If not liked yet, add the like and update Redis and the board
+//            boardRedisTemplate.opsForValue().set(memberKey, true);
+//            boardRedisTemplate.opsForSet().add(key, member.getId());
+//            board.updateLikes(false);
+//        }
+//
+//        // Save the board with the updated likes count
 //        boardRepository.save(board);
-//        notificationService.notifyLikeBoard(board);
-////        return board.getLikeMembers().size();
+//
+//        // Return the updated likes count
 //        return board.getLikes();
 //    }
 //
-//    public int boardUpdateDislikes1(Long id) {
+//
+//    @Transactional
+//    public int boardUpdateDislikes(Long id) {
+//
 //        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+//        Member member = memberRepository.findByEmail(email)
+//                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+//
 //        Board board = boardRepository.findById(id)
 //                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
-////        board.updateDislikes(member.getEmail());
-//        board.updateDislikes();
+//
+//        String key = BOARD_PREFIX + id + ":likesOrDislikes";
+//        String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
+//
+//        Boolean isAlreadyLikedOrDisliked = boardRedisTemplate.hasKey(memberKey);
+//
+//        if (isAlreadyLikedOrDisliked != null && isAlreadyLikedOrDisliked) {
+//
+//            boardRedisTemplate.delete(memberKey);
+//            boardRedisTemplate.opsForSet().remove(key, member.getId());
+//            board.updateDislikes(true);
+//        } else {
+//            boardRedisTemplate.opsForValue().set(memberKey, true);
+//            boardRedisTemplate.opsForSet().add(key, member.getId());
+//            board.updateDislikes(false);
+//        }
+//
 //        boardRepository.save(board);
-////        return board.getDislikeMembers().size();
+//
 //        return board.getDislikes();
 //    }
+
 }
