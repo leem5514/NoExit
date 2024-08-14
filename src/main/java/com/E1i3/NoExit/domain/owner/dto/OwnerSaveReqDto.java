@@ -18,13 +18,14 @@ public class OwnerSaveReqDto {
 	private String email;
 	private String phoneNumber;
 
-	public Owner toEntity(String encodedPassword){
+	public Owner toEntity(String encodedPassword, String imageUrl){
 		return Owner.builder()
 			.username(this.username)
 			.password(encodedPassword)
 			.storeName(this.storeName)
 			.email(this.email)
 			.phoneNumber(this.phoneNumber)
+			.profileImage(imageUrl)
 			.build();
 	}
 
