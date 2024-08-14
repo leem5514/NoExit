@@ -75,8 +75,8 @@ public class FindBoard extends BaseTimeEntity {
                 .build();
     }
 
-    //생각해보니까 FindBoard에는 리스트만 잇으면 되지않나? 어차피 글 안에 들어가는게 아니잖아
-    //ResDto도 필요없을 것 같은데.. 생각해보길 바람.
+//    //생각해보니까 FindBoard에는 리스트만 잇으면 되지않나? 어차피 글 안에 들어가는게 아니잖아
+//    //ResDto도 필요없을 것 같은데.. 생각해보길 바람.
     public FindBoardListResDto listFromEntity(){
         return FindBoardListResDto.builder()
                 .member_id(this.member.getId()) // 작성자 ID 추가
