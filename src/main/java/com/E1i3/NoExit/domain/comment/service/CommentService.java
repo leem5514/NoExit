@@ -21,10 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
-import java.util.Iterator;
 
 @Service
 @Transactional
@@ -56,20 +53,27 @@ public class CommentService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
 
-        Board board = boardRepository.findById(dto.getBoardId()).orElse(null); // 보드 아이디로 보드 조회
+        Board board = boardRepository.findById(dto.getBoardId()).orElseThrow(()-> new EntityNotFoundException("게시글을 찾을 수 없습니다.")); // 보드 아이디로 보드 조회
+
         if(board.getDelYN().equals(DelYN.Y)) {
             throw new IllegalArgumentException("이미 삭제된 게시글입니다.");
         }
+        System.out.println("4 ok");
+
         Comment comment = Comment.builder()
                 .board(board)
-//                .memberId(member.getId())
                 .member(member)
                 .content(dto.getContent())
                 .build();
+        System.out.println("5 ok");
 
         board.getComments().add(comment); // 게시글 댓글 목록에 추가
+        System.out.println("6 ok");
+
         commentRepository.save(comment);
-        notificationService.notifyComment(board, dto);  // 댓글 작성 시 게시글 작성자에게 알림
+        System.out.println("7 ok");
+
+//        notificationService.notifyComment(board, dto);  // 댓글 작성 시 게시글 작성자에게 알림
     }
 
 
