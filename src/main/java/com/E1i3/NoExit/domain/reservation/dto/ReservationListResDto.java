@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Builder
 @Data
 public class ReservationListResDto {
+    private Long id;
     private String resName;
     private String phoneNumber;
     private int numberOfPlayers;
@@ -26,6 +27,7 @@ public class ReservationListResDto {
 
     public static ReservationListResDto listFromEntity(Reservation reservation) {
         return ReservationListResDto.builder()
+                .id(reservation.getId())
                 .resName(reservation.getResName())
                 .phoneNumber(reservation.getPhoneNumber())
                 .numberOfPlayers(reservation.getNumberOfPlayers())
