@@ -58,7 +58,13 @@ public class CommentService {
 
         board.getComments().add(comment); // 게시글 댓글 목록에 추가
         commentRepository.save(comment);
+<<<<<<< Updated upstream
         notificationService.notifyComment(board, dto);  // 댓글 작성 시 게시글 작성자에게 알림
+=======
+        System.out.println("7 ok");
+        notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
+//        notificationService.notifyComment(board, dto);  // 댓글 작성 시 게시글 작성자에게 알림
+>>>>>>> Stashed changes
     }
 
 
@@ -130,10 +136,15 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
         comment.updateLikes();
+<<<<<<< Updated upstream
 //        board.updateLikes(member.getEmail());gv
         commentRepository.save(comment);
 //        return board.getLikeMembers().size();
         notificationService.notifyLikeComment(comment);
+=======
+
+        notificationService.notifyLikeComment(comment); // 댓글 추천 알림
+>>>>>>> Stashed changes
         return comment.getLikes();
     }
 

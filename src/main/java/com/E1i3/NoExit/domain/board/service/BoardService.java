@@ -51,10 +51,8 @@ public class BoardService {
         boardRepository.save(board);
     }
 
-
     public Page<BoardListResDto> boardList(Pageable pageable) { // 게시글 전체 조회
         Page<Board> boards = boardRepository.findByDelYN(pageable,DelYN.N);
-//        Page<Board> boards = boardRepository.findAll(pageable);
         Page<BoardListResDto> boardListResDtos = boards.map(Board::fromEntity);
         return boardListResDtos;
     }
@@ -107,8 +105,12 @@ public class BoardService {
         board.updateLikes();
 //        board.updateLikes(member.getEmail());
         boardRepository.save(board);
+<<<<<<< Updated upstream
         notificationService.notifyLikeBoard(board);
 //        return board.getLikeMembers().size();
+=======
+        notificationService.notifyLikeBoard(board); // 게시글 추천 알림
+>>>>>>> Stashed changes
         return board.getLikes();
     }
 

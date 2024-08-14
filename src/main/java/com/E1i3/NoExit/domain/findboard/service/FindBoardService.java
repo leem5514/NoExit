@@ -11,6 +11,8 @@ import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
 import com.E1i3.NoExit.domain.findboard.repository.FindBoardRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.service.NotificationService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,13 +28,16 @@ public class FindBoardService {
     private final FindBoardRepository findBoardRepository;
     private final MemberRepository memberRepository;
     private final AttendanceRepository attendanceRepository;
+    private final NotificationService notificationService;
 
     @Autowired
-    public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository, AttendanceRepository attendanceRepository) {
+    public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository, AttendanceRepository attendanceRepository,
+		NotificationService notificationService) {
         this.findBoardRepository = findBoardRepository;
         this.memberRepository = memberRepository;
         this.attendanceRepository = attendanceRepository;
-    }
+		this.notificationService = notificationService;
+	}
 
     public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
 
@@ -113,6 +118,7 @@ public class FindBoardService {
         attendanceRepository.save(attendance); // 참가자 정보 저장
 
         if ( findBoard.getCurrentCount() == findBoard.getTotalCapacity()){
+            // notificationService.notifyFullCount();
             findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
         }
 
