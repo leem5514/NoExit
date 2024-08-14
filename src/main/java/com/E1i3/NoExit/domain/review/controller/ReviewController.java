@@ -105,4 +105,11 @@ public class ReviewController {
 //        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 //    }
 
+
+    // 리뷰 숫자 카운팅
+    @GetMapping("/review/count")
+    public long getReviewCount(@RequestParam Long gameId) {
+        return reviewService.getReviewCountForGame(gameId);
+    }
+
 }

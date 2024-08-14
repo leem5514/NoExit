@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.game.service;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +33,29 @@ public class GameService {
 		}
 		return gameResDtolist;
 	}
+	@Transactional
 	public GameDetailResDto getGameDetail(Long gameId) {
 		Game game = gameRepository.findById(gameId)
 				.orElseThrow(() -> new EntityNotFoundException("게임을 찾을 수 없습니다."));
 		return GameDetailResDto.fromEntity(game);
+	}
+
+	// store의 오프닝 시간대을 게임에서 출력하기 위한 코드	
+	public List<LocalTime> getAvailableHours(Long gameId) {
+		Game game = gameRepository.findById(gameId)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid game ID"));
+
+		String openingHours = game.getStore().getOpeningHours();
+
+		String[] times = openingHours.split(" - ");
+		LocalTime startTime = LocalTime.parse(times[0]);
+		LocalTime endTime = LocalTime.parse(times[1]);
+
+		List<LocalTime> availableHours = new ArrayList<>();
+		while (!startTime.isAfter(endTime)) {
+			availableHours.add(startTime);
+			startTime = startTime.plusHours(1);
+		}
+		return availableHours;
 	}
 }

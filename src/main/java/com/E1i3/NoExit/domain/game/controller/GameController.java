@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.game.controller;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import com.E1i3.NoExit.domain.game.dto.GameDetailResDto;
@@ -35,5 +36,12 @@ public class GameController {
 		GameDetailResDto gameDetailResDto = gameService.getGameDetail(id);
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "게임 상세 조회 완료", gameDetailResDto);
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+	}
+
+	// store의 오프닝 시간대을 게임에서 출력하기 위한 코드
+	@GetMapping("/game/{gameId}/available-hours")
+	public ResponseEntity<List<LocalTime>> getAvailableHours(@PathVariable Long gameId) {
+		List<LocalTime> availableHours = gameService.getAvailableHours(gameId);
+		return ResponseEntity.ok(availableHours);
 	}
 }

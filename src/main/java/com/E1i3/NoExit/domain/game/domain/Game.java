@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -59,5 +62,20 @@ public class Game extends BaseTimeEntity {
             // .store(this.store)
             .imagePath(this.imagePath)
             .build();
+    }
+
+    // store의 오프닝 시간대을 게임에서 출력하기 위한 코드
+    public List<LocalTime> getAvailableHours(String openingHours) {
+        String[] times = openingHours.split(" - ");
+        LocalTime startTime = LocalTime.parse(times[0]);
+        LocalTime endTime = LocalTime.parse(times[1]);
+
+        List<LocalTime> availableHours = new ArrayList<>();
+        while (!startTime.isAfter(endTime)) {
+            availableHours.add(startTime);
+            startTime = startTime.plusHours(1);
+        }
+
+        return availableHours;
     }
 }
