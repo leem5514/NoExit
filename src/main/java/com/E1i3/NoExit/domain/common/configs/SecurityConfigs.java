@@ -29,9 +29,8 @@ public class SecurityConfigs {
 				.httpBasic().disable()
 				.authorizeRequests()
 				.antMatchers(
-						"/email/requestCode",
+						"/email/**",
 						"/",
-					// 	게시글, 후기 조회하는 페이지는 모두 로그인하지 않아도 가능하도록
 						"/doLogin","/owner/create", "/game/list","/findboard/list",
 						// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
 						"/member/create", "/swagger-ui/**",
@@ -44,7 +43,8 @@ public class SecurityConfigs {
 						"/webjars/**",
 						//웹소켓 test 403 해결
 						"/ws/chat/**",
-						"/chat/**"
+						"/chat/**",
+						"/board/list", "board/detail/**"
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.anyRequest().authenticated()

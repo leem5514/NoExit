@@ -125,6 +125,7 @@ public class Member extends BaseTimeEntity{
 			.email(this.email)
 			.age(this.age)
 			.phone_number(this.phone_number)
+			.profile_image(this.profileImage)
 			.build();
 	}
 

@@ -52,6 +52,7 @@ public class Game extends BaseTimeEntity {
 //    private List<Review> reviews;
     public GameResDto fromEntity(){
         return GameResDto.builder()
+            .id(this.id)
             .gameName(this.gameName)
             .difficult(this.difficult)
             .price(this.price)

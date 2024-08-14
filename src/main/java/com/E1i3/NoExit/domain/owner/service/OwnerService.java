@@ -10,8 +10,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.E1i3.NoExit.domain.common.service.RedisService;
+import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.dto.OwnerDetResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerListResDto;
@@ -27,22 +29,23 @@ public class OwnerService{
 	private final OwnerRepository ownerRepository;
 	private final RedisService redisService;
 	private final PasswordEncoder passwordEncoder;
-	private final StoreRepository storeRepository;
+	private final S3Service s3Service;
 
 
 	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
 
 	@Autowired
 	public OwnerService(OwnerRepository ownerRepository,
-		RedisService redisService, PasswordEncoder passwordEncoder, StoreRepository storeRepository) {
+		RedisService redisService, PasswordEncoder passwordEncoder,
+		S3Service s3Service) {
 		this.ownerRepository = ownerRepository;
 		this.redisService = redisService;
 		this.passwordEncoder = passwordEncoder;
-		this.storeRepository = storeRepository;
+		this.s3Service = s3Service;
 	}
 
 	@Transactional
-	public Owner ownerCreate(OwnerSaveReqDto ownerSaveReqDto) {
+	public Owner ownerCreate(OwnerSaveReqDto ownerSaveReqDto, MultipartFile imgFile) {
 		// 레디스에 인증이 된 상태인지 확인
 		String chkVerified = redisService.getValues(AUTH_EMAIL_PREFIX + ownerSaveReqDto.getEmail());
 		if (chkVerified == null || !chkVerified.equals("true")) {
@@ -54,7 +57,9 @@ public class OwnerService{
 			throw new EntityExistsException("이미 존재하는 이메일입니다.");
 		});
 		String encodedPassword = passwordEncoder.encode(ownerSaveReqDto.getPassword());
-		return ownerRepository.save(ownerSaveReqDto.toEntity(encodedPassword));
+		String imageUrl = s3Service.uploadFile(imgFile, "owner");
+
+		return ownerRepository.save(ownerSaveReqDto.toEntity(encodedPassword,  imageUrl));
 	}
 
 	// 회원 리스트 조회?
