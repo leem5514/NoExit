@@ -19,6 +19,7 @@ public class CommonExceptionHandler {
 				HttpStatus.NOT_FOUND,
 				"요청한 자원이 존재하지 않습니다. (" + e.getMessage() + ")"
 		);
+		e.printStackTrace();
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.NOT_FOUND);
 	}
 
@@ -29,6 +30,7 @@ public class CommonExceptionHandler {
 				HttpStatus.BAD_REQUEST,
 				"잘못된 요청입니다. (" + e.getMessage() + ")"
 		);
+		e.printStackTrace();
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
 	}
 
@@ -38,6 +40,7 @@ public class CommonExceptionHandler {
 				HttpStatus.BAD_REQUEST,
 				"상태 오류가 발생했습니다. (" + e.getMessage() + ")"
 		);
+		e.printStackTrace();
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
 	}
 
@@ -53,6 +56,7 @@ public class CommonExceptionHandler {
 				errorMessage.toString()
 		);
 
+		e.printStackTrace();
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
 	}
 
@@ -62,6 +66,7 @@ public class CommonExceptionHandler {
 				HttpStatus.INTERNAL_SERVER_ERROR,
 				"서버 내부에서 오류가 발생했습니다. 관리자에게 문의해주세요."
 		);
+		e.printStackTrace();
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -71,6 +76,7 @@ public class CommonExceptionHandler {
 				HttpStatus.METHOD_NOT_ALLOWED,
 				"지원하지 않는 작업입니다. (" + e.getMessage() + ")"
 		);
+		e.printStackTrace();
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
