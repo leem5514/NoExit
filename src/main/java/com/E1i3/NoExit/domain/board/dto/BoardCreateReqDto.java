@@ -20,7 +20,7 @@ public class BoardCreateReqDto {
 //    private Long memberId; // 작성자 멤버 아이디 // 로그인하면 필요없음
 //    private String writer; // 작성자
     private String title; // 제목
-    private String content; // 내용
+    private String contents; // 내용
 //    private List<BoardImg> boardImages; // 이미지
     private BoardType boardType; // 게시판 유형 (자유, 전략)
 

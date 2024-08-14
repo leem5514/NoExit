@@ -35,7 +35,7 @@ public class Board extends BaseTimeEntity {
     @Column(nullable = false)
     private String title; //  제목
 
-    private String content; // 내용
+    private String contents; // 내용
 
     private int boardHits; // 조회수
 
@@ -61,11 +61,14 @@ public class Board extends BaseTimeEntity {
 
     public BoardListResDto fromEntity(){
         BoardListResDto boardListResDto = BoardListResDto.builder()
+                .id(this.id)
                 .writer(this.member.getNickname())
                 .title(this.title)
                 .boardHits(this.boardHits)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
+                .comments(this.comments.size())
+                .thumbnail(this.imgs.get(0).getImageUrl())
                 .boardType(this.boardType)
                 .build();
 
@@ -88,14 +91,13 @@ public class Board extends BaseTimeEntity {
                 .id(this.id)
                 .writer(this.member.getNickname()) //
                 .title(this.title)
-                .content(this.content)
+                .contents(this.contents)
                 .boardHits(this.boardHits)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
                 .boardType(this.boardType)
                 .comments(dtos)
-                .createdTime(this.getCreatedTime())
-                .updatedTime(this.getUpdateTime())
+                .createdDate(this.getCreatedTime().toLocalDate())
                 .build();
 
         return boardDetailResDto;
@@ -103,7 +105,7 @@ public class Board extends BaseTimeEntity {
 
     public void updateEntity(BoardUpdateReqDto dto) {
         this.title = dto.getTitle();
-        this.content = dto.getContent();
+        this.contents = dto.getContents();
         this.boardType = dto.getBoardType();
     }
 
@@ -115,12 +117,20 @@ public class Board extends BaseTimeEntity {
         this.boardHits++;
     }
 
-    public void updateLikes() {
-        this.likes++;
+    public void updateLikes(boolean like) {
+        if(like) {
+            this.likes++;
+        }else{
+            this.likes--;
+        }
     }
 
-    public void updateDislikes() {
-        this.dislikes++;
+    public void updateDislikes(boolean dislike) {
+        if(dislike) {
+            this.dislikes++;
+        }else{
+            this.dislikes--;
+        }
     }
 
 }
