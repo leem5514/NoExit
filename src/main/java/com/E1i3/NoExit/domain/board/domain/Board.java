@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.board.domain;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
+import com.E1i3.NoExit.domain.board.dto.BoardImageDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
 import com.E1i3.NoExit.domain.comment.domain.Comment;
@@ -11,6 +12,7 @@ import lombok.*;
 import org.apache.ibatis.annotations.One;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,8 +28,7 @@ public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 아이디
-//    private Long memberId; // 작성자 아이디
-//    private String writer; // 작성자 // 굳이 필요할까...
+
     @ManyToOne //추가 7-25
     @JoinColumn(name = "member_id")
     private Member member;
@@ -35,21 +36,16 @@ public class Board extends BaseTimeEntity {
     @Column(nullable = false)
     private String title; //  제목
 
-    private String content; // 내용
+    private String contents; // 내용
 
     private int boardHits; // 조회수
 
     private int likes; // 좋아요 수
     private int dislikes; // 싫어요 수
 
-//    @Builder.Default
-//    private List<String> likeMembers = new ArrayList<>(); // 좋아요 누른 회원들
-
-//    @Builder.Default
-//    private List<String> dislikeMembers = new ArrayList<>(); // 싫어요 누른 회원들
-
-    @Column(name = "imagePath")
-    private String imagePath; // 이미지
+    @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST)
+    @Builder.Default
+    private List<BoardImage> imgs = new ArrayList<>(); // 이미지
 
     private int notificationState; // 알림 상태
 
@@ -65,18 +61,30 @@ public class Board extends BaseTimeEntity {
     private DelYN delYN = DelYN.N; // 삭제여부
 
     public BoardListResDto fromEntity(){
-        BoardListResDto boardListResDto = BoardListResDto.builder()
-                .writer(this.member.getNickname())
-                .title(this.title)
-                .boardHits(this.boardHits)
-                .likes(this.likes)
-                .dislikes(this.dislikes)
-//                .likes(this.likeMembers.size())
-//                .dislikes(this.dislikeMembers.size())
-                .boardType(this.boardType)
-                .build();
-
-        return boardListResDto;
+        if (this.imgs != null && !this.imgs.isEmpty()) {
+            return BoardListResDto.builder()
+                    .id(this.id)
+                    .writer(this.member.getNickname())
+                    .title(this.title)
+                    .boardHits(this.boardHits)
+                    .likes(this.likes)
+                    .dislikes(this.dislikes)
+                    .comments(this.comments.size())
+                    .thumbnail(this.imgs.get(0).getImageUrl())
+                    .boardType(this.boardType)
+                    .build();
+        }else{
+            return BoardListResDto.builder()
+                    .id(this.id)
+                    .writer(this.member.getNickname())
+                    .title(this.title)
+                    .boardHits(this.boardHits)
+                    .likes(this.likes)
+                    .dislikes(this.dislikes)
+                    .comments(this.comments.size())
+                    .boardType(this.boardType)
+                    .build();
+        }
     }
 
 
@@ -84,38 +92,41 @@ public class Board extends BaseTimeEntity {
     public BoardDetailResDto detailFromEntity(){
 
         List<Comment> comments = this.getComments();
-        List<CommentListResDto> dtos = new ArrayList<>();
+        List<CommentListResDto> cDtos = new ArrayList<>();
         for(Comment c : comments) {
             if(c.getDelYN().equals(DelYN.Y)) {
                 continue;
             }
-            dtos.add(c.fromEntity());
+            cDtos.add(c.fromEntity());
         }
+
+        List<BoardImage> images = this.getImgs();
+        List<BoardImageDto> iDtos = new ArrayList<>();
+        for(BoardImage i : images) {
+
+            iDtos.add(i.fromEntity());
+        }
+
         BoardDetailResDto boardDetailResDto = BoardDetailResDto.builder()
                 .id(this.id)
                 .writer(this.member.getNickname()) //
                 .title(this.title)
-                .content(this.content)
+                .contents(this.contents)
                 .boardHits(this.boardHits)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
-//                .likes(this.likeMembers.size())
-//                .dislikes(this.dislikeMembers.size())
-                .imagePath(this.imagePath)
                 .boardType(this.boardType)
-                .comments(dtos)
-                .createdTime(this.getCreatedTime())
-                .updatedTime(this.getUpdateTime())
+                .comments(cDtos)
+                .images(iDtos)
+                .createdDate(this.getCreatedTime().toLocalDate())
                 .build();
 
         return boardDetailResDto;
     }
 
-
     public void updateEntity(BoardUpdateReqDto dto) {
         this.title = dto.getTitle();
-        this.content = dto.getContent();
-        this.imagePath = dto.getImagePath();
+        this.contents = dto.getContents();
         this.boardType = dto.getBoardType();
     }
 
@@ -127,57 +138,20 @@ public class Board extends BaseTimeEntity {
         this.boardHits++;
     }
 
-    public void updateLikes() {
-        this.likes++;
-    }
-
-    public void updateDislikes() {
-        this.dislikes++;
-    }
-
-    /*
-    // 멤버로 받을 때 함수
-    public void updateLikes(String email) {
-        try {
-            for (String s : this.dislikeMembers) {
-                if (email.equals(s)) {
-                    throw new IllegalArgumentException("이미 싫어요를 누른 게시글입니다.");
-                }
-            }
-        }catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        try{
-            for(String s : this.likeMembers) {
-                if(email.equals(s)) {
-                    this.likeMembers.remove(s);
-                    return;
-                }
-            }
-        } catch (NullPointerException e) {
-            this.likeMembers.add(email);
+    public void updateLikes(boolean like) {
+        if(like) {
+            this.likes++;
+        }else{
+            this.likes--;
         }
     }
 
-    public void updateDislikes(String email) {
-        try {
-            for (String s : this.likeMembers) {
-                if (email.equals(s)) {
-                    throw new IllegalArgumentException("이미 좋아요를 누른 게시글입니다.");
-                }
-            }
-        }catch (NullPointerException e) {
-            e.printStackTrace();
+    public void updateDislikes(boolean dislike) {
+        if(dislike) {
+            this.dislikes++;
+        }else{
+            this.dislikes--;
         }
-        try{
-            for(String s : this.dislikeMembers) {
-                if(email.equals(s)) {
-                    this.dislikeMembers.remove(s);
-                    return;
-                }
-            }
-        } catch (NullPointerException e) {
-            this.dislikeMembers.add(email);
-        }
-    }*/
+    }
+
 }

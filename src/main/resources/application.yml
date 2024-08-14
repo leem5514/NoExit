@@ -1,5 +1,5 @@
 server:
-  port: ${MONGODB_PORT}
+  port: 8080
   servlet:
     encoding:
       charset: UTF-8
@@ -50,8 +50,10 @@ spring:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
 jwt:
-  expiration: 30
-  secretKey: my_token_secret
+  expiration: ${JWT_EXPIRATION}
+  secretKey: ${JWT_SECRETKEY}
+  expirationRt: ${JWT_RT_EXPIRATION}
+  secretKeyRt: ${JWT_RT_SECRETKEY}
 
 cloud:
   aws:
@@ -67,5 +69,11 @@ cloud:
         folderName2: review/
         folderName3: game/
         folderName4: storeInfo/
+        folderName5: board/
     stack:
       auto: false
+#logging:
+#  level:
+#    root: DEBUG
+#  org:
+#    springframework: DEBUG

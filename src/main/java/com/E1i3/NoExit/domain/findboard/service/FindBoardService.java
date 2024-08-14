@@ -36,8 +36,9 @@ public class FindBoardService {
         this.findBoardRepository = findBoardRepository;
         this.memberRepository = memberRepository;
         this.attendanceRepository = attendanceRepository;
-		this.notificationService = notificationService;
+		    this.notificationService = notificationService;
 	}
+
 
     public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
 

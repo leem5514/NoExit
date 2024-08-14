@@ -1,25 +1,32 @@
 package com.E1i3.NoExit.domain.board.service;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
+import com.E1i3.NoExit.domain.board.domain.BoardImage;
 import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
+import com.E1i3.NoExit.domain.board.repository.BoardImageRepository;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
-import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
+import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
+import javax.persistence.*;
+import java.util.List;
 
 @Service
 @Transactional
@@ -28,27 +35,56 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
+    private final S3Service s3Service;
+    private final BoardImageRepository boardImageRepository;
+    private static final String BOARD_PREFIX = "board:";
+    private static final String MEMBER_PREFIX = "member:";
 
     @Autowired
     public BoardService(BoardRepository boardRepository, MemberRepository memberRepository,
-		NotificationService notificationService) {
+		NotificationService notificationService, S3Service s3Service, BoardImageRepository boardImageRepository) {
         this.boardRepository = boardRepository;
         this.memberRepository = memberRepository;
-		this.notificationService = notificationService;
-	}
+        this.notificationService = notificationService;
+        this.s3Service = s3Service;
+        this.boardImageRepository = boardImageRepository;
+    }
+
+    @Autowired
+    @Qualifier("4")
+    private RedisTemplate<String, Object> boardRedisTemplate;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+    @Value("${cloud.aws.s3.folder.folderName5}")
+    private String folder;
 
 
-    public void boardCreate(BoardCreateReqDto dto) { // 게시글 생성
+
+    public Board boardCreate(BoardCreateReqDto dto, List<MultipartFile> imgFiles) { // 게시글 생성
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("없는 회원입니다."));
 
-        // Member 엔티티를 memberId로 조회
-//        Member member = memberRepository.findById(dto.getMemberId())
-//                .orElseThrow(() -> new EntityNotFoundException("Member not found with id: " + dto.getMemberId()));
+        Board board = Board.builder()
+                .member(member)
+                .title(dto.getTitle())
+                .contents(dto.getContents())
+                .boardType(dto.getBoardType())
+                .build();
 
-        // DTO를 Entity로 변환하고 Member 설정
-        Board board = dto.toEntity(member);
+        // 파일이 있는 경우 처리
+        if (imgFiles != null && !imgFiles.isEmpty()) {
+            for (MultipartFile f : imgFiles) {
+                BoardImage img = BoardImage.builder()
+                        .board(board)
+                        .imageUrl(s3Service.uploadFile(f, "board"))
+                        .build();
+                board.getImgs().add(img);
+                boardImageRepository.save(img);
+            }
+        }
         boardRepository.save(board);
+        return board;
     }
 
     public Page<BoardListResDto> boardList(Pageable pageable) { // 게시글 전체 조회
@@ -97,32 +133,68 @@ public class BoardService {
         boardRepository.save(board);
     }
 
+
+    @Transactional
     public int boardUpdateLikes(Long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
-        board.updateLikes();
-//        board.updateLikes(member.getEmail());
+
+        String likesKey = BOARD_PREFIX + id + ":likes";
+        String memberLikesKey = MEMBER_PREFIX + member.getId() + ":likes:" + id;
+
+        Boolean isLiked = boardRedisTemplate.hasKey(memberLikesKey);
+
+        if (isLiked != null && isLiked) {
+            // If already liked, remove the like
+            boardRedisTemplate.delete(memberLikesKey);
+            boardRedisTemplate.opsForSet().remove(likesKey, member.getId());
+            board.updateLikes(false);
+        } else {
+            // If not liked yet, add the like
+            boardRedisTemplate.opsForValue().set(memberLikesKey, true);
+            boardRedisTemplate.opsForSet().add(likesKey, member.getId());
+            board.updateLikes(true);
+        }
+
         boardRepository.save(board);
-<<<<<<< Updated upstream
         notificationService.notifyLikeBoard(board);
 //        return board.getLikeMembers().size();
-=======
-        notificationService.notifyLikeBoard(board); // 게시글 추천 알림
->>>>>>> Stashed changes
         return board.getLikes();
     }
 
+    @Transactional
     public int boardUpdateDislikes(Long id) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()->new EntityNotFoundException("존재하지 않는 이메일입니다."));
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+
         Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
-//        board.updateDislikes(member.getEmail());
-        board.updateDislikes();
+
+        String dislikesKey = BOARD_PREFIX + id + ":dislikes";
+        String memberDislikesKey = MEMBER_PREFIX + member.getId() + ":dislikes:" + id;
+
+        Boolean isDisliked = boardRedisTemplate.hasKey(memberDislikesKey);
+
+        if (isDisliked != null && isDisliked) {
+            // If already disliked, remove the dislike
+            boardRedisTemplate.delete(memberDislikesKey);
+            boardRedisTemplate.opsForSet().remove(dislikesKey, member.getId());
+            board.updateDislikes(false);
+        } else {
+            // If not disliked yet, add the dislike
+            boardRedisTemplate.opsForValue().set(memberDislikesKey, true);
+            boardRedisTemplate.opsForSet().add(dislikesKey, member.getId());
+            board.updateDislikes(true);
+        }
+
         boardRepository.save(board);
-//        return board.getDislikeMembers().size();
+
         return board.getDislikes();
     }
+
 }

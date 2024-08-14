@@ -46,6 +46,9 @@ public class Owner extends BaseTimeEntity {
 	@Column(length = 255, nullable = false)
 	private String phoneNumber;
 
+	@Column(nullable = true)
+	private String profileImage;
+
 	@Enumerated(EnumType.STRING)
 	@Builder.Default
 	private Role role = Role.OWNER;

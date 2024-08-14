@@ -9,6 +9,7 @@ import com.E1i3.NoExit.domain.reservation.repository.ReservationRepository;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.E1i3.NoExit.domain.review.dto.ReviewListDto;
 import com.E1i3.NoExit.domain.review.dto.ReviewSaveDto;
+import com.E1i3.NoExit.domain.review.dto.ReviewUpdateDto;
 import com.E1i3.NoExit.domain.review.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,9 +79,9 @@ public class ReviewService {
         }
 
         // 예약 상태가 ACCEPT인 후 일주일이 지났는지 확인
-        if (reservation.getResDate().isAfter(LocalDate.now().minusWeeks(1))) {
-            throw new IllegalStateException("리뷰는 예약 상태가 ACCEPT된 후 일주일이 지난 후에만 작성할 수 있습니다.");
-        }
+//        if (reservation.getResDate().isAfter(LocalDate.now().minusWeeks(1))) {
+//            throw new IllegalStateException("리뷰는 예약 상태가 ACCEPT된 후 일주일이 지난 후에만 작성할 수 있습니다.");
+//        }
 
         if (reviewRepository.findByReservationAndDelYN(reservation, DelYN.N).isPresent()) {
             throw new IllegalStateException("이미 작성된 리뷰가 있습니다.");
@@ -114,6 +115,13 @@ public class ReviewService {
         }
         return review;
     }
+    /* 게임 아이디를 통한 리뷰 리스트(전체사용자 기준 gameId 별) */
+    public Page<ReviewListDto> getReviewsByGameId(Long gameId, Pageable pageable) {
+        Page<Review> reviews = reviewRepository.findByReservation_GameIdAndDelYN(gameId, DelYN.N, pageable);
+        // 로그를 통해 반환된 리뷰의 내용을 확인합니다.
+        reviews.forEach(review -> System.out.println("Review ID: " + review.getId() + ", Game ID: " + review.getReservation().getGame().getId()));
+        return reviews.map(Review::fromEntity);
+    }
 
     /* 리뷰 리스트(전체 사용자 기준 전체 리스트) */
     public Page<ReviewListDto> pageReview(Pageable pageable) {
@@ -132,6 +140,7 @@ public class ReviewService {
         return reviews.map(Review::fromEntity);
     }
 
+    /* 리뷰 삭제 */
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public Review cancelReview(Long reviewId) {

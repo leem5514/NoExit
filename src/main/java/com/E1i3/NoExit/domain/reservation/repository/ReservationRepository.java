@@ -20,6 +20,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Optional<Reservation> findByIdAndMemberAndDelYN(Long id, Member member, DelYN delYN);
 
     List<Reservation> findByMemberEmailAndDelYN(String email, DelYN delYN);
+    List<Reservation> findByGameIn(List<Game> games);
 
 }
 

@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 public class BoardUpdateReqDto {
     private String title; // 제목
-    private String content; // 내용
+    private String contents; // 내용
     private String imagePath; // 이미지
     private BoardType boardType; // 게시판 유형
 }

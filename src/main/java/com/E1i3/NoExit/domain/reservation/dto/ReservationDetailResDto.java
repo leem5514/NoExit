@@ -22,5 +22,7 @@ public class ReservationDetailResDto {
 
     private ReservationStatus reservationStatus;
 //    private String store_name; // 가게 명(store 상속)
+    private String gameName;  // 게임명
+    private String storeName; // 가게명
     private String createdTime;
 }

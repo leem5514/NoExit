@@ -9,10 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
+import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerDetResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerListResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
@@ -38,8 +41,9 @@ public class OwnerController {
 
 	@Operation(summary= "[점주 사용자] 회원가입 API")
 	@PostMapping("/create")
-	public ResponseEntity<CommonResDto> ownerCreate(@RequestBody OwnerSaveReqDto dto) {
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "점주 회원가입 성공", ownerService.ownerCreate(dto).getId());
+	public ResponseEntity<CommonResDto> ownerCreate(@RequestPart(value = "data") OwnerSaveReqDto dto, @RequestPart(value = "file") MultipartFile imgFile) {
+	// public ResponseEntity<CommonResDto> ownerCreate(@RequestBody OwnerSaveReqDto dto) {
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "점주 회원가입 성공", ownerService.ownerCreate(dto, imgFile).getId());
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 

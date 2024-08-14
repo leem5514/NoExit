@@ -72,7 +72,7 @@ public class MemberController {
 	@Operation(summary= "[일반 사용자] 사용자 탈퇴 API")
 	@PostMapping("/member/delete")
 	public ResponseEntity<CommonResDto> deleteMember(@RequestBody MemberUpdateDto dto) {
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  memberService.memberDelete(dto.getEmail()).getId());
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  memberService.memberDelete());
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
@@ -81,7 +81,7 @@ public class MemberController {
 	@GetMapping("/member/myInfo")
 	public ResponseEntity<Object> myInfo() {
 		MemberDetResDto member = memberService.myInfo();
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "member List", member), HttpStatus.OK);
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "회원 정보 상세 조회", member), HttpStatus.OK);
 	}
 
 	@Operation(summary= "[사용자] 로그인 API")
@@ -98,25 +98,17 @@ public class MemberController {
 		if (user instanceof Member) {
 			Member member = (Member) user;
 			String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
-<<<<<<< Updated upstream
-			notificationService.subscribe(Role.USER);
-=======
 			String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole().toString());
 
->>>>>>> Stashed changes
 			loginInfo.put("id", member.getId());
 			loginInfo.put("token", jwtToken);
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "일반 사용자 로그인 성공", loginInfo), HttpStatus.OK);
 		} else if (user instanceof Owner) {
 			Owner owner = (Owner) user;
 			String jwtToken = jwtTokenProvider.createToken(owner.getEmail(), owner.getRole().toString());
-<<<<<<< Updated upstream
-			notificationService.subscribe(Role.OWNER);
-=======
 			String refreshToken = jwtTokenProvider.createRefreshToken(owner.getEmail(), owner.getRole().toString());
-
->>>>>>> Stashed changes
-			loginInfo.put("id", owner.getId());
+			
+      loginInfo.put("id", owner.getId());
 			loginInfo.put("token", jwtToken);
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "점주 로그인 성공", loginInfo), HttpStatus.OK);
 		}

@@ -51,7 +51,7 @@ public class FindBoardController {
     @GetMapping("/list")
     public ResponseEntity<CommonResDto> getFindBoardList(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "30") int size,
             @RequestParam(defaultValue = "createdTime") String sort,
             @RequestParam(defaultValue = "desc") String direction) {
 

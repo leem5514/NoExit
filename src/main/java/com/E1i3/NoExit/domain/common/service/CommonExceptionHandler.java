@@ -55,7 +55,6 @@ public class CommonExceptionHandler {
 				HttpStatus.BAD_REQUEST,
 				errorMessage.toString()
 		);
-
 		e.printStackTrace();
 		return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
 	}

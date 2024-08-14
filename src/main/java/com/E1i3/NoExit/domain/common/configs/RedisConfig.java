@@ -84,6 +84,42 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
+	// 	게시글 좋아요 (3번 데이터베이스)
+	@Bean
+	@Qualifier("4")
+	LettuceConnectionFactory connectionFactoryBoardLike() {
+		return redisConnectionFactory(3);
+	}
+
+	@Bean
+	@Qualifier("4")
+	public RedisTemplate<String, Object> redisTemplate3() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(connectionFactoryNotification());
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+		return redisTemplate;
+	}
+
+	// 	댓글 좋아요 (4번 데이터베이스)
+	@Bean
+	@Qualifier("5")
+	LettuceConnectionFactory connectionFactoryCommentLike() {
+		return redisConnectionFactory(4);
+	}
+
+	@Bean
+	@Qualifier("5")
+	public RedisTemplate<String, Object> redisTemplate4() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(connectionFactoryNotification());
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+		return redisTemplate;
+	}
+
 
 
 }

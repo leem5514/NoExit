@@ -71,7 +71,7 @@ public class FindBoard extends BaseTimeEntity {
                 .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .imagePath(this.imagePath)
+                .imagePath(this.member.getProfileImage())
                 .build();
     }
 
@@ -88,7 +88,7 @@ public class FindBoard extends BaseTimeEntity {
                 .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .imagePath(this.imagePath)
+                .imagePath(this.member.getProfileImage())
                 .build();
     }
 
