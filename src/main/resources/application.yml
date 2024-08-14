@@ -1,5 +1,5 @@
 server:
-  port: ${MONGODB_PORT}
+  port: 8080
   servlet:
     encoding:
       charset: UTF-8
@@ -16,7 +16,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl : true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show_sql : true
   application:
     name: NoExit
@@ -52,6 +52,8 @@ spring:
 jwt:
   expiration: 30
   secretKey: my_token_secret
+  expirationRt: 14400
+  secretKeyRt: noexit_secret
 
 cloud:
   aws:
