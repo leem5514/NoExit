@@ -2,13 +2,15 @@ package com.E1i3.NoExit.domain.wishlist.controller;
 
 import java.util.List;
 
+import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import com.E1i3.NoExit.domain.game.domain.Game;
@@ -34,7 +36,20 @@ public class WishListController {
 	// 위시리스트 조회
 	@GetMapping("/wishlist")
 	public ResponseEntity<?> getWishList() {
-		List<GameResDto> gemeList = wishListService.getWishList();
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "위시리스트에 조회 성공", gemeList), HttpStatus.OK);
+//		List<GameResDto> gameList = wishListService.getWishList();
+		List<WishList> wishLists = wishListService.getWishList();
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "위시리스트에 조회 성공", wishLists), HttpStatus.OK);
 	}
+
+
+
+
+	// 위시리스트 삭제
+	@PatchMapping("/wishlist/delete/{gameId}")
+	public ResponseEntity<?> deleteWishList(@PathVariable Long gameId) {
+		WishList wishList = wishListService.deleteWishList(gameId);
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "위시리스트에 삭제 성공", wishList.getId()), HttpStatus.OK);
+	}
+
+
 }

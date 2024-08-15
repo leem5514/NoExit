@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
+import com.E1i3.NoExit.domain.comment.domain.Comment;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,16 +50,36 @@ public class WishListService {
 		return wishListRepository.save(wishList);
 	}
 
-	public List<GameResDto>  getWishList() {
+//	public List<GameResDto> getWishList() {
+//		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+//		Member member = memberRepository.findByEmail(email)
+//			.orElseThrow(() -> new EntityNotFoundException("회원정보가 존재하지 않습니다."));
+//		List<WishList> wishLists = wishListRepository.findByMemberAndDelYN(member, DelYN.N);
+//
+//		return wishLists.stream()
+//				.map(wishList -> gameRepository.findById(wishList.getGameId())
+//						.orElseThrow(() -> new EntityNotFoundException("일치하는 정보가 존재하지 않습니다.")))
+//				.map(Game::fromEntity)
+//				.collect(Collectors.toList());
+//	}
+
+
+	public List<WishList> getWishList() {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(() -> new EntityNotFoundException("회원정보가 존재하지 않습니다."));
-		List<WishList> wishLists = wishListRepository.findByMember(member);
+				.orElseThrow(() -> new EntityNotFoundException("회원정보가 존재하지 않습니다."));
+		List<WishList> wishLists = wishListRepository.findByMemberAndDelYN(member, DelYN.N);
 
-		return wishLists.stream()
-			.map(wishList -> gameRepository.findById(wishList.getGameId())
-				.orElseThrow(() -> new EntityNotFoundException("일치하는 정보가 존재하지 않습니다.")))
-			.map(Game::fromEntity)
-			.collect(Collectors.toList());
+		return wishLists;
+	}
+
+
+	public WishList deleteWishList(Long gameId) {
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Member member = memberRepository.findByEmail(email)
+				.orElseThrow(() -> new EntityNotFoundException("회원정보가 존재하지 않습니다."));
+		WishList wishList = wishListRepository.findById(gameId).orElseThrow(()->new EntityNotFoundException("일치하는 정보가 존재하지 않습니다."));
+		wishList.deleteEntity();
+		return wishListRepository.save(wishList);
 	}
 }

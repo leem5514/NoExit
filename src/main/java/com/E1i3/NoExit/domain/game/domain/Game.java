@@ -54,6 +54,8 @@ public class Game extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store; // StoreInfo와의 관계 설정
+
+
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
 //    private List<Review> reviews;
     public GameResDto fromEntity(){

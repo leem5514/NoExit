@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.member.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
@@ -82,7 +83,8 @@ public class Member extends BaseTimeEntity{
 	private List<Board> findBoards;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-	private List<WishList> wishList;
+	@Builder.Default
+	private List<WishList> wishList = new ArrayList<>();
 
 	// Grade와 연관 관계 추가 : 김민성
 	@OneToOne
