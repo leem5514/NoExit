@@ -20,14 +20,11 @@ import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.member.service.MemberService;
 import com.E1i3.NoExit.domain.notification.controller.NotificationController;
-<<<<<<< Updated upstream
-import com.E1i3.NoExit.domain.notification.dto.UserInfo;
-=======
+
 import com.E1i3.NoExit.domain.notification.domain.Notification;
 import com.E1i3.NoExit.domain.notification.domain.NotificationType;
 import com.E1i3.NoExit.domain.notification.dto.UserInfo;
 import com.E1i3.NoExit.domain.notification.repository.NotificationRepository;
->>>>>>> Stashed changes
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationSaveDto;
 
@@ -52,13 +49,10 @@ public class NotificationService {
 
 	public SseEmitter subscribe(UserInfo userInfo) {
 		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-<<<<<<< Updated upstream
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Role role = userInfo.getRole();
 		// String email = (role == Role.USER) ? memberService.getEmailFromToken() : ownerService.getEmailFromToken();
 		UserInfo sseEmitterKey = UserInfo.builder().email(email).role(role).build();
-=======
->>>>>>> Stashed changes
-
 		try {
 			sseEmitter.send(SseEmitter.event().name("connect").data("연결 성공"));
 		} catch (IOException e) {
@@ -134,110 +128,30 @@ public class NotificationService {
 	public void notifyComment(Board board, CommentCreateReqDto comment) {
 		String senderEmail = memberService.getEmailFromToken();
 		String receiverEmail = board.getMember().getEmail();
-<<<<<<< Updated upstream
-		UserInfo sseEmitterKey = UserInfo.builder().email(receiverEmail).role(Role.USER).build();
-		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
-
-		log.info(sseEmitterKey.toString());
-		log.info(NotificationController.sseEmitters.get(sseEmitterKey).toString());
-
-		try {
-			sseEmitter.send(sseEmitter.event()
-				.name("댓글")    // xx님이 보내는 답글
-				.data(senderEmail + "님이 보내는 답글"));
-			log.info("코멘트 작성 이벤트 보내는 중");
-		} catch (IOException e) {
-			log.info(e.getMessage());
-		}
-		log.info("코멘트 작성 이벤트 보내기 완료");
-		return;
-=======
 		String message = senderEmail + "님이 게시글에 댓글을 남겼습니다.";
 		notifyUser(UserInfo.builder().email(receiverEmail).role(Role.USER).build(), NotificationType.COMMENT, message);
->>>>>>> Stashed changes
 	}
 
 	// 	4. 내가 쓴 게시글에 추천
 	public void notifyLikeBoard(Board board) {
 		String senderEmail = memberService.getEmailFromToken();
 		String receiverEmail = board.getMember().getEmail();
-<<<<<<< Updated upstream
-		UserInfo sseEmitterKey = UserInfo.builder().email(receiverEmail).role(Role.USER).build();
-		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
-
-		log.info(sseEmitterKey.toString());
-		log.info(NotificationController.sseEmitters.get(sseEmitterKey).toString());
-
-		try {
-			sseEmitter.send(sseEmitter.event()
-				// xx님이 내 게시글을 추천합니다.
-				.name("게시글 추천")
-				.data(senderEmail + "님이 내 게시글을 추천합니다."));
-			log.info("게시글 추천 이벤트 보내는 중");
-		} catch (IOException e) {
-			log.info(e.getMessage());
-		}
-		log.info("게시글 추천 이벤트 보내기 완료");
-=======
 		String message = senderEmail + "님이 내 게시글을 추천합니다.";
 		notifyUser(UserInfo.builder().email(receiverEmail).role(Role.USER).build(), NotificationType.BOARD_LIKE, message);
->>>>>>> Stashed changes
 	}
 
 	// 	5. 내가 쓴 댓글 추천
 	public void notifyLikeComment(Comment comment) {
 		String senderEmail = memberService.getEmailFromToken();
 		String receiverEmail = comment.getMember().getEmail();
-<<<<<<< Updated upstream
-		UserInfo sseEmitterKey = UserInfo.builder().email(receiverEmail).role(Role.USER).build();
-		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
+		String message = senderEmail + "님이 내 댓글을 추천합니다.";
+		notifyUser(UserInfo.builder().email(receiverEmail).role(Role.USER).build(), NotificationType.COMMENT_LIKE, message);
 
-		log.info(sseEmitterKey.toString());
-		log.info(NotificationController.sseEmitters.get(sseEmitterKey).toString());
-
-		try {
-			sseEmitter.send(sseEmitter.event()
-				// xx님이 내 게시글을 추천합니다.
-				.name("댓글 추천")
-				.data(senderEmail + "님이 내 답글을 추천합니다."));
-
-			log.info("코멘트 추천 이벤트 보내는 중");
-		} catch (IOException e) {
-			log.info(e.getMessage());
-		}
-		log.info("코멘트 추천 이벤트 보내기 완료");
 	}
 
 	// 	6. findBoard 참여 인원 가득차면
 	public void notifyFullCount(){
-		String email = memberService.getEmailFromToken();
-		UserInfo sseEmitterKey = UserInfo.builder().email(email).role(Role.USER).build();
-		SseEmitter sseEmitter = NotificationController.sseEmitters.get(sseEmitterKey);
-
-		log.info(sseEmitterKey.toString());
-		log.info(NotificationController.sseEmitters.get(sseEmitterKey).toString());
-
-		try {
-			sseEmitter.send(sseEmitter.event()
-				// xx님이 내 게시글을 추천합니다.
-				.name("참여 불가")
-				.data("참여인원이 가득찼습니다."));
-
-			log.info("참여인원 제한 이벤트 보내는 중");
-		} catch (IOException e) {
-			log.info(e.getMessage());
-		}
-		log.info("참여인원 제한 이벤트 보내기 완료");
-=======
-		String message = senderEmail + "님이 내 댓글을 추천합니다.";
-		notifyUser(UserInfo.builder().email(receiverEmail).role(Role.USER).build(), NotificationType.COMMENT_LIKE, message);
-	}
-
-	// 	6. findBoard 참여 인원 가득차면
-	public void notifyFullCount(String receiverEmail) {
-		String message = "참여 인원이 가득찼습니다.";
-		notifyUser(UserInfo.builder().email(receiverEmail).role(Role.USER).build(), NotificationType.FULL_COUNT, message);
->>>>>>> Stashed changes
+		notifyUser(UserInfo.builder().email("").role(Role.USER).build(), NotificationType.COMMENT_LIKE, "");
 	}
 
 }

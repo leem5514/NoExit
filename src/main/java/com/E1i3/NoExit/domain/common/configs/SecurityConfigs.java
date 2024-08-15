@@ -43,7 +43,7 @@ public class SecurityConfigs {
 						"/webjars/**",
 						//웹소켓 test 403 해결
 						"/ws/chat/**",
-						"/chat/**",
+						"/chat/**"
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.anyRequest().authenticated()

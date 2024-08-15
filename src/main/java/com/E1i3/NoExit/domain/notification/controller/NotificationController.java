@@ -12,12 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Role;
-<<<<<<< Updated upstream
-=======
-import com.E1i3.NoExit.domain.member.service.MemberService;
-import com.E1i3.NoExit.domain.notification.domain.Notification;
-import com.E1i3.NoExit.domain.notification.domain.NotificationType;
->>>>>>> Stashed changes
 import com.E1i3.NoExit.domain.notification.dto.UserInfo;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
@@ -31,10 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NotificationController {
 
 	private final NotificationService notificationService;
-<<<<<<< Updated upstream
 	public static Map<UserInfo, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
-=======
->>>>>>> Stashed changes
 
 	@Autowired
 	public NotificationController(NotificationService notificationService) {
@@ -43,14 +34,9 @@ public class NotificationController {
 
 	@Operation(summary= "[알림] 알림 서비스")
 	@GetMapping("/notification/subscribe")
-<<<<<<< Updated upstream
-	public SseEmitter subscribe(@RequestParam  Role role) {
-		return notificationService.subscribe(role);
-=======
 	public SseEmitter subscribe(@RequestParam Role role) {
 		String email = (role == Role.USER) ? notificationService.getMemberEmail() : notificationService.getOwnerEmail();
 		UserInfo userInfo = UserInfo.builder().email(email).role(role).build();
 		return notificationService.subscribe(userInfo);
->>>>>>> Stashed changes
 	}
 }
