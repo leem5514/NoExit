@@ -19,7 +19,7 @@ spring:
       ddl-auto: update
     show_sql : true
   application:
-    name: NoExit
+    name: noexit
   servlet:
     multipart:
       enabled: true

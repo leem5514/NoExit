@@ -160,4 +160,9 @@ public class ReviewService {
         return review;
     }
 
+    // 리뷰 숫자
+    public long getReviewCountForGame(Long gameId) {
+        return reviewRepository.countByReservation_GameIdAndDelYN(gameId, DelYN.N);
+    }
+
 }

@@ -150,6 +150,7 @@ public class ReservationService {
 
         return reservation.toDetailDto();
     }
+
     /* 예약 내역 조회 (사장님용) */
     @Transactional
     public List<ReservationDetailResDto> findReservationsByOwner() {
@@ -260,6 +261,14 @@ public class ReservationService {
         reservationRedisTemplate.delete(reservationKey);
 
         return reservation;
+    }
+    // DTO에서 필요한 예약 상태를 추가로 포함한 데이터 반환
+    public List<ReservationListResDto> findAvailableHours(Long gameId, LocalDate resDate) {
+        List<Reservation> reservations = reservationRepository.findByGameIdAndResDate(gameId, resDate);
+
+        return reservations.stream()
+                .map(ReservationListResDto::listFromEntity)
+                .collect(Collectors.toList());
     }
 
 //    @PreAuthorize("hasRole('USER')")
