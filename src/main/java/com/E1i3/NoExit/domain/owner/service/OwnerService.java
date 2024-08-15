@@ -33,10 +33,8 @@ public class OwnerService{
 	private final OwnerRepository ownerRepository;
 	private final RedisService redisService;
 	private final PasswordEncoder passwordEncoder;
-	private final StoreInfoRepository storeInfoRepository;
 	private final S3Service s3Service;
 	private final GameRepository gameRepository;
-	private final S3Service s3Service;
 
 
 	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE : ";
