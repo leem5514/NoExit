@@ -152,6 +152,7 @@ public class ReservationService {
     }
 
     /* 예약 내역 조회 (사장님용) */
+    @PreAuthorize("hasRole('OWNER')")
     @Transactional
     public List<ReservationDetailResDto> findReservationsByOwner() {
         // 현재 인증된 사용자의 이메일 가져오기
