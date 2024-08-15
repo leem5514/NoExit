@@ -106,11 +106,9 @@ public class NotificationService {
 					.email(receiver)
 					.type(type)
 					.message(message)
-					.delyn(DelYN.N)
 					.build()
 			);
 		} catch (SQLException e) {
-			// 예외 처리 로직 추가
 			log.error("데이터베이스 연결 오류: ", e);
 		}
 	}
@@ -125,7 +123,7 @@ public class NotificationService {
 
 	// 	1. 알림 요청시 사용자 -> 점주 예약내역 알림
 	public void notifyResToOwner(ReservationSaveDto dto) {
-		String senderEmail = memberService.getEmailFromToken();
+		String senderEmail = getMemberEmail();
 		String receiverEmail = ownerService.getEmailFromReservation(dto);
 		String message = senderEmail + "님이 예약을 요청하셨습니다.";
 		notifyUser(UserInfo.builder().email(receiverEmail).role(Role.OWNER).build(), NotificationType.RESERVATION_REQ, message);

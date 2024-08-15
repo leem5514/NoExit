@@ -19,4 +19,5 @@ public class GameResDto {
 	private int price;
 	private String imagePath; // 사진 경로
 	// private Store store;
+	private String storeName;
 }

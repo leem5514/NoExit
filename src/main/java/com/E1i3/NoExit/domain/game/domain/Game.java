@@ -54,8 +54,11 @@ public class Game extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store; // StoreInfo와의 관계 설정
+
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
 //    private List<Review> reviews;
+
+
     public GameResDto fromEntity(){
         return GameResDto.builder()
             .id(this.id)
@@ -64,6 +67,7 @@ public class Game extends BaseTimeEntity {
             .price(this.price)
             // .store(this.store)
             .imagePath(this.imagePath)
+            .storeName(this.store.getStoreName())
             .build();
     }
 

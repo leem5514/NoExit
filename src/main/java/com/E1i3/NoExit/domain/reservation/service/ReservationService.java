@@ -217,6 +217,7 @@ public class ReservationService {
             }
 
             Reservation reservation = optionalReservation.get();
+            dto = reservation.fromEntity();
 
             // 6. 예약 상태 업데이트
             reservation.updateStatus(dto.getApprovalStatus());
@@ -228,6 +229,9 @@ public class ReservationService {
                 // 예약 거절 시 해당 시간대를 다시 예약 가능하도록 처리
                 reservationRedisTemplate.delete(reservationKey);
             }
+            notificationService.notifyResToMember(dto.getMemberEmail(),dto.getApprovalStatus().toString());
+            System.out.println(dto.getMemberEmail());
+            System.out.println(dto.getGameId());
 
             return reservationRepository.save(reservation);
         } catch (Exception e) {
