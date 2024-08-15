@@ -7,6 +7,7 @@ import com.E1i3.NoExit.domain.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
 import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
@@ -48,21 +49,25 @@ public class ReservationService {
     @Autowired
     private OwnerRepository ownerRepository;
     @Autowired
+
     private StoreRepository storeRepository;
+
+    private final NotificationService notificationService;
     @Autowired
     @Qualifier("2")
     private RedisTemplate<String, Object> reservationRedisTemplate;
 
     private static final String RESERVATION_LOCK_PREFIX = "reservation:lock:";
 
-    public ReservationService(ReservationRepository reservationRepository, GameRepository gameRepository, MemberRepository memberRepository, OwnerRepository ownerRepository, StoreRepository storeRepository) {
+    public ReservationService(ReservationRepository reservationRepository, GameRepository gameRepository, MemberRepository memberRepository, OwnerRepository ownerRepository, StoreRepository storeRepository,
+		NotificationService notificationService) {
         this.reservationRepository = reservationRepository;
         this.gameRepository = gameRepository;
         this.memberRepository = memberRepository;
         this.ownerRepository = ownerRepository;
         this.storeRepository = storeRepository;
-    }
-
+		    this.notificationService = notificationService;
+	  }
 
     /* 레디스를 통한 예약하기 */
     @PreAuthorize("hasRole('USER')")
@@ -97,6 +102,7 @@ public class ReservationService {
             Reservation reservation = dto.toEntity(member, game);
             log.debug("Saving reservation: {}", reservation);
             reservationRepository.save(reservation);
+            notificationService.notifyResToOwner(dto);
             reservationRedisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
             return reservation;

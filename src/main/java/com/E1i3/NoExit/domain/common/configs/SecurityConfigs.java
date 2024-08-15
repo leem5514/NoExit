@@ -44,7 +44,6 @@ public class SecurityConfigs {
 						//웹소켓 test 403 해결
 						"/ws/chat/**",
 						"/chat/**",
-						"/board/list", "board/detail/**"
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.anyRequest().authenticated()

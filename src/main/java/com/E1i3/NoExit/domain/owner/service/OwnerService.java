@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.E1i3.NoExit.domain.common.service.RedisService;
 import com.E1i3.NoExit.domain.common.service.S3Service;
+import com.E1i3.NoExit.domain.game.domain.Game;
+import com.E1i3.NoExit.domain.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.dto.OwnerDetResDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerListResDto;
@@ -21,7 +23,9 @@ import com.E1i3.NoExit.domain.owner.dto.OwnerSaveReqDto;
 import com.E1i3.NoExit.domain.owner.dto.OwnerUpdateDto;
 import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationSaveDto;
+import com.E1i3.NoExit.domain.store.domain.Store;
 import com.E1i3.NoExit.domain.store.repository.StoreRepository;
+
 
 @Service
 public class OwnerService{
@@ -29,25 +33,31 @@ public class OwnerService{
 	private final OwnerRepository ownerRepository;
 	private final RedisService redisService;
 	private final PasswordEncoder passwordEncoder;
+	private final StoreInfoRepository storeInfoRepository;
+	private final S3Service s3Service;
+	private final GameRepository gameRepository;
 	private final S3Service s3Service;
 
 
-	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
+	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE : ";
 
 	@Autowired
 	public OwnerService(OwnerRepository ownerRepository,
 		RedisService redisService, PasswordEncoder passwordEncoder,
-		S3Service s3Service) {
+		S3Service s3Service, GameRepository gameRepository) {
 		this.ownerRepository = ownerRepository;
 		this.redisService = redisService;
 		this.passwordEncoder = passwordEncoder;
 		this.s3Service = s3Service;
+		this.gameRepository = gameRepository;
 	}
 
 	@Transactional
 	public Owner ownerCreate(OwnerSaveReqDto ownerSaveReqDto, MultipartFile imgFile) {
 		// 레디스에 인증이 된 상태인지 확인
 		String chkVerified = redisService.getValues(AUTH_EMAIL_PREFIX + ownerSaveReqDto.getEmail());
+		System.out.println(chkVerified);
+
 		if (chkVerified == null || !chkVerified.equals("true")) {
 			throw new IllegalStateException("이메일 인증이 필요합니다.");
 		}
@@ -96,7 +106,14 @@ public class OwnerService{
 
 	public void changeReservationStatus(ReservationSaveDto reservationSaveDto){
 		// 	예약 상태 변경
+	}
 
+	public String getEmailFromReservation(ReservationSaveDto dto) {
+		Game game = gameRepository.findById(dto.getGameId())
+			.orElseThrow(() -> new EntityNotFoundException("일치하는 게임이 존재하지 않습니다."));
+
+		Store store = game.getStore();
+		return store.getOwner().getEmail();
 	}
 }
 
