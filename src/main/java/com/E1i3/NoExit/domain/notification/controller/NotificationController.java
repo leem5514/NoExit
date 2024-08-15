@@ -31,10 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NotificationController {
 
 	private final NotificationService notificationService;
-<<<<<<< Updated upstream
 	public static Map<UserInfo, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
-=======
->>>>>>> Stashed changes
 
 	@Autowired
 	public NotificationController(NotificationService notificationService) {
@@ -43,14 +40,9 @@ public class NotificationController {
 
 	@Operation(summary= "[알림] 알림 서비스")
 	@GetMapping("/notification/subscribe")
-<<<<<<< Updated upstream
-	public SseEmitter subscribe(@RequestParam  Role role) {
-		return notificationService.subscribe(role);
-=======
 	public SseEmitter subscribe(@RequestParam Role role) {
 		String email = (role == Role.USER) ? notificationService.getMemberEmail() : notificationService.getOwnerEmail();
 		UserInfo userInfo = UserInfo.builder().email(email).role(role).build();
 		return notificationService.subscribe(userInfo);
->>>>>>> Stashed changes
 	}
 }
