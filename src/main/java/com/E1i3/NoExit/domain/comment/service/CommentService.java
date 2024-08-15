@@ -69,7 +69,8 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-//        notificationService.notifyComment(board, dto);  // 댓글 작성 시 게시글 작성자에게 알림
+        System.out.println("7 ok");
+        notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
     }
 
 
@@ -139,6 +140,10 @@ public class CommentService {
         commentRedisTemplate.opsForSet().add(key, member.getId());
         comment.updateLikes();
 
+//        board.updateLikes(member.getEmail());gv
+        commentRepository.save(comment);
+//        return board.getLikeMembers().size();
+        notificationService.notifyLikeComment(comment);
         return comment.getLikes();
 
     }

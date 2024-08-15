@@ -40,6 +40,7 @@ public class InitialDataLoader implements CommandLineRunner {
                     .build();
             ownerRepository.save(admin);
         }
+
         if(ownerRepository.findByEmail("test@test.com").isEmpty()) {
             Owner test = Owner.builder()
                 .username("test")

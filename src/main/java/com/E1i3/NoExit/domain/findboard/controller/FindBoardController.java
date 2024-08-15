@@ -51,7 +51,7 @@ public class FindBoardController {
     @GetMapping("/list")
     public ResponseEntity<CommonResDto> getFindBoardList(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "30") int size,
+            @RequestParam(defaultValue = "6") int size,
             @RequestParam(defaultValue = "createdTime") String sort,
             @RequestParam(defaultValue = "desc") String direction) {
 
@@ -87,7 +87,6 @@ public class FindBoardController {
             try {
                 FindBoardResDto updatedFindBoardResDto = findBoardService.incrementParticipantCount(id);
                 if (updatedFindBoardResDto.getCurrentCount() > updatedFindBoardResDto.getTotalCapacity()) {
-                    notificationService.notifyFullCount();
                     return new ResponseEntity<>(new CommonResDto(HttpStatus.BAD_REQUEST, "참가자가 이미 가득 찼습니다.", null), HttpStatus.BAD_REQUEST);
                 }
                 CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "참가자 수 증가 성공", updatedFindBoardResDto);

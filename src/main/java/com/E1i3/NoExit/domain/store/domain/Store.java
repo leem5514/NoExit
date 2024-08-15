@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.store.domain;
 
+
 import javax.persistence.*;
 import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
@@ -10,11 +11,13 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import java.util.List;
+
 @Getter
 @Builder
 @Entity

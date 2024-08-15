@@ -1,8 +1,10 @@
 package com.E1i3.NoExit.domain.game.domain;
 
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
-import com.E1i3.NoExit.domain.game.dto.GameResDto;
 import com.E1i3.NoExit.domain.store.domain.Store;
+
+import lombok.Data;
+import com.E1i3.NoExit.domain.game.dto.GameResDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +49,7 @@ public class Game extends BaseTimeEntity {
 
     @Column(name = "image_path", nullable = true)
     private String imagePath; // 사진 경로
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
