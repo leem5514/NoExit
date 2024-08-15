@@ -24,4 +24,6 @@ public class FindBoardListResDto {
     private int currentCount;
     private String imagePath;
 
+
+
 }

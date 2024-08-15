@@ -24,6 +24,7 @@ import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.service.MemberService;
+import com.E1i3.NoExit.domain.notification.dto.UserInfo;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
@@ -71,7 +72,7 @@ public class MemberController {
 	@Operation(summary= "[일반 사용자] 사용자 탈퇴 API")
 	@PostMapping("/member/delete")
 	public ResponseEntity<CommonResDto> deleteMember(@RequestBody MemberUpdateDto dto) {
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  memberService.memberDelete(dto.getEmail()).getId());
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "회원정보 삭제",  memberService.memberDelete());
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 
@@ -80,7 +81,7 @@ public class MemberController {
 	@GetMapping("/member/myInfo")
 	public ResponseEntity<Object> myInfo() {
 		MemberDetResDto member = memberService.myInfo();
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "member List", member), HttpStatus.OK);
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "회원 정보 상세 조회", member), HttpStatus.OK);
 	}
 
 	@Operation(summary= "[사용자] 로그인 API")
@@ -89,21 +90,30 @@ public class MemberController {
 		Map<String, Object> loginInfo = new HashMap<>();
 		Object user = memberService.login(loginReqDto);
 
+		UserInfo userInfo = UserInfo.builder()
+			.email(loginReqDto.getEmail())
+			.role(loginReqDto.getRole())
+			.build();
+
 		if (user instanceof Member) {
 			Member member = (Member) user;
 			String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
-			notificationService.subscribe(Role.USER);
+			String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail(), member.getRole().toString());
+
 			loginInfo.put("id", member.getId());
 			loginInfo.put("token", jwtToken);
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "일반 사용자 로그인 성공", loginInfo), HttpStatus.OK);
 		} else if (user instanceof Owner) {
 			Owner owner = (Owner) user;
 			String jwtToken = jwtTokenProvider.createToken(owner.getEmail(), owner.getRole().toString());
-			notificationService.subscribe(Role.OWNER);
-			loginInfo.put("id", owner.getId());
+			String refreshToken = jwtTokenProvider.createRefreshToken(owner.getEmail(), owner.getRole().toString());
+			
+      loginInfo.put("id", owner.getId());
 			loginInfo.put("token", jwtToken);
-			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "사용자 로그인 성공", loginInfo), HttpStatus.OK);
+			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "점주 로그인 성공", loginInfo), HttpStatus.OK);
 		}
+		notificationService.subscribe(userInfo);
+
 		// 생성된 토큰을 comonResDto에 담아서 사용자에게 리턴
 		return null;
 	}

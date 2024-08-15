@@ -17,6 +17,7 @@ import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.review.domain.Review;
+import com.E1i3.NoExit.domain.wishlist.domain.WishList;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,6 +46,7 @@ public class Member extends BaseTimeEntity{
 
 	private int point;
 	private int age;
+	@Column(nullable = true)
 	private String profileImage;
 
 	@Enumerated(EnumType.STRING)
@@ -79,13 +81,17 @@ public class Member extends BaseTimeEntity{
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Board> findBoards;
 
+	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+	private List<WishList> wishList;
+
 	// Grade와 연관 관계 추가 : 김민성
 	@OneToOne
-	@JoinColumn(name = "grade_id", unique = true)
+	@JoinColumn(name = "grade_id")
 	private Grade grade;
 
-	public Member updateMember(MemberUpdateDto dto, String encodedPassword) {
+	public Member updateMember(MemberUpdateDto dto, String email, String encodedPassword) {
 		this.username = dto.getUsername();
+		this.email = email;
 		this.password =  encodedPassword;
 		this.age = dto.getAge();
 		this.phone_number = dto.getPhone_number();
@@ -116,8 +122,11 @@ public class Member extends BaseTimeEntity{
 		return MemberDetResDto.builder()
 			.username(this.username)
 			.nickname(this.nickname)
+			.password(this.password)
 			.email(this.email)
-			.phoneNumber(this.phone_number)
+			.age(this.age)
+			.phone_number(this.phone_number)
+			.profile_image(this.profileImage)
 			.build();
 	}
 

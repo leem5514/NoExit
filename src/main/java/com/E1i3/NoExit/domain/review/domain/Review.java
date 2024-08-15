@@ -68,7 +68,8 @@ public class Review extends BaseTimeEntity {
                 .imagePath(review.getImagePath())
                 .memberNickname(review.getMember().getNickname())
                 .content(review.getContent())
-                .gameId(review.getReservation().getGame().getId())
+                .gameName(review.getReservation().getGame().getGameName())
+                .createdAt(review.getCreatedTime())
                 .build();
     }
 }
