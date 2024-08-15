@@ -12,12 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Role;
-<<<<<<< Updated upstream
-=======
-import com.E1i3.NoExit.domain.member.service.MemberService;
-import com.E1i3.NoExit.domain.notification.domain.Notification;
-import com.E1i3.NoExit.domain.notification.domain.NotificationType;
->>>>>>> Stashed changes
 import com.E1i3.NoExit.domain.notification.dto.UserInfo;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
