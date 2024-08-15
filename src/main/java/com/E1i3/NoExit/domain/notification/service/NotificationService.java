@@ -1,10 +1,13 @@
 package com.E1i3.NoExit.domain.notification.service;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.persistence.EntityNotFoundException;
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,21 +41,20 @@ public class NotificationService {
 	private final MemberService memberService;
 	private final OwnerService ownerService;
 	private final NotificationRepository notificationRepository;
+	private final DataSource dataSource;
 
 	@Autowired
 	public NotificationService(MemberService memberService, OwnerService ownerService,
-		NotificationRepository notificationRepository, MemberRepository memberRepository) {
+		NotificationRepository notificationRepository, MemberRepository memberRepository, DataSource dataSource) {
 		this.memberService = memberService;
 		this.ownerService = ownerService;
 		this.notificationRepository = notificationRepository;
+		this.dataSource = dataSource;
 	}
 
 	public SseEmitter subscribe(UserInfo userInfo) {
-		SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		Role role = userInfo.getRole();
+		SseEmitter sseEmitter = new SseEmitter(14400 * 60 * 1000L);
 		// String email = (role == Role.USER) ? memberService.getEmailFromToken() : ownerService.getEmailFromToken();
-		UserInfo sseEmitterKey = UserInfo.builder().email(email).role(role).build();
 		try {
 			sseEmitter.send(SseEmitter.event().name("connect").data("연결 성공"));
 		} catch (IOException e) {
@@ -60,9 +62,20 @@ public class NotificationService {
 		}
 
 		sseEmitters.put(userInfo, sseEmitter);
-		sseEmitter.onCompletion(() -> sseEmitters.remove(userInfo));
-		sseEmitter.onTimeout(() -> sseEmitters.remove(userInfo));
-		sseEmitter.onError((e) -> sseEmitters.remove(userInfo));
+		System.out.println(sseEmitters);
+		sseEmitter.onCompletion(() -> {
+			log.debug("onCompletion");
+			sseEmitters.remove(userInfo);
+		});
+		sseEmitter.onTimeout(() -> {
+			log.debug("onTimeout");
+			sseEmitters.remove(userInfo);
+		});
+		sseEmitter.onError((e) -> {
+			log.debug("onError");
+			sseEmitters.remove(userInfo);
+		});
+		System.out.println(sseEmitters);
 		return sseEmitter;
 	}
 
@@ -70,11 +83,6 @@ public class NotificationService {
 		SseEmitter sseEmitter = sseEmitters.get(userInfo);
 
 		String receiver = userInfo.getEmail();
-		// if(userInfo.getRole() == Role.USER) {
-		// 	receiver = memberService.getEmailFromToken();
-		// } else if (userInfo.getRole() == Role.OWNER) {
-		// 	receiver = ownerService.getEmailFromToken();
-		// }
 		saveNotification(receiver, type, message);
 
 		if (sseEmitter != null) {
@@ -91,14 +99,20 @@ public class NotificationService {
 	}
 
 	private void saveNotification(String receiver, NotificationType type, String message) {
-		notificationRepository.save(
-			Notification.builder()
-				.email(receiver)
-				.type(type)
-				.message(message)
-				.delyn(DelYN.N)
-				.build()
-		);
+		try (Connection connection = dataSource.getConnection()) {
+			// 알림 저장을 위한 데이터베이스 작업 수행
+			notificationRepository.save(
+				Notification.builder()
+					.email(receiver)
+					.type(type)
+					.message(message)
+					.delyn(DelYN.N)
+					.build()
+			);
+		} catch (SQLException e) {
+			// 예외 처리 로직 추가
+			log.error("데이터베이스 연결 오류: ", e);
+		}
 	}
 
 	public String getMemberEmail() {
@@ -151,7 +165,7 @@ public class NotificationService {
 
 	// 	6. findBoard 참여 인원 가득차면
 	public void notifyFullCount(){
-		notifyUser(UserInfo.builder().email("").role(Role.USER).build(), NotificationType.COMMENT_LIKE, "");
+		notifyUser(UserInfo.builder().email("").role(Role.USER).build(), NotificationType.FULL_COUNT, "");
 	}
 
 }

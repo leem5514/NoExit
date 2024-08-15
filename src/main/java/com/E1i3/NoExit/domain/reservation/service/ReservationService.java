@@ -102,7 +102,7 @@ public class ReservationService {
             Reservation reservation = dto.toEntity(member, game);
             log.debug("Saving reservation: {}", reservation);
             reservationRepository.save(reservation);
-            notificationService.notifyResToOwner(dto);
+            notificationService.notifyResToOwner(dto);  // onwer에게 알림
             reservationRedisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
             return reservation;
