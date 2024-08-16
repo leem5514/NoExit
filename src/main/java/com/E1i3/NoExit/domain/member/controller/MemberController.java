@@ -44,10 +44,10 @@ public class MemberController {
 
 	@Autowired
 	public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider,
-		NotificationService notificationService, NotificationService notificationService1) {
+		NotificationService notificationService) {
 		this.memberService = memberService;
 		this.jwtTokenProvider = jwtTokenProvider;
-		this.notificationService = notificationService1;
+		this.notificationService = notificationService;
 	}
 
 	// 회원가입 /member/create
@@ -102,14 +102,17 @@ public class MemberController {
 
 			loginInfo.put("id", member.getId());
 			loginInfo.put("token", jwtToken);
+			loginInfo.put("refreshToken", refreshToken);
+
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "일반 사용자 로그인 성공", loginInfo), HttpStatus.OK);
 		} else if (user instanceof Owner) {
 			Owner owner = (Owner) user;
 			String jwtToken = jwtTokenProvider.createToken(owner.getEmail(), owner.getRole().toString());
 			String refreshToken = jwtTokenProvider.createRefreshToken(owner.getEmail(), owner.getRole().toString());
 			
-      loginInfo.put("id", owner.getId());
+      		loginInfo.put("id", owner.getId());
 			loginInfo.put("token", jwtToken);
+			loginInfo.put("refreshToken", refreshToken);
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "점주 로그인 성공", loginInfo), HttpStatus.OK);
 		}
 		notificationService.subscribe(userInfo);

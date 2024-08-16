@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
+import com.E1i3.NoExit.domain.reservation.dto.ReservationUpdateResDto;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -112,5 +113,16 @@ public class Reservation extends BaseTimeEntity {
                 .storeName(this.game.getStore().getStoreName())
                 .createdTime(this.createdAt.format(formatter))
                 .build();
+    }
+
+    public ReservationUpdateResDto fromEntity() {
+        return ReservationUpdateResDto.builder()
+            .adminEmail(this.getOwner().getEmail())
+            .memberEmail(this.getMember().getEmail())
+            .gameId(this.getGame().getId())
+            .resDate(this.getResDate().toString())
+            .resDateTime(this.getResDateTime())
+            .approvalStatus(this.getApprovalStatus())
+            .build();
     }
 }

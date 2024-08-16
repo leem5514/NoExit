@@ -35,6 +35,8 @@ public class Notification extends BaseTimeEntity {
 
 	private String message;
 
-	private DelYN delyn;
+	@Enumerated(EnumType.STRING)
+	@Builder.Default
+	private DelYN delYN = DelYN.N;
 
 }

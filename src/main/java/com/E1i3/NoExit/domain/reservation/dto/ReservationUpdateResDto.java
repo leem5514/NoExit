@@ -18,6 +18,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ReservationUpdateResDto {
     private String adminEmail;
+    private String memberEmail;
     private Long gameId;
     private String resDate;
     private String resDateTime;
