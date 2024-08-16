@@ -37,7 +37,7 @@ public class ReservationSaveDto {
                 .resDateTime(this.resDateTime)
                 .reservationStatus(ReservationStatus.WAITING)
                 .approvalStatus(ApprovalStatus.READY)
-                .createdAt(LocalDateTime.now())
+                .createdTime(LocalDateTime.now())
                 .delYN(DelYN.N)
                 .build();
     }
