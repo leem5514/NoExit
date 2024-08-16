@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 public class CommentListResDto {
 
+    private Long id;
     private String writer; // 댓글 작성자 닉네임
     private String content; // 댓글 내용
     private int likes; // 좋아요 수
