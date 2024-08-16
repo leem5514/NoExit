@@ -14,6 +14,6 @@ import java.util.List;
 public interface GameRepository extends JpaRepository<Game, Long> {
     
   List<Game> findByStoreIn(List<Store> stores);
-	List<Game> findAll();
+  List<Game> findAll();
 
 }

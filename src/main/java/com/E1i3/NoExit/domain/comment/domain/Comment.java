@@ -43,7 +43,7 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member; // 댓글 작성자
 
-    private String content; // 댓글 내용
+    private String contents; // 댓글 내용
 
     private int likes; // 좋아요
     private int dislikes; // 싫어요
@@ -56,8 +56,9 @@ public class Comment extends BaseTimeEntity {
 
     public CommentListResDto fromEntity(){
         CommentListResDto commentListResDto = CommentListResDto.builder()
+                .id(this.id)
                 .writer(this.member.getNickname())
-                .content(this.content)
+                .contents(this.contents)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
                 .createdTime(this.getCreatedTime())
@@ -67,7 +68,7 @@ public class Comment extends BaseTimeEntity {
     }
 
     public void updateEntity(CommentUpdateReqDto dto) {
-        this.content = dto.getContent();
+        this.contents = dto.getContents();
     }
 
     public void deleteEntity() {
