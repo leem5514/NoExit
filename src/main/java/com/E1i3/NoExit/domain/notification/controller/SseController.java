@@ -16,9 +16,12 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.E1i3.NoExit.domain.member.domain.Role;
+import com.E1i3.NoExit.domain.notification.domain.UserInfo;
 import com.E1i3.NoExit.domain.notification.dto.NotificationResDto;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,8 +61,8 @@ public class SseController implements MessageListener {
 		return new MessageListenerAdapter(sseController, "onMessage");
 	}
 
-	@GetMapping("/subscribe")
-	public SseEmitter subcribe() {
+	@GetMapping("/subscribe/{role}")
+	public SseEmitter subcribe(@RequestParam Role role) {
 		SseEmitter emitter = new SseEmitter(14400 * 60 * 1000L);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String email = authentication.getName();
@@ -80,19 +83,22 @@ public class SseController implements MessageListener {
 		return emitter;
 	}
 
-	public void publishMessage(NotificationResDto dto, String email ) {
+	public void publishMessage(Object dto, String email ) {
 		sseRedisTemplate.convertAndSend(email, dto);
 	}
 
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
 		try {
+			System.out.println("message : " + message);
+
 			ObjectMapper objectMapper = new ObjectMapper();
 			NotificationResDto dto = objectMapper.readValue(message.getBody(), NotificationResDto.class);
 			String email = new String(pattern, StandardCharsets.UTF_8);
 			SseEmitter emitter = emitters.get(email);
+			System.out.println("emitter : " + emitter);
 			if (emitter != null) {
-				emitter.send(SseEmitter.event().name("notify:").data(dto));
+				emitter.send(SseEmitter.event().name(dto.getType().toString()).data(dto));
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);

@@ -9,6 +9,8 @@ import javax.persistence.Id;
 
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.notification.domain.NotificationType;
+import com.E1i3.NoExit.domain.reservation.domain.ApprovalStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +22,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Builder
+@JsonIgnoreProperties(ignoreUnknown =true)
 public class NotificationResDto extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +35,7 @@ public class NotificationResDto extends BaseTimeEntity {
 	private Long comment_id;
 	private Long reservation_id;
 	private String message;
-
-	// public NotificationResDto(Long id, String sender_email, String receiver_email, NotificationType type, String message) {
-	// 	this.id = id;
-	// 	this.sender_email = sender_email;
-	// 	this.email = receiver_email;
-	// 	this.type = type;
-	// 	this.message = message;
-	// }
+	@Enumerated(EnumType.STRING)
+	private ApprovalStatus approvalStatus;
 }
 

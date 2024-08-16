@@ -43,7 +43,7 @@ public class NotificationController {
 	// 	return notificationService.subscribe();
 	// }
 
-	@GetMapping("/notification")
+	@GetMapping("/notification/list")
 	public ResponseEntity<?> getNotification() {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		List<NotificationResDto> list = notificationService.getNotificationsByEmail();
