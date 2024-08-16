@@ -3,6 +3,11 @@ package com.E1i3.NoExit.domain.wishlist.controller;
 import java.util.List;
 
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
+import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
+import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
+import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
+import com.E1i3.NoExit.domain.wishlist.dto.WishReqDto;
+import com.E1i3.NoExit.domain.wishlist.dto.WishResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,29 +32,36 @@ public class WishListController {
 	}
 
 	// 위시리스트에 추가
-	@PostMapping("/wishlist/{gameId}")
-	public ResponseEntity<?> addWishList(@PathVariable Long gameId) {
-		WishList wishList = wishListService.addWishList(gameId);
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "위시리스트에 추가 성공", wishList.getId()), HttpStatus.OK);
+	@PostMapping("/wishlist/add")
+	public ResponseEntity<?> addWishList(@RequestBody WishReqDto dto) {
+		wishListService.addWishList(dto);
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "찜 성공", null);
+		return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
 	}
+
+
+
 
 	// 위시리스트 조회
 	@GetMapping("/wishlist")
-	public ResponseEntity<?> getWishList() {
+	public ResponseEntity<?> getWishList(@PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.ASC) Pageable pageable) {
 //		List<GameResDto> gameList = wishListService.getWishList();
-		List<WishList> wishLists = wishListService.getWishList();
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "위시리스트에 조회 성공", wishLists), HttpStatus.OK);
+		Page<WishResDto> dtos = wishListService.getWishList(pageable);
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "찜 목록 조회 성공", dtos);
+		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
-
 
 
 
 	// 위시리스트 삭제
 	@PatchMapping("/wishlist/delete/{gameId}")
 	public ResponseEntity<?> deleteWishList(@PathVariable Long gameId) {
-		WishList wishList = wishListService.deleteWishList(gameId);
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "위시리스트에 삭제 성공", wishList.getId()), HttpStatus.OK);
+		wishListService.deleteWishList(gameId);
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "찜 삭제", null);
+		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
+
+
 
 
 }
