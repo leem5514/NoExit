@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.common.configs;
 
+import com.E1i3.NoExit.domain.chat.service.RedisMessageSubscriber;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,9 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -120,6 +124,71 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
+	// 채팅 서비스 (5번 데이터베이스
+	@Bean
+	@Qualifier("chat")
+	public LettuceConnectionFactory connectionFactoryChat() {
+		return redisConnectionFactory(5);
+	}
 
+	@Bean
+	@Qualifier("chat")
+	public RedisTemplate<String, Object> redisTemplateChat() {
+		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+		redisTemplate.setConnectionFactory(connectionFactoryChat());
+		redisTemplate.setKeySerializer(new StringRedisSerializer());
+		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+		return redisTemplate;
+	}
+
+	@Bean
+	@Qualifier("chat")
+	public MessageListenerAdapter messageListenerAdapter() {
+		return new MessageListenerAdapter(new RedisMessageSubscriber());
+	}
+
+	@Bean
+	@Qualifier("chat")
+	public RedisMessageListenerContainer redisContainer(@Qualifier("chat") RedisConnectionFactory connectionFactory,
+														@Qualifier("chat") MessageListenerAdapter listenerAdapter) {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+		container.setConnectionFactory(connectionFactory);
+		container.addMessageListener(listenerAdapter, topic());
+		return container;
+	}
+
+	@Bean
+	public ChannelTopic topic() {
+		return new ChannelTopic("chatroom");
+	}
+//	@Bean
+//	@Qualifier("6")
+//	LettuceConnectionFactory connectionFactoryChat() {
+//		return redisConnectionFactory(5);
+//	}
+//
+//	@Bean
+//	@Qualifier("6")
+//	public RedisTemplate<String, Object> redisTemplateChat() {
+//		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+//		redisTemplate.setConnectionFactory(connectionFactoryChat());
+//		redisTemplate.setKeySerializer(new StringRedisSerializer());
+//		redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+//
+//		return redisTemplate;
+//	}
+//
+//	// Redis Message Listener for Chat
+//	@Bean
+//	public RedisMessageListenerContainer redisContainer(RedisConnectionFactory connectionFactoryChat) {
+//		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//		container.setConnectionFactory(connectionFactoryChat);
+//		return container;
+//	}
+//
+//	@Bean
+//	public ChannelTopic topic() {
+//		return new ChannelTopic("chatroom");
+//	}
 
 }

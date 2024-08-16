@@ -42,8 +42,9 @@ public class SecurityConfigs {
 						"/board/list", "/board/detail/**",
 						"/webjars/**",
 						//웹소켓 test 403 해결
-						"/ws/chat/**",
-						"/chat/**"
+						"/ws-chat/**",
+						"/chat/**", "/ws"
+
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.antMatchers("/reservation/storeReservation").hasRole("OWNER")
