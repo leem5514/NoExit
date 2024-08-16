@@ -55,6 +55,7 @@ public class FindBoardService {
 
         Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYN.N);
         return findBoards.map(FindBoard::listFromEntity);
+
     }
 
 
