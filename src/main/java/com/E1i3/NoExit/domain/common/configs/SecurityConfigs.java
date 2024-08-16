@@ -46,6 +46,7 @@ public class SecurityConfigs {
 						"/chat/**"
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
+				.antMatchers("/reservation/storeReservation").hasRole("OWNER")
 				.anyRequest().authenticated()
 				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

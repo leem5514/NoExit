@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class CommentCreateReqDto {
     private Long boardId; // 댓글 단 게시글 아이디
 //    private Long memberId; // 댓글 작성자 아이디 // 로그인하면 받아올 필요 없음
-    private String content; // 댓글 내용
+    private String contents; // 댓글 내용
 
 //    public Comment toEntity(Board board) {
 //        Comment comment = Comment.builder()

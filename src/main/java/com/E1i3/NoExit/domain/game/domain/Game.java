@@ -3,6 +3,7 @@ package com.E1i3.NoExit.domain.game.domain;
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.store.domain.Store;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import com.E1i3.NoExit.domain.game.dto.GameResDto;
 
@@ -50,12 +51,15 @@ public class Game extends BaseTimeEntity {
     @Column(name = "image_path", nullable = true)
     private String imagePath; // 사진 경로
 
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id", nullable = false)
     private Store store; // StoreInfo와의 관계 설정
+
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
 //    private List<Review> reviews;
+
+
     public GameResDto fromEntity(){
         return GameResDto.builder()
             .id(this.id)
@@ -64,6 +68,7 @@ public class Game extends BaseTimeEntity {
             .price(this.price)
             // .store(this.store)
             .imagePath(this.imagePath)
+            .storeName(this.store.getStoreName())
             .build();
     }
 
