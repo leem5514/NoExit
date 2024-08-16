@@ -62,7 +62,7 @@ public class CommentService {
         Comment comment = Comment.builder()
                 .board(board)
                 .member(member)
-                .content(dto.getContent())
+                .contents(dto.getContents())
                 .build();
 
         board.getComments().add(comment); // 게시글 댓글 목록에 추가

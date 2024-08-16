@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CommentUpdateReqDto {
-    private String content; // 댓글 내용
+    private String contents; // 댓글 내용
 }
