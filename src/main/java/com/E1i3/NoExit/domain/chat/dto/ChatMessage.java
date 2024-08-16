@@ -1,17 +1,27 @@
 package com.E1i3.NoExit.domain.chat.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
+import lombok.*;
+import org.springframework.data.redis.connection.stream.MapRecord;
+import org.springframework.data.redis.connection.stream.ObjectRecord;
+import org.springframework.data.redis.connection.stream.RecordId;
+import org.springframework.data.redis.connection.stream.StreamRecords;
+
+import javax.persistence.*;
+
 
 @Getter
 @Setter
 public class ChatMessage {
-    public enum MessageType{
-        ENTER, TALK
+    public enum MessageType {
+        CHAT,
+        JOIN,
+        LEAVE
     }
 
     private MessageType type;
-    private String roomId;
+    private String content;
     private String sender;
-    private String message;
+    private String roomId;
 }
+

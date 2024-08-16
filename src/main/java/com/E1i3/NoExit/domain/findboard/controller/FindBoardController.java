@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.findboard.controller;
 
+import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -49,21 +51,14 @@ public class FindBoardController {
 
     @Operation(summary= "[일반 사용자] 번개 글 게시판 API")
     @GetMapping("/list")
-    public ResponseEntity<CommonResDto> getFindBoardList(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "6") int size,
-            @RequestParam(defaultValue = "createdTime") String sort,
-            @RequestParam(defaultValue = "desc") String direction) {
+    public ResponseEntity<CommonResDto> getFindBoardList(@PageableDefault(size=6,sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        // 페이지 번호를 1에서 0으로 조정
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(direction), sort));
         Page<FindBoardListResDto> findBoardListResDtos = findBoardService.findBoardListResDto(pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "조회 성공", findBoardListResDtos);
 
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 
     }
-
 
     @Operation(summary= "[일반 사용자] 번개 글 수정 API")
     @PutMapping("/update/{id}")
