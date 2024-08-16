@@ -88,6 +88,14 @@ public class RedisConfig {
 		return redisTemplate;
 	}
 
+	@Bean
+	@Qualifier("3")
+	public RedisMessageListenerContainer redisMessageListenerContainer(@Qualifier("3") RedisConnectionFactory sseFactory) {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+		container.setConnectionFactory(sseFactory);
+		return container;
+	}
+
 	// 	게시글 좋아요 (3번 데이터베이스)
 	@Bean
 	@Qualifier("4")
