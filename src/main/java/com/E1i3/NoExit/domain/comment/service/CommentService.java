@@ -10,6 +10,10 @@ import com.E1i3.NoExit.domain.comment.repository.CommentRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.controller.SseController;
+import com.E1i3.NoExit.domain.notification.domain.NotificationType;
+import com.E1i3.NoExit.domain.notification.dto.NotificationResDto;
+import com.E1i3.NoExit.domain.notification.repository.NotificationRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +36,20 @@ public class CommentService {
     private final NotificationService notificationService;
     private static final String COMMENT_PREFIX = "comment:";
     private static final String MEMBER_PREFIX = "member:";
+    private final NotificationRepository notificationRepository;
+    private final SseController sseController;
 
     @Autowired
     public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository,
-        NotificationService notificationService) {
+        NotificationService notificationService, NotificationRepository notificationRepository,
+		SseController sseController) {
         this.commentRepository = commentRepository;
         this.memberRepository = memberRepository;
         this.boardRepository = boardRepository;
         this.notificationService = notificationService;
-    }
+		this.notificationRepository = notificationRepository;
+		this.sseController = sseController;
+	}
 
     @Autowired
     @Qualifier("5")
@@ -70,7 +79,11 @@ public class CommentService {
         commentRepository.save(comment);
 
         System.out.println("7 ok");
-        notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
+        NotificationResDto notificationResDto = new NotificationResDto(email, board.getMember().getEmail(),
+            NotificationType.COMMENT, member.getNickname() + "님이 게시글에 댓글을 남겼습니다.");
+        sseController.publishMessage(notificationResDto, board.getMember().getEmail());
+        // notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
+        notificationRepository.save(notificationResDto);
     }
 
 
@@ -143,7 +156,13 @@ public class CommentService {
 //        board.updateLikes(member.getEmail());gv
         commentRepository.save(comment);
 //        return board.getLikeMembers().size();
-        notificationService.notifyLikeComment(comment);
+//         notificationService.notifyLikeComment(comment);
+        String receiver_email = comment.getMember().getEmail();
+        NotificationResDto notificationResDto = new NotificationResDto(email, receiver_email,
+            NotificationType.COMMENT, member.getNickname() + "님이 내 댓글을 추천합니다.");
+        sseController.publishMessage(notificationResDto, receiver_email);
+        // notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
+        notificationRepository.save(notificationResDto);
         return comment.getLikes();
 
     }
