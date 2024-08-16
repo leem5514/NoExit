@@ -24,7 +24,6 @@ import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.service.MemberService;
-import com.E1i3.NoExit.domain.notification.dto.UserInfo;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.service.OwnerService;
@@ -90,11 +89,6 @@ public class MemberController {
 		Map<String, Object> loginInfo = new HashMap<>();
 		Object user = memberService.login(loginReqDto);
 
-		UserInfo userInfo = UserInfo.builder()
-			.email(loginReqDto.getEmail())
-			.role(loginReqDto.getRole())
-			.build();
-
 		if (user instanceof Member) {
 			Member member = (Member) user;
 			String jwtToken = jwtTokenProvider.createToken(member.getEmail(), member.getRole().toString());
@@ -115,7 +109,6 @@ public class MemberController {
 			loginInfo.put("refreshToken", refreshToken);
 			return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "점주 로그인 성공", loginInfo), HttpStatus.OK);
 		}
-		notificationService.subscribe(userInfo);
 
 		// 생성된 토큰을 comonResDto에 담아서 사용자에게 리턴
 		return null;

@@ -168,15 +168,15 @@ public class BoardService {
         }
 
         boardRepository.save(board);
-        // notificationService.notifyLikeBoard(board);
-        //        return board.getLikeMembers().size();
         String receiver_email = board.getMember().getEmail();
-        NotificationResDto notificationResDto = new NotificationResDto(email, receiver_email,
-            NotificationType.COMMENT, member.getNickname() + "님이 내 게시글을 추천합니다.");
+        NotificationResDto notificationResDto = NotificationResDto.builder()
+            .board_id(board.getId())
+            .email(receiver_email)
+            .sender_email(email)
+            .type(NotificationType.COMMENT)
+            .message(member.getNickname() + "님이 내 게시글을 추천합니다.").build();
         sseController.publishMessage(notificationResDto, receiver_email);
-        // notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
         notificationRepository.save(notificationResDto);
-
         return board.getLikes();
     }
 

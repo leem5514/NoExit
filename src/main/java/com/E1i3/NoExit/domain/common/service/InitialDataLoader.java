@@ -62,9 +62,22 @@ public class InitialDataLoader implements CommandLineRunner {
                     .role(Role.USER)
                     .phone_number("010-1234-5678") // Example phone number
                     .nickname("user") // Example nickname
-                    .profileImage("defaultImageUrl") // Set default or placeholder image URL
+                    .profileImage("https://noexit-bucket.s3.ap-northeast-2.amazonaws.com/member/a547286f-7f94-4983-9856-c68039e1e515.png\n") // Set default or placeholder image URL
                     .build();
             memberRepository.save(user);
         }
+        if (memberRepository.findByEmail("user2@test.com").isEmpty()) {
+            Member user = Member.builder()
+                .username("user_test2")
+                .email("user2@test.com")
+                .password(passwordEncoder.encode("12341234")) // Encode password
+                .role(Role.USER)
+                .phone_number("010-9876-9876") // Example phone number
+                .nickname("user_test2") // Example nickname
+                .profileImage("https://noexit-bucket.s3.ap-northeast-2.amazonaws.com/member/393e9081-b2f1-4809-a7ce-833bfcb79ab8.png\n") // Set default or placeholder image URL
+                .build();
+            memberRepository.save(user);
+        }
     }
+
 }
