@@ -134,13 +134,13 @@ public class RedisConfig {
 
 	// 채팅 서비스 (5번 데이터베이스
 	@Bean
-	@Qualifier("chat")
+	@Qualifier("6")
 	public LettuceConnectionFactory connectionFactoryChat() {
 		return redisConnectionFactory(5);
 	}
 
 	@Bean
-	@Qualifier("chat")
+	@Qualifier("6")
 	public RedisTemplate<String, Object> redisTemplateChat() {
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(connectionFactoryChat());
@@ -150,25 +150,25 @@ public class RedisConfig {
 	}
 
 	@Bean
-	@Qualifier("chat")
+	@Qualifier("6")
 	public MessageListenerAdapter messageListenerAdapter() {
 		return new MessageListenerAdapter(new RedisMessageSubscriber());
 	}
-
 	@Bean
-	@Qualifier("chat")
-	public RedisMessageListenerContainer redisContainer(@Qualifier("chat") RedisConnectionFactory connectionFactory,
-														@Qualifier("chat") MessageListenerAdapter listenerAdapter) {
+	public ChannelTopic topic() {
+		return new ChannelTopic("chatroom");
+	}
+	@Bean
+	@Qualifier("6")
+	public RedisMessageListenerContainer redisContainer(@Qualifier("6") RedisConnectionFactory connectionFactory,
+														@Qualifier("6") MessageListenerAdapter listenerAdapter) {
 		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
 		container.setConnectionFactory(connectionFactory);
 		container.addMessageListener(listenerAdapter, topic());
 		return container;
 	}
 
-	@Bean
-	public ChannelTopic topic() {
-		return new ChannelTopic("chatroom");
-	}
+
 //	@Bean
 //	@Qualifier("6")
 //	LettuceConnectionFactory connectionFactoryChat() {

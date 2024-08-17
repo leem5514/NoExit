@@ -18,6 +18,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,13 +56,18 @@ public class Comment extends BaseTimeEntity {
 
 
     public CommentListResDto fromEntity(){
+        String createdTime
+                = this.getCreatedTime().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        );
+
         CommentListResDto commentListResDto = CommentListResDto.builder()
                 .id(this.id)
                 .writer(this.member.getNickname())
                 .contents(this.contents)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
-                .createdTime(this.getCreatedTime())
+                .createdTime(createdTime)
                 .build();
 
         return commentListResDto;
@@ -75,11 +81,19 @@ public class Comment extends BaseTimeEntity {
         this.delYN = DelYN.Y;
     }
 
-    public void updateLikes() {
-        this.likes++;
+    public void updateLikes(boolean like) {
+        if(like) {
+            this.likes++;
+        }else{
+            this.likes--;
+        }
     }
 
-    public void updateDislikes() {
-        this.dislikes++;
+    public void updateDislikes(boolean dislike) {
+        if(dislike) {
+            this.dislikes++;
+        }else{
+            this.dislikes--;
+        }
     }
 }

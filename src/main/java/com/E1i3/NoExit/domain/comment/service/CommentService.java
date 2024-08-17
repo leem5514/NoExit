@@ -1,5 +1,4 @@
 package com.E1i3.NoExit.domain.comment.service;
-
 import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
 import com.E1i3.NoExit.domain.comment.domain.Comment;
@@ -15,7 +14,6 @@ import com.E1i3.NoExit.domain.notification.domain.NotificationType;
 import com.E1i3.NoExit.domain.notification.dto.NotificationResDto;
 import com.E1i3.NoExit.domain.notification.repository.NotificationRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -24,8 +22,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityNotFoundException;
+
 
 @Service
 @Transactional
@@ -228,6 +226,5 @@ public class CommentService {
 	////        return board.getDislikeMembers().size();
 	//        return comment.getDislikes();
 	//    }
-
 }
 
