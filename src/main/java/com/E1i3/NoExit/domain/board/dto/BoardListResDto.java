@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder
@@ -25,5 +26,6 @@ public class BoardListResDto {
     private int comments; // 댓글수
     private BoardType boardType; // 게시판 유형 (자유, 전략)
     private String thumbnail;
+    private LocalDate createdDate;
 
 }

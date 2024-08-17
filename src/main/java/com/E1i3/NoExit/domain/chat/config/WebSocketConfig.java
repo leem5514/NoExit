@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.*;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 //@Configuration
 //@EnableWebSocketMessageBroker
@@ -39,7 +40,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // 클라이언트가 접속할 수 있는 WebSocket 엔드포인트 등록
         registry.addEndpoint("/ws-chat")
-                .setAllowedOrigins("*");    // CORS 전체 허용
-//                .withSockJS();
+                .setAllowedOrigins("http://localhost:8082")
+                .withSockJS();
     }
 }

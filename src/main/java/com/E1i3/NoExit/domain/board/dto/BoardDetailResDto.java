@@ -24,7 +24,7 @@ public class BoardDetailResDto {
     private int likes; // 좋아요
     private int dislikes; // 싫어요
     private List<CommentListResDto> comments; // 댓글
-    private LocalDate createdDate; // 작성일
+    private String createdTime; // 작성일
     private List<BoardImageDto> images; // 이미지
     private BoardType boardType; // 게시판 유형 (자유, 전략)
 }

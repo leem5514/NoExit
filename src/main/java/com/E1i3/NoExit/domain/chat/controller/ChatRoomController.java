@@ -1,30 +1,40 @@
 package com.E1i3.NoExit.domain.chat.controller;
 
 import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
+import com.E1i3.NoExit.domain.chat.dto.CreateRoomRequest;
 import com.E1i3.NoExit.domain.chat.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RequiredArgsConstructor
+import java.util.*;
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/chat")  // 기본 경로를 설정
 public class ChatRoomController {
 
-    private final ChatRoomService chatRoomService;
+    private Map<String, List<String>> chatRooms = new HashMap<>();
 
-    @PostMapping("/chat/create")
-    public ChatRoom createRoom(@RequestParam String name, @RequestParam String password) {
-        return chatRoomService.createRoom(name, password);
+    @PostMapping("/createRoom")
+    public ResponseEntity<String> createRoom(@RequestBody Map<String, String> payload) {
+        String roomId = UUID.randomUUID().toString();
+        chatRooms.put(roomId, new ArrayList<>());
+        return ResponseEntity.ok(roomId);
     }
 
-    @GetMapping("/chat/rooms")
-    public List<ChatRoom> roomList() {
-        return chatRoomService.findAllRooms();
-    }
+    @PostMapping("/joinRoom")
+    public ResponseEntity<String> joinRoom(@RequestBody Map<String, String> payload) {
+        String roomId = payload.get("roomId");
+        String username = payload.get("username");
 
-    @GetMapping("/chat/rooms/{roomId}")
-    public ChatRoom getRoom(@PathVariable Long roomId) {
-        return chatRoomService.findRoomById(roomId);
+        if (!chatRooms.containsKey(roomId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found");
+        }
+
+        chatRooms.get(roomId).add(username);
+        return ResponseEntity.ok("Joined room");
     }
 }
+
+

@@ -27,8 +27,8 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     generate-ddl: true
     hibernate:
-    ddl-auto: update
-    show_sql: true
+      ddl-auto: create
+    show_sql : true
   application:
     name: noexit
   servlet:

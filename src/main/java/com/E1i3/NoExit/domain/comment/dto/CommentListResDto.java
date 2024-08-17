@@ -18,5 +18,5 @@ public class CommentListResDto {
     private String contents; // 댓글 내용
     private int likes; // 좋아요 수
     private int dislikes; // 싫어요 수
-    private LocalDateTime createdTime; // 작성시간
+    private String createdTime; // 작성시간
 }
