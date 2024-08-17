@@ -10,6 +10,10 @@ import com.E1i3.NoExit.domain.comment.repository.CommentRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.controller.SseController;
+import com.E1i3.NoExit.domain.notification.domain.NotificationType;
+import com.E1i3.NoExit.domain.notification.dto.NotificationResDto;
+import com.E1i3.NoExit.domain.notification.repository.NotificationRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +31,7 @@ import javax.persistence.EntityNotFoundException;
 @Service
 @Transactional
 public class CommentService {
+
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;

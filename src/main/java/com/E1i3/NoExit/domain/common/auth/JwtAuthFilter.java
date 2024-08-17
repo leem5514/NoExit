@@ -39,27 +39,25 @@ public class JwtAuthFilter extends GenericFilter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		String bearerToken = ((HttpServletRequest)request).getHeader("Authorization");
 		try {
-
 			if (bearerToken != null){
-
-				// token은 관례적으로 Bearer로 시작하는 문구를 넣어서 요청
 				if(!bearerToken.substring(0, 7).equals("Bearer ")){
 					throw new AuthenticationServiceException("Bearer 형식이 아닙니다.");
 				}
 				String token = bearerToken.substring(7);
 
-				// token 검증 및 claims(사용자 정보) 추출
-				// token 생성시에 사용한 secret키값을 넣어 토큰 검증에 사용
-				Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+				if (token != null){
+					Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
 
-				// Authentication 객체(인증 정보가 들어감) 생성(UserDetails 객체도 필요)
-				List<GrantedAuthority> authorities = new ArrayList<>();
-				authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get("role")));
-				UserDetails userDetails = new User(claims.getSubject(), "", authorities);
-				Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-				SecurityContextHolder.getContext().setAuthentication(authentication);
+					List<GrantedAuthority> authorities = new ArrayList<>();
+					authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get("role")));
+					UserDetails userDetails = new User(claims.getSubject(), "", authorities);
+					Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+					SecurityContextHolder.getContext().setAuthentication(authentication);
+				}else {
+					System.out.println("token null");
+				}
+
 			}
-			// filterchain에서 그 다음 filtering으로 넘어가도록 하는 메서드
 			chain.doFilter(request, response);
 
 		} catch (Exception e){
