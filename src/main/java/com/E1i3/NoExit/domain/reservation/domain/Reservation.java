@@ -61,8 +61,8 @@ public class Reservation extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus; // 사장님기준 예약 승인 거절 여부
 
-    @CreationTimestamp
-    private LocalDateTime createdAt; // 예약 당시 시간
+//    @CreationTimestamp
+//    private LocalDateTime createdAt; // 예약 당시 시간
 
     @Enumerated(EnumType.STRING)
     private DelYN delYN = DelYN.N;
@@ -71,7 +71,7 @@ public class Reservation extends BaseTimeEntity {
     @Builder
     public Reservation(Owner owner, Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
                        int numberOfPlayers, ReservationStatus reservationStatus, ApprovalStatus approvalStatus,
-                       LocalDateTime createdAt, DelYN delYN) {
+                       LocalDateTime createdTime, DelYN delYN) {
         this.owner = owner;
         this.member = member;
         this.game = game;
@@ -82,7 +82,7 @@ public class Reservation extends BaseTimeEntity {
         this.numberOfPlayers = numberOfPlayers;
         this.reservationStatus = reservationStatus;
         this.approvalStatus = approvalStatus;
-        this.createdAt = createdAt;
+        createdTime = LocalDateTime.now();
         this.delYN = delYN.N;
     }
 
@@ -111,7 +111,7 @@ public class Reservation extends BaseTimeEntity {
                 .reservationStatus(this.reservationStatus)
                 .gameName(this.game.getGameName())
                 .storeName(this.game.getStore().getStoreName())
-                .createdTime(this.createdAt.format(formatter))
+                .createdTime(this.createdTime().format(formatter))
                 .build();
     }
 

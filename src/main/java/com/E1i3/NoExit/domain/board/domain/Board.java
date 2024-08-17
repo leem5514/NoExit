@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,11 @@ public class Board extends BaseTimeEntity {
     private DelYN delYN = DelYN.N; // 삭제여부
 
     public BoardListResDto fromEntity(){
+        int commentLength = 0;
+        for(Comment c : this.comments) {
+            if(c.getDelYN().equals(DelYN.N)) { commentLength++; }
+        }
+
         if (this.imgs != null && !this.imgs.isEmpty()) {
             return BoardListResDto.builder()
                     .id(this.id)
@@ -69,9 +75,10 @@ public class Board extends BaseTimeEntity {
                     .boardHits(this.boardHits)
                     .likes(this.likes)
                     .dislikes(this.dislikes)
-                    .comments(this.comments.size())
+                    .comments(commentLength)
                     .thumbnail(this.imgs.get(0).getImageUrl())
                     .boardType(this.boardType)
+                    .createdDate(this.getCreatedTime().toLocalDate())
                     .build();
         }else{
             return BoardListResDto.builder()
@@ -81,8 +88,9 @@ public class Board extends BaseTimeEntity {
                     .boardHits(this.boardHits)
                     .likes(this.likes)
                     .dislikes(this.dislikes)
-                    .comments(this.comments.size())
+                    .comments(commentLength)
                     .boardType(this.boardType)
+                    .createdDate(this.getCreatedTime().toLocalDate())
                     .build();
         }
     }
@@ -107,6 +115,12 @@ public class Board extends BaseTimeEntity {
             iDtos.add(i.fromEntity());
         }
 
+        String createdTime
+                = this.getCreatedTime().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        );
+
+
         BoardDetailResDto boardDetailResDto = BoardDetailResDto.builder()
                 .id(this.id)
                 .writer(this.member.getNickname()) //
@@ -118,7 +132,7 @@ public class Board extends BaseTimeEntity {
                 .boardType(this.boardType)
                 .comments(cDtos)
                 .images(iDtos)
-                .createdDate(this.getCreatedTime().toLocalDate())
+                .createdTime(createdTime)
                 .build();
 
         return boardDetailResDto;
