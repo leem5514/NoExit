@@ -3,6 +3,7 @@ package com.E1i3.NoExit.domain.store.domain;
 
 import javax.persistence.*;
 import com.E1i3.NoExit.domain.game.domain.Game;
+import com.E1i3.NoExit.domain.game.dto.GameResDto;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.E1i3.NoExit.domain.store.dto.StoreResDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,5 +52,10 @@ public class Store {
 	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Game> games;
 
-
+	public StoreResDto fromEntity(){
+		return StoreResDto.builder()
+				.id(this.id)
+				.storeName(this.storeName)
+				.build();
+		}
 }

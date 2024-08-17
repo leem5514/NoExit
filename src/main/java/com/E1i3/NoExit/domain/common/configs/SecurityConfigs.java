@@ -43,7 +43,9 @@ public class SecurityConfigs {
 						"/webjars/**",
 						//웹소켓 test 403 해결
 						"/ws-chat/**",
-						"/chat/**", "/ws"
+						"/chat/**",
+						"/ws",
+						"/store/list" //매장 정보 접근 권한 추가 김민성
 
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
