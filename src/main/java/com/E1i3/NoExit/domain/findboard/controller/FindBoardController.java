@@ -25,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/findboard")
@@ -92,4 +93,12 @@ public class FindBoardController {
         }
     }
 
+    @Operation(summary= "[일반 사용자] 마감 임박 게시글 조회 API")
+    @GetMapping("/imminent-closing")
+    public ResponseEntity<CommonResDto> getImminentClosingBoards() {
+        List<FindBoardListResDto> imminentBoards = findBoardService.getImminentClosingBoards();
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "마감 임박 게시글 조회 성공", imminentBoards);
+
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
 }
