@@ -11,6 +11,10 @@ import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
 import com.E1i3.NoExit.domain.findboard.repository.FindBoardRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.controller.SseController;
+import com.E1i3.NoExit.domain.notification.domain.NotificationType;
+import com.E1i3.NoExit.domain.notification.dto.NotificationResDto;
+import com.E1i3.NoExit.domain.notification.repository.NotificationRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +32,17 @@ public class FindBoardService {
     private final FindBoardRepository findBoardRepository;
     private final MemberRepository memberRepository;
     private final AttendanceRepository attendanceRepository;
-    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
+    private final SseController sseController;
 
     @Autowired
-    public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository, AttendanceRepository attendanceRepository,
-		NotificationService notificationService) {
+    public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository, AttendanceRepository attendanceRepository, NotificationRepository notificationRepository,
+		SseController sseController) {
         this.findBoardRepository = findBoardRepository;
         this.memberRepository = memberRepository;
         this.attendanceRepository = attendanceRepository;
-		    this.notificationService = notificationService;
+		this.notificationRepository = notificationRepository;
+		this.sseController = sseController;
 	}
 
 
@@ -120,8 +126,16 @@ public class FindBoardService {
         attendanceRepository.save(attendance); // 참가자 정보 저장
 
         if ( findBoard.getCurrentCount() == findBoard.getTotalCapacity()){
-            // notificationService.notifyFullCount();
+            String receiver_email = findBoard.getMember().getEmail();
+            NotificationResDto notificationResDto = NotificationResDto.builder()
+                .findboard_id(findBoard.getId())
+                .email(receiver_email)
+                .type(NotificationType.FULL_COUNT)
+                .message("참여글의 모집인원이 가득찼습니다.").build();
+            sseController.publishMessage(notificationResDto, receiver_email);
+            notificationRepository.save(notificationResDto);
             findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
+
         }
 
 

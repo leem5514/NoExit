@@ -176,7 +176,7 @@ public class BoardService {
             .type(NotificationType.BOARD_LIKE)
             .message(member.getNickname() + "님이 내 게시글을 추천합니다.").build();
         sseController.publishMessage(notificationResDto, receiver_email);
-        notificationRepository.save(notificationResDto);
+        // notificationRepository.save(notificationResDto);
         return board.getLikes();
     }
 

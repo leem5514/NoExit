@@ -89,7 +89,7 @@ public class CommentService {
 		      .type(NotificationType.COMMENT)
 		      .message(member.getNickname() + "님이 게시글에 댓글을 남겼습니다.").build();
         sseController.publishMessage(notificationResDto, receiver_email);
-        notificationRepository.save(notificationResDto);
+        // notificationRepository.save(notificationResDto);
 	}
 
 	public Page<CommentListResDto> commentList(Long id, Pageable pageable) { // 댓글 조회
@@ -160,7 +160,7 @@ public class CommentService {
 			.message(member.getNickname() + "님이 내 댓글을 추천합니다.")
 			.build();
 		sseController.publishMessage(notificationResDto, receiver_email);
-		notificationRepository.save(notificationResDto);
+		// notificationRepository.save(notificationResDto);
 		return comment.getLikes();
 
 	}

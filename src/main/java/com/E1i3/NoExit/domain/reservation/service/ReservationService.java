@@ -119,8 +119,8 @@ public class ReservationService {
                 .sender_email(memberEmail)
                 .type(NotificationType.RESERVATION_REQ)
                 .message(member.getNickname() + "님이 예약을 요청하셨습니다.").build();
-            sseController.publishMessage(dto, receiver_email);
-            notificationRepository.save(notificationResDto);
+            sseController.publishMessage(notificationResDto, receiver_email);
+            // notificationRepository.save(notificationResDto);
 
             return reservation;
         } catch (Exception e) {
