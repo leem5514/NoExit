@@ -1,5 +1,4 @@
 package com.E1i3.NoExit.domain.comment.service;
-
 import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
 import com.E1i3.NoExit.domain.comment.domain.Comment;
@@ -11,7 +10,6 @@ import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -20,30 +18,31 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityNotFoundException;
 
 
 @Service
 @Transactional
 public class CommentService {
-
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final NotificationService notificationService;
     private static final String COMMENT_PREFIX = "comment:";
     private static final String MEMBER_PREFIX = "member:";
-
+    private final NotificationRepository notificationRepository;
+	  private final SseController sseController;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository,
-        NotificationService notificationService) {
-        this.commentRepository = commentRepository;
-        this.memberRepository = memberRepository;
-        this.boardRepository = boardRepository;
-        this.notificationService = notificationService;
-    }
+  	public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository, NotificationService notificationService, NotificationRepository notificationRepository,
+		SseController sseController) {
+      this.commentRepository = commentRepository;
+      this.memberRepository = memberRepository;
+      this.boardRepository = boardRepository;
+      this.notificationService = notificationService;
+      this.notificationRepository = notificationRepository;
+      this.sseController = sseController;
+	}
 
     @Autowired
     @Qualifier("5")
@@ -73,12 +72,18 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-        notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
+        // 댓글 작성 알림
+        String receiver_email = board.getMember().getEmail();
+        NotificationResDto notificationResDto = NotificationResDto.builder()
+              .board_id(board.getId())
+              .comment_id(comment.getId())
+              .email(receiver_email)
+              .sender_email(email)
+              .type(NotificationType.COMMENT)
+              .message(member.getNickname() + "님이 게시글에 댓글을 남겼습니다.").build();
+            sseController.publishMessage(notificationResDto, receiver_email);
+            // notificationRepository.save(notificationResDto);
     }
-
-
-
-
 
 
     public Page<CommentListResDto> commentList(Long id, Pageable pageable){ // 댓글 조회
@@ -90,12 +95,6 @@ public class CommentService {
         return commentListResDtos;
     }
 
-
-
-
-
-
-
     public Comment commentUpdate(Long id, CommentUpdateReqDto dto) { // 댓글 수정
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
@@ -106,7 +105,6 @@ public class CommentService {
         comment.updateEntity(dto);
         return comment;
     }
-
 
 
     public void commentDelete(Long id) { // 댓글 삭제
@@ -133,8 +131,8 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
 
-        String likesKey = COMMENT_PREFIX + id + ":likes";
-        String memberLikesKey = MEMBER_PREFIX + member.getId() + ":likes:" + id;
+        String key = COMMENT_PREFIX + id + ":likesOrDislikes";
+		    String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
 
         Boolean isLiked = commentRedisTemplate.hasKey(memberLikesKey);
 
@@ -149,6 +147,19 @@ public class CommentService {
         }
 
         commentRepository.save(comment);
+      
+      // 댓글 좋아요 알림
+        String receiver_email = comment.getMember().getEmail();
+        NotificationResDto notificationResDto = NotificationResDto.builder()
+          .comment_id(comment.getId())
+          .email(receiver_email)
+          .sender_email(email)
+          .type(NotificationType.COMMENT_LIKE)
+          .message(member.getNickname() + "님이 내 댓글을 추천합니다.")
+          .build();
+        sseController.publishMessage(notificationResDto, receiver_email);
+
+        // notificationRepository.save(notificationResDto);
 
         return comment.getLikes();
 
@@ -186,6 +197,5 @@ public class CommentService {
 
         return value;
     }
-
 }
 
