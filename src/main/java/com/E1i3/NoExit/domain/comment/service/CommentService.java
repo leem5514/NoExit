@@ -160,6 +160,7 @@ public class CommentService {
 			.message(member.getNickname() + "님이 내 댓글을 추천합니다.")
 			.build();
 		sseController.publishMessage(notificationResDto, receiver_email);
+
 		// notificationRepository.save(notificationResDto);
 		return comment.getLikes();
 
