@@ -7,6 +7,10 @@ import com.E1i3.NoExit.domain.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.controller.SseController;
+import com.E1i3.NoExit.domain.notification.domain.NotificationType;
+import com.E1i3.NoExit.domain.notification.dto.NotificationResDto;
+import com.E1i3.NoExit.domain.notification.repository.NotificationRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.owner.repository.OwnerRepository;
@@ -51,8 +55,9 @@ public class ReservationService {
     @Autowired
 
     private StoreRepository storeRepository;
+    private final SseController sseController;
+    private final NotificationRepository notificationRepository;
 
-    private final NotificationService notificationService;
     @Autowired
     @Qualifier("2")
     private RedisTemplate<String, Object> reservationRedisTemplate;
@@ -60,13 +65,15 @@ public class ReservationService {
     private static final String RESERVATION_LOCK_PREFIX = "reservation:lock:";
 
     public ReservationService(ReservationRepository reservationRepository, GameRepository gameRepository, MemberRepository memberRepository, OwnerRepository ownerRepository, StoreRepository storeRepository,
+		SseController sseController, NotificationRepository notificationRepository,
 		NotificationService notificationService) {
         this.reservationRepository = reservationRepository;
         this.gameRepository = gameRepository;
         this.memberRepository = memberRepository;
         this.ownerRepository = ownerRepository;
         this.storeRepository = storeRepository;
-		    this.notificationService = notificationService;
+		this.sseController = sseController;
+		this.notificationRepository = notificationRepository;
 	  }
 
     /* 레디스를 통한 예약하기 */
@@ -101,9 +108,19 @@ public class ReservationService {
         try {
             Reservation reservation = dto.toEntity(member, game);
             log.debug("Saving reservation: {}", reservation);
-            reservationRepository.save(reservation);
-            // notificationService.notifyResToOwner(dto);  // onwer에게 알림
+
+            Reservation saved_res = reservationRepository.save(reservation);
             reservationRedisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
+
+            String receiver_email =  dto.getEmail();
+            NotificationResDto notificationResDto = NotificationResDto.builder()
+                .reservation_id(saved_res.getId())
+                .email( receiver_email)
+                .sender_email(memberEmail)
+                .type(NotificationType.RESERVATION_REQ)
+                .message(member.getNickname() + "님이 예약을 요청하셨습니다.").build();
+            sseController.publishMessage(notificationResDto, receiver_email);
+            // notificationRepository.save(notificationResDto);
 
             return reservation;
         } catch (Exception e) {
@@ -230,9 +247,16 @@ public class ReservationService {
                 // 예약 거절 시 해당 시간대를 다시 예약 가능하도록 처리
                 reservationRedisTemplate.delete(reservationKey);
             }
-            // notificationService.notifyResToMember(dto.getMemberEmail(),dto.getApprovalStatus().toString());
-            System.out.println(dto.getMemberEmail());
-            System.out.println(dto.getGameId());
+            // NotificationResDto notificationResDto = NotificationResDto.builder()
+            //     .email(dto.getMemberEmail())
+            //     .sender_email(dto.getMemberEmail())
+            //     .reservation_id(reservation.getId())
+            //     .type(NotificationType.RESERVATION_RES)
+            //     .approvalStatus(dto.getApprovalStatus())
+            //     .message(dto.getMemberEmail() + "님이 예약을 " + dto.getApprovalStatus() + "하셨습니다.")
+            //     .build();
+            // sseController.publishMessage(notificationResDto, dto.getMemberEmail());
+            // notificationRepository.save(notificationResDto);
 
             return reservationRepository.save(reservation);
         } catch (Exception e) {

@@ -79,8 +79,8 @@ public class CommentService {
 		commentRepository.save(comment);
 		System.out.println("7 ok");
 
+		// 댓글 작성 알림
 		String receiver_email = board.getMember().getEmail();
-
 		NotificationResDto notificationResDto = NotificationResDto.builder()
 		      .board_id(board.getId())
 		      .comment_id(comment.getId())
@@ -89,24 +89,7 @@ public class CommentService {
 		      .type(NotificationType.COMMENT)
 		      .message(member.getNickname() + "님이 게시글에 댓글을 남겼습니다.").build();
         sseController.publishMessage(notificationResDto, receiver_email);
-        notificationRepository.save(notificationResDto);
-		// NotificationResDto notificationResDto = new NotificationResDto(board.getId(),email, board.getMember().getEmail(),
-		//     NotificationType.COMMENT, member.getNickname() + "님이 게시글에 댓글을 남겼습니다.");
-		// sseController.publishMessage(NotificationResDto.builder()
-		//       .board_id(board.getId())
-		//       .comment_id(comment.getId())
-		//       .email(receiver_email)
-		//       .sender_email(email)
-		//       .type(NotificationType.COMMENT)
-		//       .message(member.getNickname() + "님이 게시글에 댓글을 남겼습니다.").build(), receiver_email);
-		// notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
-		// notificationRepository.save(NotificationResDto.builder()
-		//     .board_id(board.getId())
-		//     .comment_id(comment.getId())
-		//     .email(receiver_email)
-		//     .sender_email(email)
-		//     .type(NotificationType.COMMENT)
-		//     .message(member.getNickname() + "님이 게시글에 댓글을 남겼습니다.").build());
+        // notificationRepository.save(notificationResDto);
 	}
 
 	public Page<CommentListResDto> commentList(Long id, Pageable pageable) { // 댓글 조회
@@ -166,6 +149,8 @@ public class CommentService {
 		//        board.updateLikes(member.getEmail());gv
 		commentRepository.save(comment);
 		//        return board.getLikeMembers().size();
+
+		// 댓글 좋아요 알림
 		String receiver_email = comment.getMember().getEmail();
 		NotificationResDto notificationResDto = NotificationResDto.builder()
 			.comment_id(comment.getId())
@@ -174,14 +159,8 @@ public class CommentService {
 			.type(NotificationType.COMMENT_LIKE)
 			.message(member.getNickname() + "님이 내 댓글을 추천합니다.")
 			.build();
-
-		// NotificationResDto notificationResDto = new NotificationResDto(comment.getId(), email, receiver_email,
-		//     NotificationType.COMMENT, member.getNickname() + "님이 내 댓글을 추천합니다.");
-
 		sseController.publishMessage(notificationResDto, receiver_email);
-		notificationRepository.save(notificationResDto);
-		// notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
-
+		// notificationRepository.save(notificationResDto);
 		return comment.getLikes();
 
 	}

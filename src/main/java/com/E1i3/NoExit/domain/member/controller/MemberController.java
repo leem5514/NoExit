@@ -3,9 +3,13 @@ package com.E1i3.NoExit.domain.member.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
+import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
@@ -23,6 +28,7 @@ import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
+import com.E1i3.NoExit.domain.member.dto.memberRefreshDto;
 import com.E1i3.NoExit.domain.member.service.MemberService;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
@@ -40,13 +46,18 @@ public class MemberController {
 	private final MemberService memberService;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final NotificationService notificationService;
+	private final RedisTemplate<String, Object> redisTemplate;
+
+	@Value("${jwt.secretKeyRt}")
+	private String secretKeyRt;
 
 	@Autowired
 	public MemberController(MemberService memberService, JwtTokenProvider jwtTokenProvider,
-		NotificationService notificationService) {
+		NotificationService notificationService, RedisTemplate<String, Object> redisTemplate) {
 		this.memberService = memberService;
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.notificationService = notificationService;
+		this.redisTemplate = redisTemplate;
 	}
 
 	// 회원가입 /member/create
@@ -112,5 +123,34 @@ public class MemberController {
 
 		// 생성된 토큰을 comonResDto에 담아서 사용자에게 리턴
 		return null;
+	}
+
+	@PostMapping("/refresh-token")
+	public ResponseEntity<?> generateNewAccesstoken(@RequestBody memberRefreshDto dto) {
+		String rt = dto.getRefreshToken();
+		Claims claims = null;
+		try {
+			// 코드를 통해 rt 검증
+			claims = Jwts.parser().setSigningKey(secretKeyRt).parseClaimsJws(rt).getBody();
+		} catch (Exception e) {
+			return new ResponseEntity<>(new CommonErrorDto(HttpStatus.BAD_REQUEST, "invalids refresh token"),
+				HttpStatus.BAD_REQUEST);
+		}
+		String email = claims.getSubject();
+		String role = claims.get("role").toString();
+
+		// redis를 조회하여 rt 추가 검증
+		Object obj = redisTemplate.opsForValue().get(email);
+		if (obj == null || !obj.toString().equals(rt)) {
+			return new ResponseEntity<>(new CommonErrorDto(HttpStatus.UNAUTHORIZED, "invalids refresh token"),
+				HttpStatus.UNAUTHORIZED);
+		}
+		String newAt = jwtTokenProvider.createToken(email, role);
+		Map<String, Object> info = new HashMap<>();
+		info.put("token", newAt);
+
+		// 생성된 토큰을 comonResDto에 담아서 사용자에게 리턴
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "at is renewed", info), HttpStatus.OK);
+
 	}
 }

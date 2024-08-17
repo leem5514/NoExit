@@ -22,10 +22,10 @@ spring:
       namespace: chat
 
 
-  jpa :
+  jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MariaDBDialect
-    generate-ddl : true
+    generate-ddl: true
     hibernate:
       ddl-auto: create
     show_sql : true

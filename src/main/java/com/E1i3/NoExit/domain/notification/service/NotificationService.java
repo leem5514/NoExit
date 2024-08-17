@@ -50,8 +50,14 @@ public class NotificationService {
 		this.dataSource = dataSource;
 	}
 
-	public List<NotificationResDto> getNotificationsByEmail(){
+	public List<NotificationResDto> getNotificationsByEmail() {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		return notificationRepository.findByEmail(email);
+	}
+
+	public void updateDelYN(Long id) {
+		NotificationResDto notificationResDto = notificationRepository.findById(id)
+			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 알림입니다."));
+		notificationResDto.updateDelYN(DelYN.Y);
 	}
 }
