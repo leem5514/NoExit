@@ -109,20 +109,21 @@ public class ReservationService {
             Reservation reservation = dto.toEntity(member, game);
             log.debug("Saving reservation: {}", reservation);
 
-            Reservation saved_res = reservationRepository.save(reservation);
             reservationRedisTemplate.opsForValue().set(reservationKey, "RESERVED", 3, TimeUnit.HOURS); // 3시간 뒤 자동 삭제
 
-            String receiver_email =  dto.getEmail();
+            Reservation savedReservation = reservationRepository.save(reservation);
+
+            String receiver_email = game.getStore().getOwner().getEmail();
             NotificationResDto notificationResDto = NotificationResDto.builder()
-                .reservation_id(saved_res.getId())
-                .email( receiver_email)
+                .reservation_id(savedReservation.getId())
+                .email(receiver_email)
                 .sender_email(memberEmail)
                 .type(NotificationType.RESERVATION_REQ)
                 .message(member.getNickname() + "님이 예약을 요청하셨습니다.").build();
             sseController.publishMessage(notificationResDto, receiver_email);
-            // notificationRepository.save(notificationResDto);
+            notificationRepository.save(notificationResDto);
 
-            return reservation;
+            return savedReservation;
         } catch (Exception e) {
             log.error("Exception occurred during reservation save: ", e);
             reservationRedisTemplate.delete(reservationKey);
@@ -247,18 +248,18 @@ public class ReservationService {
                 // 예약 거절 시 해당 시간대를 다시 예약 가능하도록 처리
                 reservationRedisTemplate.delete(reservationKey);
             }
-            // NotificationResDto notificationResDto = NotificationResDto.builder()
-            //     .email(dto.getMemberEmail())
-            //     .sender_email(dto.getMemberEmail())
-            //     .reservation_id(reservation.getId())
-            //     .type(NotificationType.RESERVATION_RES)
-            //     .approvalStatus(dto.getApprovalStatus())
-            //     .message(dto.getMemberEmail() + "님이 예약을 " + dto.getApprovalStatus() + "하셨습니다.")
-            //     .build();
-            // sseController.publishMessage(notificationResDto, dto.getMemberEmail());
-            // notificationRepository.save(notificationResDto);
 
-            return reservationRepository.save(reservation);
+            Reservation savedReservation = reservationRepository.save(reservation);
+            NotificationResDto notificationResDto = NotificationResDto.builder()
+                .email(dto.getMemberEmail())
+                .sender_email(dto.getMemberEmail())
+                .reservation_id(reservation.getId())
+                .type(NotificationType.RESERVATION_RES)
+                .approvalStatus(dto.getApprovalStatus())
+                .message(dto.getMemberEmail() + "님이 예약을 " + dto.getApprovalStatus() + "하셨습니다.")
+                .build();
+            sseController.publishMessage(notificationResDto, dto.getMemberEmail());
+            return savedReservation;
         } catch (Exception e) {
             log.error("Error during approval status update: ", e);
             throw e;
