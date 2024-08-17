@@ -10,10 +10,6 @@ import com.E1i3.NoExit.domain.comment.repository.CommentRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
-import com.E1i3.NoExit.domain.notification.controller.SseController;
-import com.E1i3.NoExit.domain.notification.domain.NotificationType;
-import com.E1i3.NoExit.domain.notification.dto.NotificationResDto;
-import com.E1i3.NoExit.domain.notification.repository.NotificationRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +73,6 @@ public class CommentService {
 
         commentRepository.save(comment);
 
-        System.out.println("7 ok");
         notificationService.notifyComment(board, dto);  // 내가 쓴 게시글에 댓글 알림
     }
 
