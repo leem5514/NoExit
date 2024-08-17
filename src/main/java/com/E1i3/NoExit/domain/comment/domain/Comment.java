@@ -81,11 +81,19 @@ public class Comment extends BaseTimeEntity {
         this.delYN = DelYN.Y;
     }
 
-    public void updateLikes() {
-        this.likes++;
+    public void updateLikes(boolean like) {
+        if(like) {
+            this.likes++;
+        }else{
+            this.likes--;
+        }
     }
 
-    public void updateDislikes() {
-        this.dislikes++;
+    public void updateDislikes(boolean dislike) {
+        if(dislike) {
+            this.dislikes++;
+        }else{
+            this.dislikes--;
+        }
     }
 }

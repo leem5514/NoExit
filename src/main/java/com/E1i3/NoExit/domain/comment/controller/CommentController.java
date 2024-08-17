@@ -118,9 +118,15 @@ public class CommentController {
     @PatchMapping("/comment/dislike/{id}")
     public ResponseEntity<Object> commentDislike(@PathVariable Long id) {
         try {
-            int dislikes = commentService.commentUpdateDisikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this comment", dislikes);
-            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            CommonResDto commonResDto;
+            boolean value = false;
+            if(commentService.commentUpdateDislikes(id)) {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this comment", !value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            } else {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you un-disliked this comment", value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            }
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
             CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());
