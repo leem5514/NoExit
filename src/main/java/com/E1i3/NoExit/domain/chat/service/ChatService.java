@@ -1,33 +1,26 @@
-//package com.E1i3.NoExit.domain.chat.service;
-//
-//
-//import com.E1i3.NoExit.domain.chat.domain.ChatMessageEntity;
-//import com.E1i3.NoExit.domain.chat.dto.ChatMessage;
-//import com.E1i3.NoExit.domain.chat.repository.ChatMessageRepository;
-//import org.springframework.stereotype.Service;
-//
-//import java.util.List;
-//
-//@Service
-//public class ChatService {
-//
-//    private final ChatMessageRepository chatMessageRepository;
-//
-//    public ChatService(ChatMessageRepository chatMessageRepository) {
-//        this.chatMessageRepository = chatMessageRepository;
-//    }
-//
-//    public void saveMessage(ChatMessage chatMessage) {
-//        ChatMessageEntity messageEntity = new ChatMessageEntity();
-//        messageEntity.setRoomId(chatMessage.getRoomId());
-//        messageEntity.setSender(chatMessage.getSender());
-//        messageEntity.setContent(chatMessage.getContent());
-//        messageEntity.setTimestamp(System.currentTimeMillis());
-//
-//        chatMessageRepository.save(messageEntity);
-//    }
-//
-//    public List<ChatMessageEntity> getChatHistory(String roomId) {
-//        return chatMessageRepository.findByRoomId(roomId);
-//    }
-//}
+package com.E1i3.NoExit.domain.chat.service;
+
+
+import com.E1i3.NoExit.domain.chat.domain.ChatMessageEntity;
+import com.E1i3.NoExit.domain.chat.dto.ChatMessage;
+import com.E1i3.NoExit.domain.chat.repository.ChatMessageRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ChatService {
+
+    private final RedisMessagePublisher redisMessagePublisher;
+    private final RedisStreamService redisStreamService;
+
+    public void handleMessage(String roomId, String message) {
+        // 메시지를 Redis 스트림에 저장
+        redisStreamService.addMessageToStream(roomId, message);
+
+        // 메시지를 Redis 채널에 퍼블리시
+        redisMessagePublisher.publish(message);
+    }
+}
