@@ -45,8 +45,8 @@ public class SecurityConfigs {
 						"/ws-chat/**",
 						"/chat/**",
 						"/ws",
-						"/store/list" //매장 정보 접근 권한 추가 김민성
-
+						"/store/list", //매장 정보 접근 권한 추가 김민성
+						"/attendance/list" // 참석자 정보 접근 권한 추가 김민성
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.antMatchers("/reservation/storeReservation").hasRole("OWNER")
