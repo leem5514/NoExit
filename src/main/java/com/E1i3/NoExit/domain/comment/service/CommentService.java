@@ -35,7 +35,7 @@ public class CommentService {
     private static final String COMMENT_PREFIX = "comment:";
     private static final String MEMBER_PREFIX = "member:";
     private final NotificationRepository notificationRepository;
-	  private final SseController sseController;
+    private final SseController sseController;
 
     @Autowired
   	public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository, NotificationService notificationService, NotificationRepository notificationRepository,

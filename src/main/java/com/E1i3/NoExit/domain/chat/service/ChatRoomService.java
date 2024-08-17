@@ -15,9 +15,7 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
 
     public ChatRoom createRoom(String name, String password) {
-        ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setName(name);
-        chatRoom.setPassword(password);
+        ChatRoom chatRoom = new ChatRoom(name, password);
         return chatRoomRepository.save(chatRoom);
     }
 
@@ -26,6 +24,8 @@ public class ChatRoomService {
     }
 
     public ChatRoom findRoomById(Long id) {
-        return chatRoomRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Room not found"));
+        return chatRoomRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
     }
+
 }
