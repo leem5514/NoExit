@@ -9,6 +9,10 @@ import com.E1i3.NoExit.domain.comment.repository.CommentRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.E1i3.NoExit.domain.notification.controller.SseController;
+import com.E1i3.NoExit.domain.notification.domain.NotificationType;
+import com.E1i3.NoExit.domain.notification.dto.NotificationResDto;
+import com.E1i3.NoExit.domain.notification.repository.NotificationRepository;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -123,7 +127,9 @@ public class CommentService {
 
 
     @Transactional
-    public int commentUpdateLikes(Long id) {
+    public boolean commentUpdateLikes(Long id) {
+        boolean value = false;
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
@@ -131,10 +137,12 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
 
-        String key = COMMENT_PREFIX + id + ":likesOrDislikes";
-		    String memberKey = MEMBER_PREFIX + member.getId() + ":likesOrDislikes:" + id;
+
+        String likesKey = COMMENT_PREFIX + id + ":likes";
+        String memberLikesKey = MEMBER_PREFIX + member.getId() + ":likes:" + id;
 
         Boolean isLiked = commentRedisTemplate.hasKey(memberLikesKey);
+
 
         if (isLiked != null && isLiked) {
             commentRedisTemplate.delete(memberLikesKey);
@@ -144,11 +152,12 @@ public class CommentService {
             commentRedisTemplate.opsForValue().set(memberLikesKey, true);
             commentRedisTemplate.opsForSet().add(likesKey, member.getId());
             comment.updateLikes(true);
+            value = true;
         }
 
-        commentRepository.save(comment);
-      
-      // 댓글 좋아요 알림
+
+
+        // 댓글 좋아요 알림
         String receiver_email = comment.getMember().getEmail();
         NotificationResDto notificationResDto = NotificationResDto.builder()
           .comment_id(comment.getId())
@@ -161,7 +170,9 @@ public class CommentService {
 
         // notificationRepository.save(notificationResDto);
 
-        return comment.getLikes();
+        commentRepository.save(comment);
+
+        return value;
 
     }
 
