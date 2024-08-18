@@ -24,6 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -140,6 +142,15 @@ public class FindBoardService {
 
 
         return findBoard.ResDtoFromEntity();
+    }
+
+    @Transactional(readOnly = true)
+    public List<FindBoardListResDto> getImminentClosingBoards() {
+        List<FindBoard> imminentBoards = findBoardRepository.findImminentClosingBoards();
+
+        return imminentBoards.stream()
+                .map(FindBoard::listFromEntity)
+                .collect(Collectors.toList());
     }
 
 }
