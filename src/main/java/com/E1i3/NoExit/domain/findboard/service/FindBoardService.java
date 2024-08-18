@@ -135,7 +135,6 @@ public class FindBoardService {
                 .type(NotificationType.FULL_COUNT)
                 .message("참여글의 모집인원이 가득찼습니다.").build();
             sseController.publishMessage(notificationResDto, receiver_email);
-            notificationRepository.save(notificationResDto);
             findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
 
         }

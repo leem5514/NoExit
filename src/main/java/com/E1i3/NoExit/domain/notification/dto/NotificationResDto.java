@@ -43,7 +43,7 @@ public class NotificationResDto extends BaseTimeEntity {
 	@Builder.Default
 	private DelYN delYn = DelYN.N;
 
-	public void updateDelYN(DelYN delYN) {
+	public void updateDelYN() {
 		this.delYn = DelYN.Y;
 	}
 }
