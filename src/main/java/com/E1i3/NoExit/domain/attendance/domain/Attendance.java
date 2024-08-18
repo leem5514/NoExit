@@ -31,10 +31,14 @@ public class Attendance {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    private String email;
+
+
     public AttendanceResDto listfromEntity(){
         return AttendanceResDto.builder()
                 .findBoardId(findBoard.getId())
                 .memberId(member.getId())
+                .email(this.email)
                 .build();
     }
 

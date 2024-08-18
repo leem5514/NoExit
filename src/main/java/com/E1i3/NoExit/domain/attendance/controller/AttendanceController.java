@@ -28,4 +28,13 @@ public class AttendanceController {
         return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", attendances), HttpStatus.OK);
     }
 
+    // 새로운 기능 추가
+    @GetMapping("/attendance/list/findBoard/{findBoardId}")
+    public ResponseEntity<?> attendanceListByFindBoard(@PathVariable Long findBoardId) {
+        List<AttendanceResDto> attendances = attendanceService.attendanceListByFindBoard(findBoardId);
+        return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", attendances), HttpStatus.OK);
+    }
+
+
 }
+

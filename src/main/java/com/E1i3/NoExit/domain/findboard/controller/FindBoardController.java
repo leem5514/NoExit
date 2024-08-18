@@ -101,4 +101,6 @@ public class FindBoardController {
 
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
+
+
 }
