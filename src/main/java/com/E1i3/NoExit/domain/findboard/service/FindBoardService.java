@@ -24,6 +24,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -133,13 +135,21 @@ public class FindBoardService {
                 .type(NotificationType.FULL_COUNT)
                 .message("참여글의 모집인원이 가득찼습니다.").build();
             sseController.publishMessage(notificationResDto, receiver_email);
-            notificationRepository.save(notificationResDto);
             findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
 
         }
 
 
         return findBoard.ResDtoFromEntity();
+    }
+
+    @Transactional(readOnly = true)
+    public List<FindBoardListResDto> getImminentClosingBoards() {
+        List<FindBoard> imminentBoards = findBoardRepository.findImminentClosingBoards();
+
+        return imminentBoards.stream()
+                .map(FindBoard::listFromEntity)
+                .collect(Collectors.toList());
     }
 
 }

@@ -21,4 +21,5 @@ public class ReviewListDto {
     private String memberNickname; // 작성자 닉네임
     private String gameName;
     private LocalDateTime createdAt;
+    private String storeName;
 }

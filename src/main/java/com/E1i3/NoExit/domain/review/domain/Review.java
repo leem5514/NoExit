@@ -63,13 +63,14 @@ public class Review extends BaseTimeEntity {
 
     public static ReviewListDto fromEntity(Review review) {
         return ReviewListDto.builder()
-                .id(review.getId())
-                .rating(review.getRating())
-                .imagePath(review.getImagePath())
-                .memberNickname(review.getMember().getNickname())
-                .content(review.getContent())
-                .gameName(review.getReservation().getGame().getGameName())
-                .createdAt(review.getCreatedTime())
-                .build();
+            .id(review.getId())
+            .rating(review.getRating())
+            .imagePath(review.getImagePath())
+            .memberNickname(review.getMember().getNickname())
+            .content(review.getContent())
+            .gameName(review.getReservation().getGame().getGameName())
+            .storeName(review.getReservation().getOwner().getStoreName())
+            .createdAt(review.getCreatedTime())
+            .build();
     }
 }

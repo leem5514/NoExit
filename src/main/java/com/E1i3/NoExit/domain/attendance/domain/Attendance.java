@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.attendance.domain;
 
+import com.E1i3.NoExit.domain.attendance.dto.AttendanceResDto;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Getter
@@ -28,5 +30,12 @@ public class Attendance {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public AttendanceResDto listfromEntity(){
+        return AttendanceResDto.builder()
+                .findBoardId(findBoard.getId())
+                .memberId(member.getId())
+                .build();
+    }
 
 }
