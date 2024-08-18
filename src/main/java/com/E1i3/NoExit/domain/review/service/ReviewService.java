@@ -59,7 +59,6 @@ public class ReviewService {
         this.reservationRepository = reservationRepository;
     }
 
-
     /*  */
     @PreAuthorize("hasRole('USER')")
     @Transactional
@@ -160,9 +159,11 @@ public class ReviewService {
         return review;
     }
 
-    // 리뷰 숫자
+    /* 리뷰 숫자 */
     public long getReviewCountForGame(Long gameId) {
         return reviewRepository.countByReservation_GameIdAndDelYN(gameId, DelYN.N);
     }
+
+
 
 }

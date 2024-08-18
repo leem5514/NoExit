@@ -72,6 +72,7 @@ public class Reservation extends BaseTimeEntity {
     public Reservation(Owner owner, Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
                        int numberOfPlayers, ReservationStatus reservationStatus, ApprovalStatus approvalStatus,
                        LocalDateTime createdTime, DelYN delYN) {
+        this.id = id;
         this.owner = owner;
         this.member = member;
         this.game = game;
@@ -117,6 +118,7 @@ public class Reservation extends BaseTimeEntity {
 
     public ReservationUpdateResDto fromEntity() {
         return ReservationUpdateResDto.builder()
+                .id(this.id)
             .adminEmail(this.getOwner().getEmail())
             .memberEmail(this.getMember().getEmail())
             .gameId(this.getGame().getId())

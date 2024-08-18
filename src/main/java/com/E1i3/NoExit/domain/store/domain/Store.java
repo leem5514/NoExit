@@ -57,5 +57,5 @@ public class Store {
 				.id(this.id)
 				.storeName(this.storeName)
 				.build();
-		}
+	}
 }
