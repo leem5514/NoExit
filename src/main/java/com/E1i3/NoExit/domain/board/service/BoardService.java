@@ -170,7 +170,7 @@ public class BoardService {
         boardRepository.save(board);
         String receiver_email = board.getMember().getEmail();
         NotificationResDto notificationResDto = NotificationResDto.builder()
-            .board_id(board.getId())
+            .notification_id(board.getId())
             .email(receiver_email)
             .sender_email(email)
             .type(NotificationType.BOARD_LIKE)

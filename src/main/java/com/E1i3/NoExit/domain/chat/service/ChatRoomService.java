@@ -1,6 +1,7 @@
 package com.E1i3.NoExit.domain.chat.service;
 
 
+import com.E1i3.NoExit.domain.attendance.domain.Attendance;
 import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
 import com.E1i3.NoExit.domain.chat.repository.ChatRoomRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;

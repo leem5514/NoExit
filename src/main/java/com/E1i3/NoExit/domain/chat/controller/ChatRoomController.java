@@ -19,6 +19,10 @@ public class ChatRoomController {
     private final ChatService chatService;
     private final ChatMessageRepository chatMessageRepository;
 
+   
+    private Map<String, List<String>> chatRooms = new HashMap<>();
+
+
     public ChatRoomController(ChatRoomService chatRoomService, ChatService chatService, ChatMessageRepository chatMessageRepository) {
         this.chatRoomService = chatRoomService;
         this.chatService = chatService;
@@ -43,13 +47,6 @@ public class ChatRoomController {
         // 사용자 추가 로직이 필요하다면 추가 구현
         return ResponseEntity.ok("Joined room");
     }
-// 채팅방에 참여
-//    @PostMapping("/joinRoom")
-//    public ResponseEntity<String> joinRoom(@RequestBody CreateRoomRequest request) {
-//        // 참여 로직을 추가할 수 있습니다.
-//        ChatRoom chatRoom = chatRoomService.findRoomById(request.getRoomId());
-//        return ResponseEntity.ok("Joined room: " + chatRoom.getName());
-//    }
 
     @GetMapping("/rooms")
     public ResponseEntity<List<ChatRoom>> roomList() {
@@ -67,6 +64,13 @@ public class ChatRoomController {
         }
         List<ChatMessageEntity> messages = chatMessageRepository.findByChatRoom(chatRoom);
         return ResponseEntity.ok(messages);
+    }
+
+
+    @GetMapping("/list")
+    public List<ChatRoom>list() {
+        return chatRoomService.findAllRooms();
+
     }
 }
 
