@@ -274,7 +274,10 @@ public class ReservationService {
             throw new IllegalArgumentException("본인의 예약만 취소할 수 있습니다.");
         }
 
+        reservation.updateStatus(ApprovalStatus.NO);
+        // 예약 삭제 플래그를 Y로 설정
         reservation.updateDelYN();
+
         reservationRepository.save(reservation);
 
         String reservationKey = RESERVATION_LOCK_PREFIX + reservation.getGame().getStore().getStoreName() + ":" + reservation.getGame().getGameName() + ":" + reservation.getResDate() + ":" + reservation.getResDateTime();
