@@ -25,4 +25,3 @@ public class RedisMessagePublisher {
         redisTemplate.convertAndSend(topic.getTopic(), message);
     }
 }
-

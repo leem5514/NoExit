@@ -18,7 +18,7 @@ public class ChatMessage {
         LEAVE
     }
     private MessageType type;
-    private String content;
+    private Object content;
     private String sender;
     private String roomId;
 

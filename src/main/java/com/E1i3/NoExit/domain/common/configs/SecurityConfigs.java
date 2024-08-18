@@ -42,7 +42,7 @@ public class SecurityConfigs {
 						"/board/list", "/board/detail/**",
 						"/webjars/**",
 						//웹소켓 test 403 해결
-						"/ws-chat/**"
+						"/ws-chat/**",
 //						"/chat/**", "/ws"
 						"/ws-chat/**",
 						"/store/list", //매장 정보 접근 권한 추가 김민성
