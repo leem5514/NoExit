@@ -52,19 +52,19 @@ public class ChatRoomController {
     public ResponseEntity<List<ChatRoom>> roomList() {
         return ResponseEntity.ok(chatRoomService.findAllRooms());
     }
-    @GetMapping("/rooms/{roomId}")
-    public ResponseEntity<ChatRoom> getRoom(@PathVariable Long roomId) {
-        return ResponseEntity.ok(chatRoomService.findRoomById(roomId));
-    }
-    @GetMapping("/rooms/{roomId}/messages")
-    public ResponseEntity<List<ChatMessageEntity>> getMessages(@PathVariable Long roomId) {
-        ChatRoom chatRoom = chatRoomService.findRoomById(roomId);
-        if (chatRoom == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        List<ChatMessageEntity> messages = chatMessageRepository.findByChatRoom(chatRoom);
-        return ResponseEntity.ok(messages);
-    }
+//    @GetMapping("/rooms/{roomId}")
+//    public ResponseEntity<ChatRoom> getRoom(@PathVariable Long roomId) {
+//        return ResponseEntity.ok(chatRoomService.findRoomById(roomId));
+//    }
+//    @GetMapping("/rooms/{roomId}/messages")
+//    public ResponseEntity<List<ChatMessageEntity>> getMessages(@PathVariable Long roomId) {
+//        ChatRoom chatRoom = chatRoomService.findRoomById(roomId);
+//        if (chatRoom == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//        }
+//        List<ChatMessageEntity> messages = chatMessageRepository.findByChatRoom(chatRoom);
+//        return ResponseEntity.ok(messages);
+//    }
 
 
     @GetMapping("/list")

@@ -8,6 +8,8 @@ import com.E1i3.NoExit.domain.chat.repository.ChatMessageRepository;
 import com.E1i3.NoExit.domain.chat.repository.ChatRoomRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,10 +29,11 @@ public class ChatService {
     private final RedisMessageListenerContainer redisContainer;
 
     private final RedisMessagePublisher redisMessagePublisher;
-//    private final RedisStreamService redisStreamService;
+    //    private final RedisStreamService redisStreamService;
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
+    private final ObjectMapper objectMapper;
 
     public List<ChatMessageEntity> getMessagesForRoom(Long roomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(roomId)
@@ -39,41 +42,38 @@ public class ChatService {
     }
 
     // 메시지를 처리하고 저장하는 기능
-    public void handleMessage(String roomId, String senderNickname, String content) {
-        System.out.println("Handling message for room ID: " + roomId);
-
+    public void handleMessage(String roomId, String senderNickname, Object content) {
         String senderEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (senderEmail == null) {
-            throw new IllegalStateException("Authentication information not found in SecurityContextHolder");
-        }
-        System.out.println("Sender Email: " + senderEmail);
-
         Member member = memberRepository.findByEmail(senderEmail)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid sender email: " + senderEmail));
-        System.out.println("Member found: " + member.getNickname());
 
-
-
-        // ChatRoom을 조회하여 엔티티 가져오기
         ChatRoom chatRoom = chatRoomRepository.findById(Long.parseLong(roomId))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
 
-        // ChatMessageEntity 빌드
+        // JSON으로 content를 변환
+        String contentAsString;
+        try {
+            contentAsString = objectMapper.writeValueAsString(content);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to serialize content", e);
+        }
+
         ChatMessageEntity chatMessageEntity = ChatMessageEntity.builder()
                 .sender(member.getNickname())
-                .content(content)
+                .content(contentAsString)
                 .chatRoom(chatRoom)
                 .timestamp(System.currentTimeMillis())
                 .build();
 
         // 메시지 저장
         chatMessageRepository.save(chatMessageEntity);
-        System.out.println("Saved message to database: " + content);
+        System.out.println("Saved message to database: " + contentAsString);
 
         // Redis로 메시지 퍼블리시
-        redisMessagePublisher.publish(content);
-        System.out.println("Published message to Redis: " + content);
+        redisMessagePublisher.publish(contentAsString);
+        System.out.println("Published message to Redis: " + contentAsString);
     }
+
 
     // 특정 방의 모든 메시지 조회
     public List<ChatMessageEntity> getMessagesByRoomId(Long roomId) {
