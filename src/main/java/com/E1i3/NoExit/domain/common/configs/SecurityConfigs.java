@@ -34,7 +34,7 @@ public class SecurityConfigs {
 						"/doLogin","/owner/create", "/game/list","/findboard/list", "/game/detail/**", "/game/**", "/findboard/create",
 						// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
 						"/member/create", "/swagger-ui/**",
-						"/review/all","/review/all/**","/review/count",
+						"/review/all","/review/all/**","/review/count","/review/game/**",
 						"/swagger-resources/**",
 						"/swagger-ui.html",
 						"/v2/api-docs",

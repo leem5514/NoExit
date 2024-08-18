@@ -23,6 +23,8 @@ import io.swagger.annotations.Api;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @Api(tags="리뷰 서비스")
@@ -112,4 +114,17 @@ public class ReviewController {
         return reviewService.getReviewCountForGame(gameId);
     }
 
+
+    /* 게임별 리뷰 개수와 평균 평점을 반환하는 엔드포인트 */
+    @GetMapping("/review/game/{gameId}")
+    public ResponseEntity<Map<String, Object>> getReviewsByGameId(@PathVariable Long gameId) {
+        Map<String, Object> response = new HashMap<>();
+        long reviewCount = reviewService.getReviewCountForGame(gameId);
+        double averageRating = reviewService.calculateAverageRatingForGame(gameId);
+
+        response.put("reviewCount", reviewCount);
+        response.put("averageRating", averageRating);
+
+        return ResponseEntity.ok(response);
+    }
 }

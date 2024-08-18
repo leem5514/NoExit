@@ -67,6 +67,7 @@ public class Reservation extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private DelYN delYN = DelYN.N;
 
+//    private boolean reviewWritten = false; // 리뷰 읽음 처리
 
     @Builder
     public Reservation(Owner owner, Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
@@ -87,6 +88,7 @@ public class Reservation extends BaseTimeEntity {
         this.delYN = delYN.N;
     }
 
+
     public void updateStatus(ApprovalStatus approvalStatus) {
         this.approvalStatus = approvalStatus;
         if (approvalStatus == ApprovalStatus.OK) {
@@ -95,6 +97,10 @@ public class Reservation extends BaseTimeEntity {
             this.reservationStatus = ReservationStatus.REJECT;
         }
     }
+
+//    public void markReviewAsWritten() {
+//        this.reviewWritten = true;
+//    }
 
     public void updateDelYN() {
         this.delYN = DelYN.Y;

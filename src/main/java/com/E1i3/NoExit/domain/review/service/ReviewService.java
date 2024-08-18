@@ -109,6 +109,9 @@ public class ReviewService {
             String s3Path = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(s3Key)).toExternalForm();
             review.updateImagePath(s3Path);
 
+            //reservation.markReviewAsWritten();
+            reservationRepository.save(reservation);
+
         } catch (IOException e) {
             throw new RuntimeException("이미지 업로드 실패");
         }
@@ -163,7 +166,12 @@ public class ReviewService {
     public long getReviewCountForGame(Long gameId) {
         return reviewRepository.countByReservation_GameIdAndDelYN(gameId, DelYN.N);
     }
-
-
-
+    /* 리뷰 평균 값 */
+    public double calculateAverageRatingForGame(Long gameId) {
+        List<Review> reviews = reviewRepository.findByReservation_GameIdAndDelYN(gameId, DelYN.N);
+        return reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
+    }
 }
