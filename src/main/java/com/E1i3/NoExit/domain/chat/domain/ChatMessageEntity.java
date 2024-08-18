@@ -16,15 +16,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 public class ChatMessageEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String sender;
     private String content;
     private Long timestamp;
-
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     @JsonBackReference

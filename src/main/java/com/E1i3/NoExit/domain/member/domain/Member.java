@@ -8,6 +8,7 @@ import javax.persistence.*;
 import com.E1i3.NoExit.domain.attendance.domain.Attendance;
 import com.E1i3.NoExit.domain.board.domain.Board;
 
+import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.grade.domain.Grade;
@@ -20,6 +21,7 @@ import com.E1i3.NoExit.domain.reservation.domain.Reservation;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.E1i3.NoExit.domain.wishlist.domain.WishList;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -90,6 +92,11 @@ public class Member extends BaseTimeEntity{
 	@OneToOne
 	@JoinColumn(name = "grade_id")
 	private Grade grade;
+
+	// 채팅 방 구현을 위한 추가 , 역 직렬화 막기 위한 조건 추가
+	@ManyToMany(mappedBy = "members")
+	@JsonBackReference // Member는 역참조로 직렬화 제외
+	private List<ChatRoom> chatRooms = new ArrayList<>();
 
 	public Member updateMember(MemberUpdateDto dto, String email, String encodedPassword) {
 		this.username = dto.getUsername();

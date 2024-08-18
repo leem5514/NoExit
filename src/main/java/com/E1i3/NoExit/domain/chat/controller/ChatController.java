@@ -4,11 +4,15 @@ package com.E1i3.NoExit.domain.chat.controller;
 import com.E1i3.NoExit.domain.chat.dto.ChatMessage;
 import com.E1i3.NoExit.domain.chat.service.ChatService;
 import com.E1i3.NoExit.domain.chat.service.RedisMessagePublisher;
-import com.E1i3.NoExit.domain.chat.service.RedisStreamService;
+//import com.E1i3.NoExit.domain.chat.service.RedisStreamService;
+import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -16,45 +20,74 @@ import org.springframework.stereotype.Controller;
 public class ChatController {
 
     private final RedisMessagePublisher redisMessagePublisher;
-    private final RedisStreamService redisStreamService;
+//    private final RedisStreamService redisStreamService;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
+    private final MemberRepository memberRepository;
 
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@Payload ChatMessage chatMessage) {
+        String senderEmail = null;
+        try {
+            // Check if the authentication is present
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null) {
+                throw new IllegalStateException("No authentication found in SecurityContextHolder");
+            }
 
-        System.out.println("Received message to send: " + chatMessage.getContent());            //
+            // Retrieve the sender's email
+            senderEmail = authentication.getName();
+            if (senderEmail == null) {
+                throw new IllegalStateException("No sender email found in authentication");
+            }
+            System.out.println("/chat.sendMessage의 Sender email: " + senderEmail);
 
-        // 메시지를 Redis 스트림에 추가
-        redisStreamService.addMessageToStream(chatMessage.getRoomId(), chatMessage.getContent());
+            // Find the member by email
+            String finalSenderEmail = senderEmail;
+            Member member = memberRepository.findByEmail(senderEmail)
+                    .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + finalSenderEmail));
 
-        System.out.println("Added message to Redis stream: " + chatMessage.getContent());      //
+            // Set the sender's nickname
+            chatMessage.setSender(member.getNickname());
 
-        // 메시지를 Redis 채널에 퍼블리시
-        redisMessagePublisher.publish(chatMessage.getContent());
+            System.out.println("Message to send: " + chatMessage.getContent());
 
-        System.out.println("Published message to Redis channel: " + chatMessage.getContent());       //
-
-        chatService.handleMessage(chatMessage.getRoomId(), chatMessage.getSender(), chatMessage.getContent());
-
-        System.out.println("Handled and saved message: " + chatMessage.getContent());             //
-
-        // WebSocket을 통해 같은 방에 있는 클라이언트들에게 메시지 전송
-        String destination = "/topic/room/" + chatMessage.getRoomId();
-        messagingTemplate.convertAndSend(destination, chatMessage);
-
-        System.out.println("Message sent to WebSocket topic: " + destination);           //
+        } catch (Exception e) {
+            System.err.println("Error in sendMessage: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @MessageMapping("/chat.join")
-    public void joinRoom(@Payload ChatMessage chatMessage) {
-        chatMessage.setContent(chatMessage.getSender() + " joined the room!");
+    public void joinRoom(@Payload final ChatMessage chatMessage) {
+        try {
+            String senderEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+            if (senderEmail == null) {
+                throw new IllegalStateException("Authentication information not found in SecurityContextHolder");
+            }
+            System.out.println("/chat.join의 Sender Email: " + senderEmail);
 
-        System.out.println("User joined room: " + chatMessage.getRoomId());             //
+            chatMessage.setContent(chatMessage.getSender() + " joined room " + chatMessage.getRoomId() + "!");
 
-        // WebSocket을 통해 방에 참여했다는 메시지를 브로드캐스트
-        String destination = "/topic/room/" + chatMessage.getRoomId();
-        messagingTemplate.convertAndSend(destination, chatMessage);
-        System.out.println("Join message sent to WebSocket topic: " + destination);             //
+            System.out.println("Executing findByEmail with senderEmail: " + senderEmail);
+            Member member = memberRepository.findByEmail(senderEmail)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid sender email: " + senderEmail));
+            System.out.println("Member found: " + member.getNickname());
+
+
+            chatMessage.setSender(member.getNickname());
+            System.out.println("Sender nickname set to: " + chatMessage.getRoomId());
+
+            final String destination = "/topic/room/" + chatMessage.getRoomId();
+            messagingTemplate.convertAndSend(destination, chatMessage);
+
+            System.out.println("User joined room: " + chatMessage.getRoomId());
+            System.out.println("Join message sent to WebSocket topic: " + destination);
+        } catch (Exception e) {
+            System.err.println("Error in joinRoom: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
+
 }

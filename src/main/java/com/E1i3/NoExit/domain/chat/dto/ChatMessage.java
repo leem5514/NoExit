@@ -9,7 +9,6 @@ import org.springframework.data.redis.connection.stream.StreamRecords;
 
 import javax.persistence.*;
 
-
 @Getter
 @Setter
 public class ChatMessage {
@@ -18,10 +17,10 @@ public class ChatMessage {
         JOIN,
         LEAVE
     }
-
     private MessageType type;
     private String content;
     private String sender;
     private String roomId;
+
 }
 

@@ -25,13 +25,11 @@ public class ChatRoomController {
         this.chatMessageRepository = chatMessageRepository;
     }
 
-
     @PostMapping("/createRoom")
     public ResponseEntity<ChatRoom> createRoom(@RequestBody CreateRoomRequest request) {
         ChatRoom chatRoom = chatRoomService.createRoom(request.getName(), request.getPassword());
         return ResponseEntity.ok(chatRoom);
     }
-
     @PostMapping("/joinRoom")
     public ResponseEntity<String> joinRoom(@RequestBody Map<String, String> payload) {
         String roomId = payload.get("roomId");
@@ -52,7 +50,6 @@ public class ChatRoomController {
 //        ChatRoom chatRoom = chatRoomService.findRoomById(request.getRoomId());
 //        return ResponseEntity.ok("Joined room: " + chatRoom.getName());
 //    }
-
 
     @GetMapping("/rooms")
     public ResponseEntity<List<ChatRoom>> roomList() {

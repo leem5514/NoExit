@@ -42,12 +42,12 @@ public class SecurityConfigs {
 						"/board/list", "/board/detail/**",
 						"/webjars/**",
 						//웹소켓 test 403 해결
-						"/ws-chat/**",
-						"/chat/**", "/ws"
-
+						"/ws-chat/**"
+//						"/chat/**", "/ws"
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.antMatchers("/reservation/storeReservation").hasRole("OWNER")
+				.antMatchers("/chat/**").authenticated()
 				.anyRequest().authenticated()
 				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
