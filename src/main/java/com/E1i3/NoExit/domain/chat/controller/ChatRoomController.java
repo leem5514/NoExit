@@ -14,6 +14,7 @@ import java.util.*;
 @RequestMapping("/chat")  // 기본 경로를 설정
 public class ChatRoomController {
 
+    private final ChatRoomService chatRoomService;
     private Map<String, List<String>> chatRooms = new HashMap<>();
 
     @PostMapping("/createRoom")
@@ -34,6 +35,11 @@ public class ChatRoomController {
 
         chatRooms.get(roomId).add(username);
         return ResponseEntity.ok("Joined room");
+    }
+
+    @GetMapping("/list")
+    public List<ChatRoom>list() {
+        return chatRoomService.findAllRooms();
     }
 }
 

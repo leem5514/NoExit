@@ -115,7 +115,7 @@ public class ReservationService {
 
             String receiver_email = game.getStore().getOwner().getEmail();
             NotificationResDto notificationResDto = NotificationResDto.builder()
-                .reservation_id(savedReservation.getId())
+                .notification_id(savedReservation.getId())
                 .email(receiver_email)
                 .sender_email(memberEmail)
                 .type(NotificationType.RESERVATION_REQ)
@@ -253,7 +253,7 @@ public class ReservationService {
             NotificationResDto notificationResDto = NotificationResDto.builder()
                 .email(dto.getMemberEmail())
                 .sender_email(dto.getMemberEmail())
-                .reservation_id(reservation.getId())
+                .notification_id(reservation.getId())
                 .type(NotificationType.RESERVATION_RES)
                 .approvalStatus(dto.getApprovalStatus())
                 .message(dto.getMemberEmail() + "님이 예약을 " + dto.getApprovalStatus() + "하셨습니다.")
