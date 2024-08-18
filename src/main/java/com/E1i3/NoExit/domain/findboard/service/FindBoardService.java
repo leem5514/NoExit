@@ -2,6 +2,8 @@ package com.E1i3.NoExit.domain.findboard.service;
 
 import com.E1i3.NoExit.domain.attendance.domain.Attendance;
 import com.E1i3.NoExit.domain.attendance.repositroy.AttendanceRepository;
+import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
+import com.E1i3.NoExit.domain.chat.service.ChatRoomService;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
@@ -36,16 +38,18 @@ public class FindBoardService {
     private final AttendanceRepository attendanceRepository;
     private final NotificationRepository notificationRepository;
     private final SseController sseController;
+    private final ChatRoomService chatRoomService;
 
     @Autowired
     public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository, AttendanceRepository attendanceRepository, NotificationRepository notificationRepository,
-		SseController sseController) {
+		SseController sseController, ChatRoomService chatRoomService) {
         this.findBoardRepository = findBoardRepository;
         this.memberRepository = memberRepository;
         this.attendanceRepository = attendanceRepository;
 		this.notificationRepository = notificationRepository;
 		this.sseController = sseController;
-	}
+        this.chatRoomService = chatRoomService;
+    }
 
 
     public void findBoardCreate(FindBoardSaveReqDto findBoardSaveReqDto) {
@@ -128,17 +132,38 @@ public class FindBoardService {
         attendanceRepository.save(attendance); // 참가자 정보 저장
 
         if ( findBoard.getCurrentCount() == findBoard.getTotalCapacity()){
-            String receiver_email = findBoard.getMember().getEmail();
-            NotificationResDto notificationResDto = NotificationResDto.builder()
-                .findboard_id(findBoard.getId())
-                .email(receiver_email)
-                .type(NotificationType.FULL_COUNT)
-                .message("참여글의 모집인원이 가득찼습니다.").build();
-            sseController.publishMessage(notificationResDto, receiver_email);
-            findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
+            String receiver_email = findBoard.getMember().getEmail();   // 신청한 사람
+            // NotificationResDto notificationResDto = NotificationResDto.builder()
+            //     .findboard_id(findBoard.getId())
+            //     .email(receiver_email)
+            //     .type(NotificationType.FULL_COUNT)
+            //     .message("참여글의 모집인원이 가득찼습니다.").build();
+            // sseController.publishMessage(notificationResDto, receiver_email);
 
+            ChatRoom chatRoom = chatRoomService.createRoom(findBoard.getTitle() + "을 위한 채팅방", "0000");
+            List<Attendance> attendances = attendanceRepository.findByFindBoardId(findBoard.getId());
+
+            // 채팅방에 참여한 모든 사용자에게 알림 전송
+            NotificationResDto participantNotification;
+            for (Attendance a : attendances) {
+                participantNotification = NotificationResDto.builder()
+                    .notification_id(findBoard.getId())
+                    .email(a.getMember().getEmail())
+                    .type(NotificationType.CHAT_ROOM_INVITE)
+                    .message("참여한 채팅방이 생성되었습니다. 채팅방 이름: " + chatRoom.getName())
+                    .build();
+                sseController.publishMessage(participantNotification, a.getMember().getEmail());
+            }
+            //  게시글 작성자에게도 알림을 보내야함
+            NotificationResDto notificationResDto = NotificationResDto.builder()
+                .notification_id(chatRoom.getRoomId())
+                .email(findBoard.getMember().getEmail())
+                .type(NotificationType.FULL_COUNT)
+                .message("참여글의 모집인원이 가득차 채팅방이 생성되었습니다...").build();
+            sseController.publishMessage(notificationResDto, findBoard.getMember().getEmail());
         }
 
+        findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
 
         return findBoard.ResDtoFromEntity();
     }
