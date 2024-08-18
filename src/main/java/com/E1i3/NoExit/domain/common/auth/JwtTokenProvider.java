@@ -1,8 +1,16 @@
 package com.E1i3.NoExit.domain.common.auth;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
@@ -49,4 +57,30 @@ public class JwtTokenProvider {
 			.compact();
 		return token;
 	}
+	public Authentication getAuthentication(String token) {
+		Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get("role")));
+		UserDetails userDetails = new User(claims.getSubject(), "", authorities);
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+	}
+
+	public boolean validateToken(String token) {
+		try {
+			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	public String getNicknameFromToken(String token) {
+		Claims claims = Jwts.parser()
+				.setSigningKey(secretKey)
+				.parseClaimsJws(token)
+				.getBody();
+
+		return claims.get("nickname", String.class); // nickname 클레임 추출
+	}
+
 }

@@ -34,7 +34,6 @@ public class CommentController {
 
     // url은 임의로 대충 붙임
 
-
     @Operation(summary= "댓글 작성")
     @PostMapping("/comment/create") // 댓글 생성
     public ResponseEntity<Object> commentCreate(@RequestBody CommentCreateReqDto dto) {

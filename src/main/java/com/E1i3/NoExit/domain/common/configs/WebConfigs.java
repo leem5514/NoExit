@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+
 @Configuration
 public class WebConfigs implements WebMvcConfigurer {
 
@@ -24,3 +25,4 @@ public class WebConfigs implements WebMvcConfigurer {
 				.allowCredentials(true);  // 자격 증명을 허용
 	}
 }
+
