@@ -46,4 +46,7 @@ public class Attendance {
                 .build();
     }
 
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
+    }
 }

@@ -92,7 +92,7 @@ public class Member extends BaseTimeEntity{
 	private List<WishList> wishList = new ArrayList<>();
 
 	// Grade와 연관 관계 추가 : 김민성
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "grade_id")
 	private Grade grade;
 	//
