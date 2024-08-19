@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Builder
 @Data
@@ -11,6 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReviewUpdateDto {
     private String content;
-    private String rating;
-    private String imagePath;
+    private int rating;
+    private MultipartFile reviewImage;
 }
