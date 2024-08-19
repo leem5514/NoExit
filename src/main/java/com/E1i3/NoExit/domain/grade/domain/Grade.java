@@ -28,6 +28,6 @@ public class Grade {
     private List<Coupon> coupons;
 
     // Member와의 1:1 관계 추가
-    @OneToOne(mappedBy = "grade")
-    private Member member;
+    // @OneToOne(mappedBy = "grade")
+    // private Member member;
 }

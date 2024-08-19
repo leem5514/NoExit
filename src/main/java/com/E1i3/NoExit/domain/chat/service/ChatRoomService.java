@@ -39,9 +39,7 @@ public class ChatRoomService {
     }
 
     public List<ChatRoom> getChatRoomsForMember(String email) {
-        Member member = memberRepository.findByEmail(email)
-            .orElseThrow(() -> new EntityNotFoundException("일치하는 회원 정보가 존재하지 않습니다.."));
-        List<Attendance> attendances = attendanceRepository.findByMember(member);
+        List<Attendance> attendances = attendanceRepository.findByEmailAndChatRoomIsNotNull(email);
         List<ChatRoom> chatRooms = new ArrayList<>();
         for (Attendance attendance : attendances) {
             chatRooms.add(attendance.getChatRoom());

@@ -2,10 +2,8 @@ package com.E1i3.NoExit.domain.board.service;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
 import com.E1i3.NoExit.domain.board.domain.BoardImage;
-import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
-import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
-import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
-import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
+import com.E1i3.NoExit.domain.board.domain.BoardType;
+import com.E1i3.NoExit.domain.board.dto.*;
 import com.E1i3.NoExit.domain.board.repository.BoardImageRepository;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
@@ -23,6 +21,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +29,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -96,11 +100,49 @@ public class BoardService {
         return board;
     }
 
-    public Page<BoardListResDto> boardList(Pageable pageable) { // 게시글 전체 조회
-        Page<Board> boards = boardRepository.findByDelYN(pageable, DelYN.N);
+    public Page<BoardListResDto> boardList(BoardSearchDto searchDto, Pageable pageable) { // 게시글 전체 조회
+
+        if(searchDto == null) {
+            Page<Board> boards = boardRepository.findByDelYN(pageable, DelYN.N);
+            Page<BoardListResDto> boardListResDtos = boards.map(Board::fromEntity);
+            return boardListResDtos;
+        }
+
+        Specification<Board> specification = new Specification<Board>() {
+            @Override
+            public Predicate toPredicate(Root<Board> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                if (searchDto.getSearchTitle() != null && !searchDto.getSearchTitle().isEmpty()) {
+                    predicates.add(criteriaBuilder.like(root.get("title"), "%" + searchDto.getSearchTitle() + "%"));
+                }
+                if (searchDto.getSearchBoardType() != null && !searchDto.getSearchBoardType().isEmpty()) {
+                    BoardType boardType = null;
+                    try {
+                        boardType = BoardType.valueOf(searchDto.getSearchBoardType());
+                    } catch (IllegalArgumentException e) {
+                        e.getMessage();
+                    }
+                    predicates.add(criteriaBuilder.equal(root.get("boardType"), boardType));
+                }
+
+                predicates.add(criteriaBuilder.equal(root.get("delYN"), DelYN.N));
+
+                Predicate[] predicateArr = new Predicate[predicates.size()];
+                for(int i=0; i<predicateArr.length; i++) {
+                    predicateArr[i] = predicates.get(i);
+                }
+
+                Predicate predicate = criteriaBuilder.and(predicateArr);
+                return predicate;
+            }
+        };
+
+        Page<Board> boards = boardRepository.findAll(specification, pageable);
         Page<BoardListResDto> boardListResDtos = boards.map(Board::fromEntity);
         return boardListResDtos;
     }
+
+
 
     public BoardDetailResDto boardDetail(Long id) { // 특정 게시글 조회
         Board board = boardRepository.findById(id)
@@ -112,18 +154,32 @@ public class BoardService {
         return board.detailFromEntity();
     }
 
-    public Board boardUpdate(Long id, BoardUpdateReqDto dto) {
+    public Board boardUpdate(Long id, BoardUpdateReqDto dto, List<MultipartFile> imgFiles) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("없는 회원입니다."));
         Board board = boardRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
 
         if (!board.getMember().getEmail().equals(email)) {
             throw new IllegalArgumentException("본인의 게시글만 수정할 수 있습니다.");
         }
 
+        // 파일이 있는 경우 처리
+        if (imgFiles != null && !imgFiles.isEmpty()) {
+            for (MultipartFile f : imgFiles) {
+                BoardImage img = BoardImage.builder()
+                        .board(board)
+                        .imageUrl(s3Service.uploadFile(f, "board"))
+                        .build();
+                board.getImgs().add(img);
+                boardImageRepository.save(img);
+            }
+        }
+
         board.updateEntity(dto);
         return boardRepository.save(board);
+
     }
 
     public void boardDelete(Long id) {

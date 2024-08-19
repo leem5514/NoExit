@@ -160,6 +160,9 @@ public class FindBoardService {
             // 채팅방에 참여한 모든 사용자에게 알림 전송
             NotificationResDto participantNotification;
             for (Attendance a : attendances) {
+                a.setChatRoom(chatRoom);
+                attendanceRepository.save(a);
+
                 participantNotification = NotificationResDto.builder()
                     .notification_id(chatRoom.getRoomId())
                     .email(a.getMember().getEmail())
@@ -168,14 +171,6 @@ public class FindBoardService {
                     .build();
                 sseController.publishMessage(participantNotification, a.getMember().getEmail());
             }
-            //  게시글 작성자에게도 알림을 보내야함
-            NotificationResDto notificationResDto = NotificationResDto.builder()
-                .notification_id(chatRoom.getRoomId())
-                .email(findBoard.getMember().getEmail())
-                .type(NotificationType.FULL_COUNT)
-                .message("참여글의 모집인원이 가득차 채팅방이 생성되었습니다...").build();
-            sseController.publishMessage(notificationResDto, findBoard.getMember().getEmail());
-
             findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경 , 위치 수정 if문 밖에 잇어서 옮겨놨음. 혹시 문제생기면 다시 빼기 8.18
         }
         // 게시글 작성자도 attendance에 추가해서 채팅 목록에 나올 수 있도록
