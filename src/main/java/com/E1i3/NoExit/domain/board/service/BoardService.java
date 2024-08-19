@@ -1,11 +1,11 @@
 package com.E1i3.NoExit.domain.board.service;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
-import com.E1i3.NoExit.domain.board.domain.BoardImage;
 import com.E1i3.NoExit.domain.board.domain.BoardType;
 import com.E1i3.NoExit.domain.board.dto.*;
-import com.E1i3.NoExit.domain.board.repository.BoardImageRepository;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
+import com.E1i3.NoExit.domain.boardimage.domain.BoardImage;
+import com.E1i3.NoExit.domain.boardimage.repository.BoardImageRepository;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.member.domain.Member;
@@ -79,19 +79,19 @@ public class BoardService {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("없는 회원입니다."));
 
         Board board = Board.builder()
-            .member(member)
-            .title(dto.getTitle())
-            .contents(dto.getContents())
-            .boardType(dto.getBoardType())
-            .build();
+                .member(member)
+                .title(dto.getTitle())
+                .contents(dto.getContents())
+                .boardType(dto.getBoardType())
+                .build();
 
         // 파일이 있는 경우 처리
         if (imgFiles != null && !imgFiles.isEmpty()) {
             for (MultipartFile f : imgFiles) {
                 BoardImage img = BoardImage.builder()
-                    .board(board)
-                    .imageUrl(s3Service.uploadFile(f, "board"))
-                    .build();
+                        .board(board)
+                        .imageUrl(s3Service.uploadFile(f, "board"))
+                        .build();
                 board.getImgs().add(img);
                 boardImageRepository.save(img);
             }
@@ -158,7 +158,6 @@ public class BoardService {
     }
 
     public Board boardUpdate(Long id, BoardUpdateReqDto dto, List<MultipartFile> imgFiles) {
-
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("없는 회원입니다."));
         Board board = boardRepository.findById(id)
@@ -168,7 +167,8 @@ public class BoardService {
             throw new IllegalArgumentException("본인의 게시글만 수정할 수 있습니다.");
         }
 
-        // 파일이 있는 경우 처리
+
+        board.updateEntity(dto);
         if (imgFiles != null && !imgFiles.isEmpty()) {
             for (MultipartFile f : imgFiles) {
                 BoardImage img = BoardImage.builder()
@@ -180,7 +180,6 @@ public class BoardService {
             }
         }
 
-        board.updateEntity(dto);
         return boardRepository.save(board);
 
     }

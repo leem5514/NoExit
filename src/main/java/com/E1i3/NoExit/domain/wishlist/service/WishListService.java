@@ -1,17 +1,10 @@
 package com.E1i3.NoExit.domain.wishlist.service;
 
-import java.security.Security;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
-
-import com.E1i3.NoExit.domain.board.domain.Board;
-import com.E1i3.NoExit.domain.comment.domain.Comment;
-import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
-import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
-import com.E1i3.NoExit.domain.wishlist.dto.WishReqDto;
+import com.E1i3.NoExit.domain.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.wishlist.dto.WishResDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.E1i3.NoExit.domain.game.domain.Game;
-import com.E1i3.NoExit.domain.game.dto.GameResDto;
-import com.E1i3.NoExit.domain.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
 import com.E1i3.NoExit.domain.wishlist.domain.WishList;

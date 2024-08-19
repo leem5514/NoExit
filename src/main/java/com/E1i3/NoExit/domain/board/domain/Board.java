@@ -1,21 +1,16 @@
 package com.E1i3.NoExit.domain.board.domain;
 import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
-import com.E1i3.NoExit.domain.board.dto.BoardImageDto;
 import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
+import com.E1i3.NoExit.domain.boardimage.domain.BoardImage;
+import com.E1i3.NoExit.domain.boardimage.dto.BoardImageDto;
 import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.*;
-import org.apache.ibatis.annotations.One;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.web.multipart.MultipartFile;
-
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,10 +69,9 @@ public class Board extends BaseTimeEntity {
                     .title(this.title)
                     .boardHits(this.boardHits)
                     .likes(this.likes)
-                    .dislikes(this.dislikes)
                     .comments(commentLength)
-                    .thumbnail(this.imgs.get(0).getImageUrl())
                     .boardType(this.boardType)
+                    .img(true)
                     .createdDate(this.getCreatedTime().toLocalDate())
                     .build();
         }else{
@@ -87,9 +81,9 @@ public class Board extends BaseTimeEntity {
                     .title(this.title)
                     .boardHits(this.boardHits)
                     .likes(this.likes)
-                    .dislikes(this.dislikes)
                     .comments(commentLength)
                     .boardType(this.boardType)
+                    .img(false)
                     .createdDate(this.getCreatedTime().toLocalDate())
                     .build();
         }
@@ -111,8 +105,9 @@ public class Board extends BaseTimeEntity {
         List<BoardImage> images = this.getImgs();
         List<BoardImageDto> iDtos = new ArrayList<>();
         for(BoardImage i : images) {
-
-            iDtos.add(i.fromEntity());
+            if(i.getDelYN().equals(DelYN.N)) {
+                iDtos.add(i.fromEntity());
+            }
         }
 
         String createdTime
@@ -142,6 +137,13 @@ public class Board extends BaseTimeEntity {
         this.title = dto.getTitle();
         this.contents = dto.getContents();
         this.boardType = dto.getBoardType();
+        for(int i=0; i<this.getImgs().size(); i++) {
+            for(int j=0; j<dto.getRemoveImgs().size(); j++) {
+                if(this.getImgs().get(i).equals(dto.getRemoveImgs().get(j))) {
+                    this.getImgs().get(i).deleteEntity();
+                }
+            }
+        }
     }
 
     public void deleteEntity() {
