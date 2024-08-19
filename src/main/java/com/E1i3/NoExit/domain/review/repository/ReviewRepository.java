@@ -28,5 +28,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 리뷰 숫자
     long countByReservation_GameIdAndDelYN(Long gameId, DelYN delYN);
 
-
+    // 리뷰 평점
+    List<Review> findByReservation_GameIdAndDelYN(Long gameId, DelYN delYN);
 }
