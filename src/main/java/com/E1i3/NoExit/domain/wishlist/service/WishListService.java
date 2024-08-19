@@ -33,11 +33,13 @@ public class WishListService {
 
 	private final WishListRepository wishListRepository;
 	private final MemberRepository memberRepository;
+	private final GameRepository gameRepository;
 
-
-	public WishListService(WishListRepository wishListRepository, MemberRepository memberRepository) {
+	public WishListService(WishListRepository wishListRepository, MemberRepository memberRepository,
+		GameRepository gameRepository) {
 		this.wishListRepository = wishListRepository;
 		this.memberRepository = memberRepository;
+		this.gameRepository = gameRepository;
 	}
 
 
@@ -47,6 +49,9 @@ public class WishListService {
 			.orElseThrow(() -> new EntityNotFoundException("회원정보가 존재하지 않습니다."));
 
 		WishList wishList = dto.toEntity(member);
+		// 위시리스트 추가시 카운트 추가
+		Game game = gameRepository.findById(dto.getGameId()).orElseThrow(() -> new EntityNotFoundException("일치하는 게임 정보가 존재하지 않습니다."));
+		game.addToWishList();
 		return wishListRepository.save(wishList);
 	}
 

@@ -1,18 +1,26 @@
 package com.E1i3.NoExit.domain.member.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.E1i3.NoExit.domain.board.domain.Board;
+import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.common.dto.LoginReqDto;
 import com.E1i3.NoExit.domain.common.service.RedisService;
 import com.E1i3.NoExit.domain.common.service.S3Service;
@@ -20,6 +28,7 @@ import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.dto.MemberDetResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberListResDto;
+import com.E1i3.NoExit.domain.member.dto.MemberRankingResDto;
 import com.E1i3.NoExit.domain.member.dto.MemberSaveReqDto;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
@@ -40,7 +49,8 @@ public class MemberService {
 	private final OwnerRepository ownerRepository;
 
 	@Autowired
-	public MemberService(MemberRepository memberRepository, RedisService redisService, S3Service s3Service, PasswordEncoder passwordEncoder,
+	public MemberService(MemberRepository memberRepository, RedisService redisService, S3Service s3Service,
+		PasswordEncoder passwordEncoder,
 		OwnerRepository ownerRepository) {
 		this.memberRepository = memberRepository;
 		this.redisService = redisService;
@@ -73,12 +83,18 @@ public class MemberService {
 		return memberList.map(a -> a.fromEntity());
 	}
 
+	public Page<MemberRankingResDto> memberRankingList(Pageable pageable) { // 게시글 전체 조회
+		Page<Member> memberList = memberRepository.findAll(pageable);
+		return memberList.map(a -> a.rankingFromEntity());
+	}
+
 	// 회원 삭제
 	@Transactional
 	public Member memberDelete() {
 		// 토큰을 통해 이메일 가져오기
 		String email = getEmailFromToken();
-		Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
 		return member.updateDelYN();
 	}
 
@@ -87,7 +103,8 @@ public class MemberService {
 	public Member memberUpdate(MemberUpdateDto memberUpdateDto) {
 		// 이메일과 비밀번호는 바뀌지않음
 		String email = getEmailFromToken();
-		Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		Member member = memberRepository.findByEmail(email)
+			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
 		String encodedPassword = passwordEncoder.encode(member.getPassword());
 		return member.updateMember(memberUpdateDto, email, encodedPassword);
 	}
@@ -95,23 +112,24 @@ public class MemberService {
 	// 로그인
 	public Object login(LoginReqDto loginReqDto) {
 		if (loginReqDto.getRole().equals(Role.USER)) {
-			Member member = memberRepository.findByEmail(loginReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+			Member member = memberRepository.findByEmail(loginReqDto.getEmail())
+				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
 			// 	password 일치 여부
-			if(!passwordEncoder.matches(loginReqDto.getPassword(), member.getPassword())){
+			if (!passwordEncoder.matches(loginReqDto.getPassword(), member.getPassword())) {
 				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 			}
 			return member;
-		}else if(loginReqDto.getRole().equals(Role.OWNER)) {
-			Owner owner = ownerRepository.findByEmail(loginReqDto.getEmail()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
+		} else if (loginReqDto.getRole().equals(Role.OWNER)) {
+			Owner owner = ownerRepository.findByEmail(loginReqDto.getEmail())
+				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
 			// 	password 일치 여부
-			if(!passwordEncoder.matches(loginReqDto.getPassword(), owner.getPassword())){
+			if (!passwordEncoder.matches(loginReqDto.getPassword(), owner.getPassword())) {
 				throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 			}
 			return owner;
 		}
 		return null;
 	}
-
 
 	// 회원 상세 조회
 	public MemberDetResDto myInfo() {
@@ -120,7 +138,7 @@ public class MemberService {
 		return member.detFromEntity();
 	}
 
-  public String getEmailFromToken(){
+	public String getEmailFromToken() {
 		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
 }

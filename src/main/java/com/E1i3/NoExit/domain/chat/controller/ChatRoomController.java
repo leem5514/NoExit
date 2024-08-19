@@ -8,6 +8,7 @@ import com.E1i3.NoExit.domain.chat.service.ChatRoomService;
 import com.E1i3.NoExit.domain.chat.service.ChatService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -66,11 +67,11 @@ public class ChatRoomController {
 //        return ResponseEntity.ok(messages);
 //    }
 
-
-    @GetMapping("/list")
-    public List<ChatRoom>list() {
-        return chatRoomService.findAllRooms();
-
+    @GetMapping("/myrooms")
+    public ResponseEntity<List<ChatRoom>> getMyChatRooms() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<ChatRoom> chatRooms = chatRoomService.getChatRoomsForMember(email);
+        return ResponseEntity.  ok(chatRooms);
     }
 }
 

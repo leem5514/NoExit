@@ -88,4 +88,8 @@ public class Game extends BaseTimeEntity {
 
         return availableHours;
     }
+
+    public void addToWishList(){
+        this.wishCount++;
+    }
 }
