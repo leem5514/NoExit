@@ -29,14 +29,19 @@ public class ChatRoom {
     @JsonManagedReference
     private List<ChatMessageEntity> messages = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "chat_room_members",
-            joinColumns = @JoinColumn(name = "room_id"),
-            inverseJoinColumns = @JoinColumn(name = "member_id")
-    )
-    @JsonIgnore // 순환 참조 방지
-    private List<Member> members = new ArrayList<>();
+    // @ManyToMany
+    // @JoinTable(
+    //         name = "chat_room_members",
+    //         joinColumns = @JoinColumn(name = "room_id"),
+    //         inverseJoinColumns = @JoinColumn(name = "member_id")
+    // )
+    //
+    // //
+    // @JsonIgnore // 순환 참조 방지
+    // private List<Member> members = new ArrayList<>();
+
+    // @OneToMany(mappedBy = "chatRoom")
+    // private List<Attendance> attendances;
 
 
     public ChatRoom(String name, String password) {

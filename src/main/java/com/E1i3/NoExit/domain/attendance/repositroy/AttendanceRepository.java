@@ -13,4 +13,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     List<Attendance> findAll();
     List<Attendance> findByFindBoardId(Long id);
+
+	List<Attendance> findByMember(Member member);
 }

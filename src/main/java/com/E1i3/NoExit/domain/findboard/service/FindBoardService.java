@@ -125,12 +125,6 @@ public class FindBoardService {
 
         findBoard.incrementCurrentCount();
 
-        Attendance attendance = Attendance.builder() // Attendance 엔티티에 참가신청 버튼을 누른 회원의 정보를 id로 추가
-                .findBoard(findBoard) // 게시글 id
-                .member(member) // 참석자 id
-                .build();
-        attendanceRepository.save(attendance); // 참가자 정보 저장
-
         if ( findBoard.getCurrentCount() == findBoard.getTotalCapacity()){
             String receiver_email = findBoard.getMember().getEmail();   // 신청한 사람
             // NotificationResDto notificationResDto = NotificationResDto.builder()
@@ -140,14 +134,14 @@ public class FindBoardService {
             //     .message("참여글의 모집인원이 가득찼습니다.").build();
             // sseController.publishMessage(notificationResDto, receiver_email);
 
-            ChatRoom chatRoom = chatRoomService.createRoom(findBoard.getTitle() + "을 위한 채팅방", "0000");
+            ChatRoom chatRoom = chatRoomService.createRoom(findBoard.getTitle() , "0000");
             List<Attendance> attendances = attendanceRepository.findByFindBoardId(findBoard.getId());
 
             // 채팅방에 참여한 모든 사용자에게 알림 전송
             NotificationResDto participantNotification;
             for (Attendance a : attendances) {
                 participantNotification = NotificationResDto.builder()
-                    .notification_id(findBoard.getId())
+                    .notification_id(chatRoom.getRoomId())
                     .email(a.getMember().getEmail())
                     .type(NotificationType.CHAT_ROOM_INVITE)
                     .message("참여한 채팅방이 생성되었습니다. 채팅방 이름: " + chatRoom.getName())
@@ -161,9 +155,16 @@ public class FindBoardService {
                 .type(NotificationType.FULL_COUNT)
                 .message("참여글의 모집인원이 가득차 채팅방이 생성되었습니다...").build();
             sseController.publishMessage(notificationResDto, findBoard.getMember().getEmail());
-        }
 
-        findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
+            findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
+        }
+        // 게시글 작성자도 attendance에 추가해서 채팅 목록에 나올 수 있도록
+        Attendance attendance = Attendance.builder()
+            .findBoard(findBoard) // 게시글 id
+            .member(member) // 참석자 id
+            .build();
+        attendanceRepository.save(attendance);
+
 
         return findBoard.ResDtoFromEntity();
     }
