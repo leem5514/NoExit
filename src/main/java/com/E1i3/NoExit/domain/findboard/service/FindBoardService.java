@@ -60,6 +60,17 @@ public class FindBoardService {
 
         FindBoard findBoard = findBoardSaveReqDto.toEntity(member);
         findBoardRepository.save(findBoard);
+
+//        incrementParticipantCount(findBoard.getId());
+
+        Attendance attendance = Attendance.builder() // Attendance 엔티티에 참가신청 버튼을 누른 회원의 정보를 id로 추가
+                .findBoard(findBoard) // 게시글 id
+                .member(member)
+                .email(memberEmail)// 참석자 id
+                .build();
+
+        attendanceRepository.save(attendance); // 참가자 정보 저장
+        findBoard.incrementCurrentCount();
     }
 
 //    @Transactional(readOnly = true)
@@ -118,7 +129,7 @@ public class FindBoardService {
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("참가 신청은 로그인 후 가능합니다."));
 
-        // 게시글 작성자와 로그인한 사용자가 동일한지 확인
+//         게시글 작성자와 로그인한 사용자가 동일한지 확인
         if (findBoard.getMember().getEmail().equals(memberEmail)) {
             throw new IllegalStateException("자신의 게시글에 참가 신청을 할 수 없습니다.");
         }
@@ -162,11 +173,11 @@ public class FindBoardService {
             }
             findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경 , 위치 수정 if문 밖에 잇어서 옮겨놨음. 혹시 문제생기면 다시 빼기 8.18
         }
-        // // 게시글 작성자도 attendance에 추가해서 채팅 목록에 나올 수 있도록
-        // attendance = Attendance.builder()
-        //     .findBoard(findBoard) // 게시글 id
-        //     .member(member) // 참석자 id
-        //     .build();
+        // 게시글 작성자도 attendance에 추가해서 채팅 목록에 나올 수 있도록
+        attendance = Attendance.builder()
+            .findBoard(findBoard) // 게시글 id
+            .member(member) // 참석자 id
+            .build();
         attendanceRepository.save(attendance);
 
 
