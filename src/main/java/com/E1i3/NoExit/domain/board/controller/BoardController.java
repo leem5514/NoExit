@@ -1,10 +1,7 @@
 package com.E1i3.NoExit.domain.board.controller;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
-import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
-import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
-import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
-import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
+import com.E1i3.NoExit.domain.board.dto.*;
 import com.E1i3.NoExit.domain.board.service.BoardService;
 import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
@@ -36,7 +33,7 @@ public class BoardController {
 
     @Operation(summary= "게시글 작성")
     @PostMapping("/board/create") // 게시글 생성
-    public ResponseEntity<Object> boardCreate(@RequestPart(value = "data") BoardCreateReqDto dto,
+    public ResponseEntity<Object> boardCreate(@RequestPart(value = "data", required = false) BoardCreateReqDto dto,
                                               @RequestPart(value = "file", required = false) List<MultipartFile> imgFiles
                                               ) {
         try {
@@ -55,13 +52,12 @@ public class BoardController {
 
     @Operation(summary= "게시글 전체 조회")
     @GetMapping("/board/list") // 게시글 전체 조회
-    public ResponseEntity<Object> boardRead(
-            @PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<BoardListResDto> dtos =  boardService.boardList(pageable);
+    public ResponseEntity<Object> boardRead(BoardSearchDto searchDto,
+                                            @PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<BoardListResDto> dtos =  boardService.boardList(searchDto, pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "list is successfully found", dtos);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
-
 
 
 
@@ -82,9 +78,13 @@ public class BoardController {
 
     @Operation(summary= "게시글 수정")
     @PatchMapping("/board/update/{id}") // 게시글 수정
-    public ResponseEntity<Object> boardUpdate(@PathVariable Long id, @RequestBody BoardUpdateReqDto dto) {
+    public ResponseEntity<Object> boardUpdate(
+            @PathVariable Long id,
+            @RequestPart(value = "data", required = false) BoardUpdateReqDto boardUpdateReqDto,
+            @RequestPart(value = "file", required = false) List<MultipartFile> updatedImgFiles
+            ) {
         try {
-            boardService.boardUpdate(id, dto);
+            boardService.boardUpdate(id, boardUpdateReqDto, updatedImgFiles);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "board is successfully updated", null);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {
@@ -95,12 +95,6 @@ public class BoardController {
     }
 
 
-
-//    @DeleteMapping("/board/delete/{id}") // 게시글 삭제
-//    public String boardDelete(@PathVariable Long id) {
-//        boardService.boardDelete(id);
-//        return "ok";
-//    }
 
     @Operation(summary= "게시글 삭제")
     @PatchMapping("/board/delete/{id}") // 게시글 삭제
