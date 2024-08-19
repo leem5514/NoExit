@@ -6,10 +6,7 @@ import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
 import com.E1i3.NoExit.domain.chat.service.ChatRoomService;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
-import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
-import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
-import com.E1i3.NoExit.domain.findboard.dto.FindBoardSaveReqDto;
-import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
+import com.E1i3.NoExit.domain.findboard.dto.*;
 import com.E1i3.NoExit.domain.findboard.repository.FindBoardRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
@@ -22,10 +19,13 @@ import com.E1i3.NoExit.domain.notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,13 +62,13 @@ public class FindBoardService {
         findBoardRepository.save(findBoard);
     }
 
-    @Transactional(readOnly = true)
-    public Page<FindBoardListResDto> findBoardListResDto(Pageable pageable) {
-
-        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYN.N);
-        return findBoards.map(FindBoard::listFromEntity);
-
-    }
+//    @Transactional(readOnly = true)
+//    public Page<FindBoardListResDto> findBoardListResDto(Pageable pageable) {
+//
+//        Page<FindBoard> findBoards = findBoardRepository.findByDelYn(pageable, DelYN.N);
+//        return findBoards.map(FindBoard::listFromEntity);
+//
+//    }
 
 
     @Transactional
@@ -125,6 +125,15 @@ public class FindBoardService {
 
         findBoard.incrementCurrentCount();
 
+
+        Attendance attendance = Attendance.builder() // Attendance 엔티티에 참가신청 버튼을 누른 회원의 정보를 id로 추가
+                .findBoard(findBoard) // 게시글 id
+                .member(member)
+                .email(memberEmail)// 참석자 id
+                .build();
+
+        attendanceRepository.save(attendance); // 참가자 정보 저장
+
         if ( findBoard.getCurrentCount() == findBoard.getTotalCapacity()){
             String receiver_email = findBoard.getMember().getEmail();   // 신청한 사람
             // NotificationResDto notificationResDto = NotificationResDto.builder()
@@ -156,7 +165,7 @@ public class FindBoardService {
                 .message("참여글의 모집인원이 가득차 채팅방이 생성되었습니다...").build();
             sseController.publishMessage(notificationResDto, findBoard.getMember().getEmail());
 
-            findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경
+            findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경 , 위치 수정 if문 밖에 잇어서 옮겨놨음. 혹시 문제생기면 다시 빼기 8.18
         }
         // 게시글 작성자도 attendance에 추가해서 채팅 목록에 나올 수 있도록
         Attendance attendance = Attendance.builder()
@@ -176,6 +185,29 @@ public class FindBoardService {
         return imminentBoards.stream()
                 .map(FindBoard::listFromEntity)
                 .collect(Collectors.toList());
+    }
+    public Page<FindBoardListResDto> findBoardList(FindBoardSearchDto searchDto, Pageable pageable) {
+        Specification<FindBoard> specification = (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // 제목 검색 조건 추가
+            if (searchDto.getTitle() != null && !searchDto.getTitle().isEmpty()) {
+                predicates.add(criteriaBuilder.like(root.get("title"), "%" + searchDto.getTitle() + "%"));
+            }
+
+            // 내용 검색 조건 추가
+            if (searchDto.getContents() != null && !searchDto.getContents().isEmpty()) {
+                predicates.add(criteriaBuilder.like(root.get("contents"), "%" + searchDto.getContents() + "%"));
+            }
+
+            // DelYN 조건 추가: 삭제되지 않은 게시글만 조회
+            predicates.add(criteriaBuilder.equal(root.get("delYn"), DelYN.N));
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<FindBoard> findBoards = findBoardRepository.findAll(specification, pageable);
+        return findBoards.map(FindBoard::listFromEntity);
     }
 
 }

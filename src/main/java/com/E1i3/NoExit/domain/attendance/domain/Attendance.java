@@ -35,11 +35,14 @@ public class Attendance {
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
+  
+    private String email;
 
     public AttendanceResDto listfromEntity(){
         return AttendanceResDto.builder()
                 .findBoardId(findBoard.getId())
                 .memberId(member.getId())
+                .email(this.email)
                 .build();
     }
 

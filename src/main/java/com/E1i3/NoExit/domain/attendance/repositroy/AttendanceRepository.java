@@ -14,5 +14,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findAll();
     List<Attendance> findByFindBoardId(Long id);
 
-	List<Attendance> findByMember(Member member);
+	  List<Attendance> findByMember(Member member);
+    // 특정 FindBoard ID로 필터링된 Attendance 목록을 조회하는 메서드
+    List<Attendance> findByFindBoardId(Long findBoardId);
 }
