@@ -45,6 +45,8 @@ public class Game extends BaseTimeEntity {
     //@Column(nullable = false, length = 500)
     private String gameInfo; // 게임설명
 
+    private int wishCount = 0;
+
     @Enumerated(EnumType.STRING)
     private AgeLimit ageLimit; // 나이제한( 성인 / 미성년자 )
 
@@ -85,5 +87,9 @@ public class Game extends BaseTimeEntity {
         }
 
         return availableHours;
+    }
+
+    public void addToWishList(){
+        this.wishCount++;
     }
 }

@@ -26,7 +26,7 @@ public class GameController {
 	}
 
 	@GetMapping("/game/list")
-	public ResponseEntity<?> productList() {
+	public ResponseEntity<?> gameList() {
 		List<GameResDto> games = gameService.gameList();
 		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
 	}
@@ -43,5 +43,11 @@ public class GameController {
 	public ResponseEntity<List<LocalTime>> getAvailableHours(@PathVariable Long gameId) {
 		List<LocalTime> availableHours = gameService.getAvailableHours(gameId);
 		return ResponseEntity.ok(availableHours);
+	}
+
+	@GetMapping("/game/ranking")
+	public ResponseEntity<?> gameRankingList() {
+		List<GameResDto> games = gameService.gameList();
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
 	}
 }
