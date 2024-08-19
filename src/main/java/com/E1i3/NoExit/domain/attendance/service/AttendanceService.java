@@ -42,4 +42,15 @@ public class AttendanceService {
         return attendanceResDtos;
     }
 
+    @Transactional(readOnly = true)
+    public List<AttendanceResDto> attendanceListByFindBoard(Long findBoardId) {
+        List<Attendance> attendanceList = attendanceRepository.findByFindBoardId(findBoardId);
+        List<AttendanceResDto> attendanceResDtos = new ArrayList<>();
+
+        for (Attendance attendance : attendanceList) {
+            attendanceResDtos.add(attendance.listfromEntity());
+        }
+
+        return attendanceResDtos;
+    }
 }

@@ -13,5 +13,7 @@ public class AttendanceResDto {
 
     private Long findBoardId;
     private Long memberId;
+    private String email;
+
 
 }
