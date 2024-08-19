@@ -23,7 +23,7 @@ public class FindBoardListResDto {
     private int totalCapacity;
     private int currentCount;
     private String imagePath;
-
+    private String selectedStoreName;
 
 
 }

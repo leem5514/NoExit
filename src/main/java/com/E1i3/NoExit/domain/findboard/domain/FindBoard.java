@@ -35,6 +35,8 @@ public class FindBoard extends BaseTimeEntity {
     @Column(length = 100, nullable = true)
     private String writer;
 
+    private String selectedStoreName;
+
     @Column(length = 3000)
     private String contents;
 
@@ -89,6 +91,7 @@ public class FindBoard extends BaseTimeEntity {
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
                 .imagePath(this.member.getProfileImage())
+                .selectedStoreName(this.selectedStoreName)
                 .build();
     }
 
@@ -105,7 +108,6 @@ public class FindBoard extends BaseTimeEntity {
         this.contents = dto.getContents();
         this.expirationTime = dto.getExpirationDate();
         this.totalCapacity = dto.getTotalCapacity();
-        this.imagePath = dto.getImagePath();
         this.getUpdateTime(); // 데이터 값 이상한지 확인하기.
     }
 }
