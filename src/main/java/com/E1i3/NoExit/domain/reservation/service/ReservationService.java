@@ -244,7 +244,7 @@ public class ReservationService {
                     .notification_id(reservation.getId())
                     .type(NotificationType.RESERVATION_RES)
                     .approvalStatus(dto.getApprovalStatus())
-                    .message(reservation.getMember().getEmail() + "님이 예약을 " + dto.getApprovalStatus() + "하셨습니다.")
+                    .message(owner.getStoreName() + "님이 예약을 " + (dto.getApprovalStatus() == ApprovalStatus.OK ? "승인" : "거절") + "하셨습니다.")
                     .build();
             sseController.publishMessage(notificationResDto, reservation.getMember().getEmail());
 
