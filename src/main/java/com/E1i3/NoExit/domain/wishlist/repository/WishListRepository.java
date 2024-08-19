@@ -15,6 +15,7 @@ import com.E1i3.NoExit.domain.wishlist.domain.WishList;
 
 @Repository
 public interface WishListRepository extends JpaRepository<WishList, Long> {
+	List<WishList> findByMember(Member member);
 	Page<WishList> findByMemberAndDelYN(Pageable pageable, Member member, DelYN delYN);
 
 }

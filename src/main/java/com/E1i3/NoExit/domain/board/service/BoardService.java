@@ -115,6 +115,9 @@ public class BoardService {
                 if (searchDto.getSearchTitle() != null && !searchDto.getSearchTitle().isEmpty()) {
                     predicates.add(criteriaBuilder.like(root.get("title"), "%" + searchDto.getSearchTitle() + "%"));
                 }
+                if (searchDto.getSearchContents() != null && !searchDto.getSearchContents().isEmpty()) {
+                    predicates.add(criteriaBuilder.like(root.get("contents"), "%" + searchDto.getSearchContents() + "%"));
+                }
                 if (searchDto.getSearchBoardType() != null && !searchDto.getSearchBoardType().isEmpty()) {
                     BoardType boardType = null;
                     try {

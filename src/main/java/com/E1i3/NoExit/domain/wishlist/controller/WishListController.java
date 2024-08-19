@@ -32,9 +32,9 @@ public class WishListController {
 	}
 
 	// 위시리스트에 추가
-	@PostMapping("/wishlist/add")
-	public ResponseEntity<?> addWishList(@RequestBody WishReqDto dto) {
-		wishListService.addWishList(dto);
+	@PostMapping("/wishlist/add/{gameId}")
+	public ResponseEntity<?> addWishList(@PathVariable Long gameId) {
+		wishListService.addWishList(gameId);
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "찜 성공", null);
 		return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
 	}

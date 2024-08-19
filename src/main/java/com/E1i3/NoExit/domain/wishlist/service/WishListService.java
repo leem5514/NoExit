@@ -33,20 +33,31 @@ public class WishListService {
 
 	private final WishListRepository wishListRepository;
 	private final MemberRepository memberRepository;
+	private final GameRepository gameRepository;
 
 
-	public WishListService(WishListRepository wishListRepository, MemberRepository memberRepository) {
+	public WishListService(WishListRepository wishListRepository, MemberRepository memberRepository, GameRepository gameRepository) {
 		this.wishListRepository = wishListRepository;
 		this.memberRepository = memberRepository;
+		this.gameRepository = gameRepository;
 	}
 
 
-	public WishList addWishList(WishReqDto dto) {
+	public WishList addWishList(Long gameId) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Member member = memberRepository.findByEmail(email)
-			.orElseThrow(() -> new EntityNotFoundException("회원정보가 존재하지 않습니다."));
+				.orElseThrow(() -> new EntityNotFoundException("회원정보가 존재하지 않습니다."));
+		List<WishList> wishLists = wishListRepository.findByMember(member);
 
-		WishList wishList = dto.toEntity(member);
+		for(int i=0; i<wishLists.size(); i++) {
+			if (wishLists.get(i).getGameId().equals(gameId) && wishLists.get(i).getDelYN().equals(DelYN.N)) {
+				throw new IllegalArgumentException("이미 위시리스트에 존재하는 게임입니다.");
+			}
+		}
+		WishList wishList = WishList.builder()
+				.gameId(gameId)
+				.member(member)
+				.build();
 		return wishListRepository.save(wishList);
 	}
 
@@ -80,12 +91,17 @@ public class WishListService {
 
 
 
-	public WishList deleteWishList(Long gameId) {
+	public void deleteWishList(Long gameId) {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Member member = memberRepository.findByEmail(email)
 				.orElseThrow(() -> new EntityNotFoundException("회원정보가 존재하지 않습니다."));
-		WishList wishList = wishListRepository.findById(gameId).orElseThrow(()->new EntityNotFoundException("일치하는 정보가 존재하지 않습니다."));
-		wishList.deleteEntity();
-		return wishListRepository.save(wishList);
+
+		List<WishList> wishLists = wishListRepository.findByMember(member);
+		for(int i=0; i<wishLists.size(); i++) {
+			if (wishLists.get(i).getGameId().equals(gameId) && wishLists.get(i).getDelYN().equals(DelYN.N)) {
+				wishLists.get(i).deleteEntity();
+				wishListRepository.save(wishLists.get(i));
+			}
+		}
 	}
 }

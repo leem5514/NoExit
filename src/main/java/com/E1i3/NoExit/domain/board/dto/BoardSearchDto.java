@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class BoardSearchDto {
     private String searchBoardType;
+    private String searchContents;
     private String searchTitle;
 }
