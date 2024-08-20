@@ -98,14 +98,14 @@ public class ReviewController {
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
-//    @PreAuthorize("hasRole('USER')")
-//    @PostMapping("/review/update")
-//    @Operation(summary= "[일반 사용자] 리뷰 수정 API")
-//    public ResponseEntity<?> updateReview(@RequestBody ReviewUpdateDto dto) {
-//        Review updatedReview = reviewService.updateReview(dto);
-//        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "리뷰 수정이 완료되었습니다.", updatedReview.getId());
-//        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-//    }
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/review/update/{id}")
+    @Operation(summary = "[일반 사용자] 리뷰 수정 API")
+    public ResponseEntity<CommonResDto> updateReview(@PathVariable Long id, @ModelAttribute ReviewUpdateDto dto) {
+        Review updatedReview = reviewService.updateReview(id, dto);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "리뷰 수정이 완료되었습니다.", updatedReview.getId());
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
 
 
     // 리뷰 숫자 카운팅
