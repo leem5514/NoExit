@@ -54,7 +54,7 @@ public class BoardController {
     @Operation(summary= "게시글 전체 조회")
     @GetMapping("/board/list") // 게시글 전체 조회
     public ResponseEntity<Object> boardRead(BoardSearchDto searchDto,
-                                            @PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
+                                            @PageableDefault(size=20,sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<BoardListResDto> dtos =  boardService.boardList(searchDto, pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "list is successfully found", dtos);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
@@ -71,8 +71,6 @@ public class BoardController {
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "board is successfully found", dto);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
-
-
 
 
 
@@ -111,14 +109,19 @@ public class BoardController {
         }
     }
 
-
     @Operation(summary= "게시글 좋아요")
     @PatchMapping("/board/like/{id}")
     public ResponseEntity<Object> boardLike(@PathVariable Long id) {
         try {
-            int likes = boardService.boardUpdateLikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you liked this board", likes);
-            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            CommonResDto commonResDto;
+            boolean value = false;
+            if(boardService.boardUpdateLikes(id)) {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you liked this board", !value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            } else {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you un-liked this board", value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            }
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
             CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());
@@ -128,13 +131,20 @@ public class BoardController {
 
 
 
+
     @Operation(summary= "게시글 싫어요")
     @PatchMapping("/board/dislike/{id}")
     public ResponseEntity<Object> boardDislike(@PathVariable Long id) {
         try {
-            int dislikes = boardService.boardUpdateDislikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this board", dislikes);
-            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            CommonResDto commonResDto;
+            boolean value = false;
+            if(boardService.boardUpdateDislikes(id)) {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this board", !value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            } else {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you un-disliked this board", value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            }
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
             CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());
