@@ -1,14 +1,13 @@
 package com.E1i3.NoExit.domain.board.dto;
 
 import com.E1i3.NoExit.domain.board.domain.BoardType;
+import com.E1i3.NoExit.domain.boardimage.dto.BoardImageDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder

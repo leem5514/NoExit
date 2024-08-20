@@ -33,9 +33,9 @@ public class BoardController {
 
     @Operation(summary= "게시글 작성")
     @PostMapping("/board/create") // 게시글 생성
-    public ResponseEntity<Object> boardCreate(@RequestPart(value = "data", required = false) BoardCreateReqDto dto,
+    public ResponseEntity<Object> boardCreate(@RequestPart(value = "data") BoardCreateReqDto dto,
                                               @RequestPart(value = "file", required = false) List<MultipartFile> imgFiles
-                                              ) {
+    ) {
         try {
             Board board = boardService.boardCreate(dto, imgFiles);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "board is successfully created", board.getId());
@@ -46,6 +46,7 @@ public class BoardController {
             return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
         }
     }
+
 
 
 
@@ -81,10 +82,10 @@ public class BoardController {
     public ResponseEntity<Object> boardUpdate(
             @PathVariable Long id,
             @RequestPart(value = "data", required = false) BoardUpdateReqDto boardUpdateReqDto,
-            @RequestPart(value = "file", required = false) List<MultipartFile> updatedImgFiles
+            @RequestPart(value = "file", required = false) List<MultipartFile> imgFiles
             ) {
         try {
-            boardService.boardUpdate(id, boardUpdateReqDto, updatedImgFiles);
+            boardService.boardUpdate(id, boardUpdateReqDto, imgFiles);
             CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "board is successfully updated", null);
             return new ResponseEntity<>(commonResDto, HttpStatus.OK);
         } catch(IllegalArgumentException e) {
@@ -140,4 +141,5 @@ public class BoardController {
             return new ResponseEntity<>(commonErrorDto, HttpStatus.BAD_REQUEST);
         }
     }
+
 }
