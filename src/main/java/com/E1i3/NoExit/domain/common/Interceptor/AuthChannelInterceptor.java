@@ -1,5 +1,6 @@
 package com.E1i3.NoExit.domain.common.Interceptor;
 
+import com.E1i3.NoExit.domain.chat.domain.StompPrincipal;
 import com.E1i3.NoExit.domain.common.auth.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
@@ -11,6 +12,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -38,7 +40,10 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
                 if (jwtTokenProvider.validateToken(accessToken)) {
                     Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    System.out.println("Authentication set for: " + authentication.getName());  // 로그 추가
+                    System.out.println("Authentication set for: " + authentication.getName());
+
+                    String email = authentication.getName(); // getName()으로 이메일을 가져옴
+                    accessor.setUser(new StompPrincipal(email)); // 커스텀 Principal 사용
                 } else {
                     throw new AuthenticationCredentialsNotFoundException("AccessToken is not valid");
                 }
@@ -53,6 +58,4 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
     public void init() {
         SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
     }
-
 }
-

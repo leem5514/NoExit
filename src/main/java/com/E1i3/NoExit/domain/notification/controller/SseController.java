@@ -44,7 +44,7 @@ public class SseController implements MessageListener {
 
 	private final RedisMessageListenerContainer redisMessageListenerContainer;
 
-	public SseController(@Qualifier("4") RedisTemplate<String, Object> sseRedisTemplate,
+	public SseController(@Qualifier("3") RedisTemplate<String, Object> sseRedisTemplate,
 		RedisMessageListenerContainer redisMessageListenerContainer, NotificationRepository notificationRepository) {
 		this.sseRedisTemplate = sseRedisTemplate;
 		this.redisMessageListenerContainer = redisMessageListenerContainer;

@@ -69,7 +69,7 @@ public class ReviewService {
 
         Reservation reservation = reservationRepository.findById(dto.getReservationId())
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않은 예약입니다."));
-
+//        Reservation reservation = reservationRepository.findByIdAndDelYN(dto.getReservationId()).orElseThrow(())
         // 예약 상태가 ACCEPT인지 확인
         if (reservation.getReservationStatus() != ReservationStatus.ACCEPT) {
             throw new IllegalStateException("리뷰를 작성할 수 없는 상태입니다. 예약이 승인되지 않았습니다.");

@@ -35,6 +35,7 @@ public class JwtTokenProvider {
 		// claims는 사용자 정보(payload 정보)
 		Claims claims = Jwts.claims().setSubject(email);
 		claims.put("role", role);
+
 		Date now =  new Date();
 		String token = Jwts.builder()
 			.setClaims(claims)
@@ -74,13 +75,19 @@ public class JwtTokenProvider {
 			return false;
 		}
 	}
-	public String getNicknameFromToken(String token) {
-		Claims claims = Jwts.parser()
-				.setSigningKey(secretKey)
-				.parseClaimsJws(token)
-				.getBody();
-
-		return claims.get("nickname", String.class); // nickname 클레임 추출
-	}
+//		public String getNicknameFromToken(String token) {
+//			try {
+//				Claims claims = Jwts.parser()
+//						.setSigningKey(secretKey) // 서명 키 설정
+//						.parseClaimsJws(token) // 토큰 파싱 및 클레임 추출
+//						.getBody();
+//
+//				String email = claims.get(subject);
+//				System.out.println("Extracted nickname from token: " + email); // 로그 추가
+//				return nickname;
+//			} catch (Exception e) {
+//				throw new RuntimeException("Invalid token", e);
+//			}
+//		}
 
 }
