@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityNotFoundException;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
+import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.game.repository.GameRepository;
 import com.E1i3.NoExit.domain.wishlist.dto.WishResDto;
 import org.springframework.data.domain.Page;
@@ -48,6 +49,9 @@ public class WishListService {
 				.gameId(gameId)
 				.member(member)
 				.build();
+		Game game = gameRepository.findById(gameId).orElseThrow(()->new EntityNotFoundException("없는 게임정보입니다."));
+		game.updateWishCount(true);
+		gameRepository.save(game);
 		return wishListRepository.save(wishList);
 	}
 
@@ -93,5 +97,8 @@ public class WishListService {
 				wishListRepository.save(wishLists.get(i));
 			}
 		}
+		Game game = gameRepository.findById(gameId).orElseThrow(()->new EntityNotFoundException("없는 게임정보입니다."));
+		game.updateWishCount(false);
+		gameRepository.save(game);
 	}
 }
