@@ -59,62 +59,64 @@ public class ReviewService {
         this.reservationRepository = reservationRepository;
     }
 
-
     /*  */
     @PreAuthorize("hasRole('USER')")
     @Transactional
     public Review createReview(ReviewSaveDto dto) {
-
-        // 리뷰를 작성하기 위한 필요 조건(추가) (예약 state 가 ACCEPT 가 된 조건, 로그인 된 사용자 정보, 예약 일수가 2주가 지나지 않은 사용자)
         String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(memberEmail)
                 .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
 
         Reservation reservation = reservationRepository.findById(dto.getReservationId())
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않은 예약입니다."));
-
+//        Reservation reservation = reservationRepository.findByIdAndDelYN(dto.getReservationId()).orElseThrow(())
         // 예약 상태가 ACCEPT인지 확인
         if (reservation.getReservationStatus() != ReservationStatus.ACCEPT) {
             throw new IllegalStateException("리뷰를 작성할 수 없는 상태입니다. 예약이 승인되지 않았습니다.");
         }
 
-        // 예약 상태가 ACCEPT인 후 일주일이 지났는지 확인
-//        if (reservation.getResDate().isAfter(LocalDate.now().minusWeeks(1))) {
-//            throw new IllegalStateException("리뷰는 예약 상태가 ACCEPT된 후 일주일이 지난 후에만 작성할 수 있습니다.");
-//        }
+        // 기존에 삭제된 리뷰가 있는지 확인
+        Review existingReview = reviewRepository.findByReservationAndDelYN(reservation, DelYN.Y).orElse(null);
 
-        if (reviewRepository.findByReservationAndDelYN(reservation, DelYN.N).isPresent()) {
-            throw new IllegalStateException("이미 작성된 리뷰가 있습니다.");
+        if (existingReview != null) {
+            // 이미 삭제된 리뷰가 있는 경우, 해당 리뷰를 재활성화하고 업데이트 처리
+            existingReview.cancelAndRecreateYN();
+            existingReview.updateContent(dto.getContent(), dto.getRating(), dto.getReviewImage());
+            updateReviewImage(existingReview, dto.getReviewImage());
+            return reviewRepository.save(existingReview);
         }
 
+        // 새로운 리뷰를 생성하는 로직
         MultipartFile image = dto.getReviewImage();
-        Review review = null;
+        Review review = dto.toEntity(member, reservation);
+
+        if (image != null && !image.isEmpty()) {
+            updateReviewImage(review, image);
+        }
+
+        return reviewRepository.save(review);
+    }
+
+    private void updateReviewImage(Review review, MultipartFile image) {
         try {
-            review = reviewRepository.save(dto.toEntity(member, reservation));
-            // 파일을 로컬 디스크에 저장
-            byte[] bytes = image.getBytes();
             String fileName = review.getId() + "_" + image.getOriginalFilename();
-            Path path = Paths.get("C:/springboot_img", fileName);
-
-            Files.write(path, bytes, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-
             String s3Key = reviewFolder + fileName;
+
             // S3에 파일 업로드
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucket)
                     .key(s3Key)
                     .build();
-            PutObjectResponse putObjectResponse = s3Client.putObject(putObjectRequest, RequestBody.fromFile(path));
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(image.getBytes()));
 
-            // 업로드된 파일의 S3 URL 가져오기
             String s3Path = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(s3Key)).toExternalForm();
             review.updateImagePath(s3Path);
-
         } catch (IOException e) {
-            throw new RuntimeException("이미지 업로드 실패");
+            throw new RuntimeException("이미지 업로드 실패", e);
         }
-        return review;
     }
+
+
     /* 게임 아이디를 통한 리뷰 리스트(전체사용자 기준 gameId 별) */
     public Page<ReviewListDto> getReviewsByGameId(Long gameId, Pageable pageable) {
         Page<Review> reviews = reviewRepository.findByReservation_GameIdAndDelYN(gameId, DelYN.N, pageable);
@@ -160,9 +162,60 @@ public class ReviewService {
         return review;
     }
 
-    // 리뷰 숫자
+    @PreAuthorize("hasRole('USER')")
+    @Transactional
+    public Review updateReview(Long reviewId, ReviewUpdateDto dto) {
+        String memberEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(memberEmail)
+                .orElseThrow(() -> new EntityNotFoundException("회원 정보를 찾을 수 없습니다."));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("리뷰를 찾을 수 없습니다."));
+
+        if (!review.getMember().equals(member)) {
+            throw new IllegalArgumentException("본인이 작성한 리뷰만 수정할 수 있습니다.");
+        }
+
+        // 이미지 처리
+        String s3Path = null;
+        if (dto.getReviewImage() != null && !dto.getReviewImage().isEmpty()) {
+            try {
+                String fileName = review.getId() + "_" + dto.getReviewImage().getOriginalFilename();
+                String s3Key = reviewFolder + fileName;
+
+                // S3에 파일 업로드
+                PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(s3Key)
+                        .build();
+                s3Client.putObject(putObjectRequest, RequestBody.fromBytes(dto.getReviewImage().getBytes()));
+
+                s3Path = s3Client.utilities().getUrl(a -> a.bucket(bucket).key(s3Key)).toExternalForm();
+                review.updateImagePath(s3Path);
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 업로드 실패", e);
+            }
+        }
+
+        // 내용과 평점 업데이트 (이미지 경로는 여기서 처리하지 않음)
+        review.updateContentAndRating(dto.getContent(), dto.getRating());
+        return reviewRepository.save(review);
+    }
+
+
+
+
+
+    /* 리뷰 숫자 */
     public long getReviewCountForGame(Long gameId) {
         return reviewRepository.countByReservation_GameIdAndDelYN(gameId, DelYN.N);
     }
-
+    /* 리뷰 평균 값 */
+    public double calculateAverageRatingForGame(Long gameId) {
+        List<Review> reviews = reviewRepository.findByReservation_GameIdAndDelYN(gameId, DelYN.N);
+        return reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
+    }
 }

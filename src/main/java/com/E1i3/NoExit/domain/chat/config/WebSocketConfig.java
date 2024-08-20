@@ -1,11 +1,11 @@
 package com.E1i3.NoExit.domain.chat.config;
 
-import lombok.RequiredArgsConstructor;
+import com.E1i3.NoExit.domain.common.Interceptor.AuthChannelInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.socket.config.annotation.*;
-import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 //@Configuration
 //@EnableWebSocketMessageBroker
@@ -28,6 +28,12 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final AuthChannelInterceptor authChannelInterceptor;
+
+    public WebSocketConfig(AuthChannelInterceptor authChannelInterceptor) {
+        this.authChannelInterceptor = authChannelInterceptor;
+    }
+
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
@@ -38,9 +44,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // 클라이언트가 접속할 수 있는 WebSocket 엔드포인트 등록
         registry.addEndpoint("/ws-chat")
-                .setAllowedOrigins("http://localhost:8082")
+                .setAllowedOrigins("http://localhost:8082")  // Vue.js 클라이언트의 도메인을 명확히 설정
                 .withSockJS();
+//                .setClientLibraryUrl("https://cdn.jsdelivr.net/sockjs/1.4.0/sockjs.min.js"); // SockJS 라이브러리 경로 설정
     }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(authChannelInterceptor)
+                .taskExecutor(new ThreadPoolTaskExecutor());
+    }
+
 }

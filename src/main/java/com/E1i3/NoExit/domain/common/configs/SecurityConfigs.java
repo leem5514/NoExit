@@ -34,7 +34,7 @@ public class SecurityConfigs {
 						"/doLogin","/owner/create", "/game/list","/findboard/list", "/game/detail/**", "/game/**", "/findboard/create",
 						// 김민성 : Swagger 관련 경로를 허용 , 접속 경로 : http://localhost:8080/swagger-ui/#/
 						"/member/create", "/swagger-ui/**",
-						"/review/all","/review/all/**","/review/count",
+						"/review/all","/review/all/**","/review/count","/review/game/**",
 						"/swagger-resources/**",
 						"/swagger-ui.html",
 						"/v2/api-docs",
@@ -43,11 +43,15 @@ public class SecurityConfigs {
 						"/webjars/**",
 						//웹소켓 test 403 해결
 						"/ws-chat/**",
-						"/chat/**", "/ws"
-
+//						"/chat/**", "/ws"
+						"/ws-chat/**",
+						"/store/list", //매장 정보 접근 권한 추가 김민성
+						"/attendance/list",// 참석자 정보 접근 권한 추가 김민성
+						"/attendance/check" // 참석자 중복 체크 접근 권한 추가 김민성
 				).permitAll()
 				.antMatchers("/reservation/create").hasRole("USER")
 				.antMatchers("/reservation/storeReservation").hasRole("OWNER")
+				.antMatchers("/chat/**").authenticated()
 				.anyRequest().authenticated()
 				.and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

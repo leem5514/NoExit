@@ -1,13 +1,12 @@
 package com.E1i3.NoExit.domain.board.service;
 
 import com.E1i3.NoExit.domain.board.domain.Board;
-import com.E1i3.NoExit.domain.board.domain.BoardImage;
-import com.E1i3.NoExit.domain.board.dto.BoardCreateReqDto;
-import com.E1i3.NoExit.domain.board.dto.BoardDetailResDto;
-import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
-import com.E1i3.NoExit.domain.board.dto.BoardUpdateReqDto;
-import com.E1i3.NoExit.domain.board.repository.BoardImageRepository;
+import com.E1i3.NoExit.domain.board.domain.BoardType;
+import com.E1i3.NoExit.domain.board.dto.*;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
+import com.E1i3.NoExit.domain.boardimage.domain.BoardImage;
+import com.E1i3.NoExit.domain.boardimage.repository.BoardImageRepository;
+import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.member.domain.Member;
@@ -23,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -75,19 +80,19 @@ public class BoardService {
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("없는 회원입니다."));
 
         Board board = Board.builder()
-            .member(member)
-            .title(dto.getTitle())
-            .contents(dto.getContents())
-            .boardType(dto.getBoardType())
-            .build();
+                .member(member)
+                .title(dto.getTitle())
+                .contents(dto.getContents())
+                .boardType(dto.getBoardType())
+                .build();
 
         // 파일이 있는 경우 처리
         if (imgFiles != null && !imgFiles.isEmpty()) {
             for (MultipartFile f : imgFiles) {
                 BoardImage img = BoardImage.builder()
-                    .board(board)
-                    .imageUrl(s3Service.uploadFile(f, "board"))
-                    .build();
+                        .board(board)
+                        .imageUrl(s3Service.uploadFile(f, "board"))
+                        .build();
                 board.getImgs().add(img);
                 boardImageRepository.save(img);
             }
@@ -96,11 +101,52 @@ public class BoardService {
         return board;
     }
 
-    public Page<BoardListResDto> boardList(Pageable pageable) { // 게시글 전체 조회
-        Page<Board> boards = boardRepository.findByDelYN(pageable, DelYN.N);
+    public Page<BoardListResDto> boardList(BoardSearchDto searchDto, Pageable pageable) { // 게시글 전체 조회
+
+        if(searchDto == null) {
+            Page<Board> boards = boardRepository.findByDelYN(pageable, DelYN.N);
+            Page<BoardListResDto> boardListResDtos = boards.map(Board::fromEntity);
+            return boardListResDtos;
+        }
+
+        Specification<Board> specification = new Specification<Board>() {
+            @Override
+            public Predicate toPredicate(Root<Board> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+                List<Predicate> predicates = new ArrayList<>();
+                if (searchDto.getSearchTitle() != null && !searchDto.getSearchTitle().isEmpty()) {
+                    predicates.add(criteriaBuilder.like(root.get("title"), "%" + searchDto.getSearchTitle() + "%"));
+                }
+                if (searchDto.getSearchContents() != null && !searchDto.getSearchContents().isEmpty()) {
+                    predicates.add(criteriaBuilder.like(root.get("contents"), "%" + searchDto.getSearchContents() + "%"));
+                }
+                if (searchDto.getSearchBoardType() != null && !searchDto.getSearchBoardType().isEmpty()) {
+                    BoardType boardType = null;
+                    try {
+                        boardType = BoardType.valueOf(searchDto.getSearchBoardType());
+                    } catch (IllegalArgumentException e) {
+                        e.getMessage();
+                    }
+                    predicates.add(criteriaBuilder.equal(root.get("boardType"), boardType));
+                }
+
+                predicates.add(criteriaBuilder.equal(root.get("delYN"), DelYN.N));
+
+                Predicate[] predicateArr = new Predicate[predicates.size()];
+                for(int i=0; i<predicateArr.length; i++) {
+                    predicateArr[i] = predicates.get(i);
+                }
+
+                Predicate predicate = criteriaBuilder.and(predicateArr);
+                return predicate;
+            }
+        };
+
+        Page<Board> boards = boardRepository.findAll(specification, pageable);
         Page<BoardListResDto> boardListResDtos = boards.map(Board::fromEntity);
         return boardListResDtos;
     }
+
+
 
     public BoardDetailResDto boardDetail(Long id) { // 특정 게시글 조회
         Board board = boardRepository.findById(id)
@@ -112,18 +158,31 @@ public class BoardService {
         return board.detailFromEntity();
     }
 
-    public Board boardUpdate(Long id, BoardUpdateReqDto dto) {
-
+    public Board boardUpdate(Long id, BoardUpdateReqDto dto, List<MultipartFile> imgFiles) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("없는 회원입니다."));
         Board board = boardRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Board not found with id: " + id));
 
         if (!board.getMember().getEmail().equals(email)) {
             throw new IllegalArgumentException("본인의 게시글만 수정할 수 있습니다.");
         }
 
+
         board.updateEntity(dto);
+        if (imgFiles != null && !imgFiles.isEmpty()) {
+            for (MultipartFile f : imgFiles) {
+                BoardImage img = BoardImage.builder()
+                        .board(board)
+                        .imageUrl(s3Service.uploadFile(f, "board"))
+                        .build();
+                board.getImgs().add(img);
+                boardImageRepository.save(img);
+            }
+        }
+
         return boardRepository.save(board);
+
     }
 
     public void boardDelete(Long id) {
@@ -142,7 +201,9 @@ public class BoardService {
     }
 
     @Transactional
-    public int boardUpdateLikes(Long id) {
+    public boolean boardUpdateLikes(Long id) {
+        boolean value = false;
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
@@ -156,32 +217,34 @@ public class BoardService {
         Boolean isLiked = boardRedisTemplate.hasKey(memberLikesKey);
 
         if (isLiked != null && isLiked) {
-            // If already liked, remove the like
             boardRedisTemplate.delete(memberLikesKey);
             boardRedisTemplate.opsForSet().remove(likesKey, member.getId());
             board.updateLikes(false);
         } else {
-            // If not liked yet, add the like
             boardRedisTemplate.opsForValue().set(memberLikesKey, true);
             boardRedisTemplate.opsForSet().add(likesKey, member.getId());
             board.updateLikes(true);
+            value = true;
         }
 
         boardRepository.save(board);
         String receiver_email = board.getMember().getEmail();
-        NotificationResDto notificationResDto = NotificationResDto.builder()
-            .board_id(board.getId())
-            .email(receiver_email)
-            .sender_email(email)
-            .type(NotificationType.BOARD_LIKE)
-            .message(member.getNickname() + "님이 내 게시글을 추천합니다.").build();
-        sseController.publishMessage(notificationResDto, receiver_email);
-        // notificationRepository.save(notificationResDto);
-        return board.getLikes();
+        if(!receiver_email.equals(email)) {
+            NotificationResDto notificationResDto = NotificationResDto.builder()
+                .notification_id(board.getId())
+                .email(receiver_email)
+                .sender_email(email)
+                .type(NotificationType.BOARD_LIKE)
+                .message(member.getNickname() + "님이 내 게시글을 추천합니다.").build();
+            sseController.publishMessage(notificationResDto, receiver_email);
+        }
+        return value;
     }
 
     @Transactional
-    public int boardUpdateDislikes(Long id) {
+    public boolean boardUpdateDislikes(Long id) {
+        boolean value = false;
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
@@ -195,20 +258,19 @@ public class BoardService {
         Boolean isDisliked = boardRedisTemplate.hasKey(memberDislikesKey);
 
         if (isDisliked != null && isDisliked) {
-            // If already disliked, remove the dislike
             boardRedisTemplate.delete(memberDislikesKey);
             boardRedisTemplate.opsForSet().remove(dislikesKey, member.getId());
             board.updateDislikes(false);
         } else {
-            // If not disliked yet, add the dislike
             boardRedisTemplate.opsForValue().set(memberDislikesKey, true);
             boardRedisTemplate.opsForSet().add(dislikesKey, member.getId());
             board.updateDislikes(true);
+            value = true;
         }
 
         boardRepository.save(board);
 
-        return board.getDislikes();
+        return value;
     }
 
 }

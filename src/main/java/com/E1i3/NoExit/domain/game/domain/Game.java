@@ -4,7 +4,6 @@ import com.E1i3.NoExit.domain.common.domain.BaseTimeEntity;
 import com.E1i3.NoExit.domain.store.domain.Store;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import com.E1i3.NoExit.domain.game.dto.GameResDto;
 
 import lombok.AllArgsConstructor;
@@ -44,6 +43,8 @@ public class Game extends BaseTimeEntity {
 
     //@Column(nullable = false, length = 500)
     private String gameInfo; // 게임설명
+
+    private int wishCount = 0;
 
     @Enumerated(EnumType.STRING)
     private AgeLimit ageLimit; // 나이제한( 성인 / 미성년자 )
@@ -85,5 +86,10 @@ public class Game extends BaseTimeEntity {
         }
 
         return availableHours;
+    }
+
+    public void updateWishCount(boolean wish) {
+        if(wish) { this.wishCount++; }
+        else { this.wishCount--; }
     }
 }

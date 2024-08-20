@@ -32,10 +32,11 @@ public class NotificationResDto extends BaseTimeEntity {
 	private String email;	// 알림 받는이
 	@Enumerated(EnumType.STRING)
 	private NotificationType type;
-	private Long board_id;
-	private Long comment_id;
-	private Long reservation_id;
-	private Long findboard_id;
+	private Long notification_id;
+	// private Long board_id;
+	// private Long comment_id;
+	// private Long reservation_id;
+	// private Long findboard_id;
 	private String message;
 	@Enumerated(EnumType.STRING)
 	private ApprovalStatus approvalStatus;
@@ -43,7 +44,7 @@ public class NotificationResDto extends BaseTimeEntity {
 	@Builder.Default
 	private DelYN delYn = DelYN.N;
 
-	public void updateDelYN(DelYN delYN) {
+	public void updateDelYN() {
 		this.delYn = DelYN.Y;
 	}
 }

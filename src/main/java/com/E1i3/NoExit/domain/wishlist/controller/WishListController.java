@@ -1,14 +1,8 @@
 package com.E1i3.NoExit.domain.wishlist.controller;
 
-import java.util.List;
 
-import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
-import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
-import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
-import com.E1i3.NoExit.domain.common.dto.CommonErrorDto;
-import com.E1i3.NoExit.domain.wishlist.dto.WishReqDto;
+
 import com.E1i3.NoExit.domain.wishlist.dto.WishResDto;
-import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,9 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
-import com.E1i3.NoExit.domain.game.domain.Game;
-import com.E1i3.NoExit.domain.game.dto.GameResDto;
-import com.E1i3.NoExit.domain.wishlist.domain.WishList;
 import com.E1i3.NoExit.domain.wishlist.service.WishListService;
 
 @RestController
@@ -32,9 +23,9 @@ public class WishListController {
 	}
 
 	// 위시리스트에 추가
-	@PostMapping("/wishlist/add")
-	public ResponseEntity<?> addWishList(@RequestBody WishReqDto dto) {
-		wishListService.addWishList(dto);
+	@PostMapping("/wishlist/add/{gameId}")
+	public ResponseEntity<?> addWishList(@PathVariable Long gameId) {
+		wishListService.addWishList(gameId);
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "찜 성공", null);
 		return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
 	}
@@ -60,8 +51,5 @@ public class WishListController {
 		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "찜 삭제", null);
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
-
-
-
 
 }

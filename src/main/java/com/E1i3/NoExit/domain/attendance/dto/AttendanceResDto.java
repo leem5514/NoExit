@@ -1,4 +1,4 @@
-package com.E1i3.NoExit.domain.board.dto;
+package com.E1i3.NoExit.domain.attendance.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardImageDto {
-    private String imageUrl;
+public class AttendanceResDto {
+
+    private Long findBoardId;
+    private Long memberId;
+    private String email;
+
+
 }
