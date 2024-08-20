@@ -42,10 +42,9 @@ public class ChatService {
     }
 
     // 메시지를 처리하고 저장하는 기능
-    public void handleMessage(String roomId, String senderNickname, Object content) {
-        String senderEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(senderEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid sender email: " + senderEmail));
+    public void handleMessage(String roomId, String senderEmail, Object content) {
+        //String senderEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
 
         ChatRoom chatRoom = chatRoomRepository.findById(Long.parseLong(roomId))
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
@@ -59,7 +58,7 @@ public class ChatService {
         }
 
         ChatMessageEntity chatMessageEntity = ChatMessageEntity.builder()
-                .sender(member.getNickname())
+                .sender(senderEmail)
                 .content(contentAsString)
                 .chatRoom(chatRoom)
                 .timestamp(System.currentTimeMillis())
