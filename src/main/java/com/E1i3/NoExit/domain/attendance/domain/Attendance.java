@@ -2,6 +2,7 @@ package com.E1i3.NoExit.domain.attendance.domain;
 
 import com.E1i3.NoExit.domain.attendance.dto.AttendanceResDto;
 import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
+import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.findboard.domain.FindBoard;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import lombok.AllArgsConstructor;
@@ -37,6 +38,10 @@ public class Attendance {
     private ChatRoom chatRoom;
   
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private DelYN delYn = DelYN.N;
 
     public AttendanceResDto listfromEntity(){
         return AttendanceResDto.builder()
