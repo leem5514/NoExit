@@ -228,13 +228,12 @@ public class BoardService {
         boardRepository.save(board);
         String receiver_email = board.getMember().getEmail();
         NotificationResDto notificationResDto = NotificationResDto.builder()
-            .board_id(board.getId())
+            .notification_id(board.getId())
             .email(receiver_email)
             .sender_email(email)
             .type(NotificationType.BOARD_LIKE)
             .message(member.getNickname() + "님이 내 게시글을 추천합니다.").build();
         sseController.publishMessage(notificationResDto, receiver_email);
-        // notificationRepository.save(notificationResDto);
         return board.getLikes();
     }
 

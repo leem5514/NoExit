@@ -1,5 +1,7 @@
 package com.E1i3.NoExit.domain.common.service;
 
+import com.E1i3.NoExit.domain.grade.domain.Grade;
+import com.E1i3.NoExit.domain.grade.repository.GradeRepository;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.member.domain.Role;
 import com.E1i3.NoExit.domain.member.repository.MemberRepository;
@@ -23,9 +25,29 @@ public class InitialDataLoader implements CommandLineRunner {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private GradeRepository gradeRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
+
+		Grade grade = Grade.builder().id(1L)
+			.gradeName("초보 탈출꾼").build();
+		gradeRepository.save(grade);
+		grade = Grade.builder().id(2L)
+			.gradeName("상급 탈출꾼").build();
+		gradeRepository.save(grade);
+		grade = Grade.builder().id(3L)
+			.gradeName("탈출 전문가").build();
+		gradeRepository.save(grade);
+		grade = Grade.builder().id(4L)
+			.gradeName("탈출 마스터").build();
+		gradeRepository.save(grade);
+		grade = Grade.builder().id(5L)
+			.gradeName("전설의 탈출꾼").build();
+		gradeRepository.save(grade);
+
+		grade = gradeRepository.findById(1L).get();
 
 		// Check and create OWNER account if not exis
 		// ts
@@ -61,6 +83,7 @@ public class InitialDataLoader implements CommandLineRunner {
 				.password(passwordEncoder.encode("12341234")) // Encode password
 				.role(Role.USER)
 				.age(23)
+				.grade(grade)
 				.phone_number("010-1234-5678") // Example phone number
 				.nickname("user") // Example nickname
 				.profileImage(
@@ -75,6 +98,7 @@ public class InitialDataLoader implements CommandLineRunner {
 				.password(passwordEncoder.encode("12341234")) // Encode password
 				.role(Role.USER)
 				.age(48)
+				.grade(grade)
 				.phone_number("010-9876-9876") // Example phone number
 				.nickname("user_test2") // Example nickname
 				.profileImage(

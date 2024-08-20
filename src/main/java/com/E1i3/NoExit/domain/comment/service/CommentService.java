@@ -35,7 +35,7 @@ public class CommentService {
     private static final String COMMENT_PREFIX = "comment:";
     private static final String MEMBER_PREFIX = "member:";
     private final NotificationRepository notificationRepository;
-	  private final SseController sseController;
+    private final SseController sseController;
 
     @Autowired
   	public CommentService(CommentRepository commentRepository, MemberRepository memberRepository, BoardRepository boardRepository, NotificationService notificationService, NotificationRepository notificationRepository,
@@ -79,8 +79,7 @@ public class CommentService {
         // 댓글 작성 알림
         String receiver_email = board.getMember().getEmail();
         NotificationResDto notificationResDto = NotificationResDto.builder()
-              .board_id(board.getId())
-              .comment_id(comment.getId())
+              .notification_id(board.getId())
               .email(receiver_email)
               .sender_email(email)
               .type(NotificationType.COMMENT)
@@ -160,7 +159,7 @@ public class CommentService {
         // 댓글 좋아요 알림
         String receiver_email = comment.getMember().getEmail();
         NotificationResDto notificationResDto = NotificationResDto.builder()
-          .comment_id(comment.getId())
+          .notification_id(comment.getId())
           .email(receiver_email)
           .sender_email(email)
           .type(NotificationType.COMMENT_LIKE)

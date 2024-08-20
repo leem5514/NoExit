@@ -58,6 +58,8 @@ public class NotificationService {
 	public void updateDelYN(Long id) {
 		NotificationResDto notificationResDto = notificationRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 알림입니다."));
-		notificationResDto.updateDelYN(DelYN.Y);
+		notificationResDto.updateDelYN();
+		notificationRepository.save(notificationResDto);
+		System.out.println(notificationResDto.getDelYn());
 	}
 }
