@@ -53,4 +53,21 @@ public class AttendanceService {
 
         return attendanceResDtos;
     }
+    @Transactional
+    public void markAttendancesAsDeleted(Long findBoardId) {
+        // 변경 전 데이터 조회 및 출력
+        List<Attendance> attendancesBeforeUpdate = attendanceRepository.findByFindBoardId(findBoardId);
+        System.out.println("Before update:");
+        attendancesBeforeUpdate.forEach(attendance -> System.out.println(attendance));
+
+        // 데이터 업데이트
+        attendanceRepository.markAttendancesAsDeletedByFindBoardId(findBoardId);
+
+        // 변경 후 데이터 조회 및 출력
+        List<Attendance> attendancesAfterUpdate = attendanceRepository.findByFindBoardId(findBoardId);
+        System.out.println("After update:");
+        attendancesAfterUpdate.forEach(attendance -> System.out.println(attendance));
+    }
+
+
 }

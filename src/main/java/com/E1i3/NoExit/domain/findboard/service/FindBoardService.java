@@ -2,6 +2,7 @@ package com.E1i3.NoExit.domain.findboard.service;
 
 import com.E1i3.NoExit.domain.attendance.domain.Attendance;
 import com.E1i3.NoExit.domain.attendance.repositroy.AttendanceRepository;
+import com.E1i3.NoExit.domain.attendance.service.AttendanceService;
 import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
 import com.E1i3.NoExit.domain.chat.service.ChatRoomService;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @Service
 public class FindBoardService {
 
+    private final AttendanceService attendanceService;
     private final FindBoardRepository findBoardRepository;
     private final MemberRepository memberRepository;
     private final AttendanceRepository attendanceRepository;
@@ -41,8 +43,9 @@ public class FindBoardService {
     private final ChatRoomService chatRoomService;
 
     @Autowired
-    public FindBoardService(FindBoardRepository findBoardRepository, MemberRepository memberRepository, AttendanceRepository attendanceRepository, NotificationRepository notificationRepository,
-		SseController sseController, ChatRoomService chatRoomService) {
+    public FindBoardService(AttendanceService attendanceService, FindBoardRepository findBoardRepository, MemberRepository memberRepository, AttendanceRepository attendanceRepository, NotificationRepository notificationRepository,
+                            SseController sseController, ChatRoomService chatRoomService) {
+        this.attendanceService = attendanceService;
         this.findBoardRepository = findBoardRepository;
         this.memberRepository = memberRepository;
         this.attendanceRepository = attendanceRepository;
@@ -137,16 +140,23 @@ public class FindBoardService {
         findBoard.incrementCurrentCount();
 
 
+
+
         Attendance attendance = Attendance.builder() // Attendance 엔티티에 참가신청 버튼을 누른 회원의 정보를 id로 추가
                 .findBoard(findBoard) // 게시글 id
                 .member(member)
-                .email(memberEmail)// 참석자 id
+                .email(memberEmail)
+                // 참석자 id
                 .build();
 
         attendanceRepository.save(attendance); // 참가자 정보 저장
 
         if ( findBoard.getCurrentCount() == findBoard.getTotalCapacity()){
+
+
+
             String receiver_email = findBoard.getMember().getEmail();   // 신청한 사람
+
             // NotificationResDto notificationResDto = NotificationResDto.builder()
             //     .findboard_id(findBoard.getId())
             //     .email(receiver_email)
@@ -172,13 +182,15 @@ public class FindBoardService {
                 sseController.publishMessage(participantNotification, a.getMember().getEmail());
             }
             findBoard.markAsDeleted(); // 참가 인원이 꽉 차면 게시글을 Y로 변경 , 위치 수정 if문 밖에 잇어서 옮겨놨음. 혹시 문제생기면 다시 빼기 8.18
+            attendanceService.markAttendancesAsDeleted(findBoard.getId());
         }
-        // 게시글 작성자도 attendance에 추가해서 채팅 목록에 나올 수 있도록
-        attendance = Attendance.builder()
-            .findBoard(findBoard) // 게시글 id
-            .member(member) // 참석자 id
-            .build();
-        attendanceRepository.save(attendance);
+//        // 게시글 작성자도 attendance에 추가해서 채팅 목록에 나올 수 있도록
+//        attendance = Attendance.builder()
+//            .findBoard(findBoard) // 게시글 id
+//            .member(member) // 참석자 id
+//            .build();
+//        attendanceRepository.save(attendance);
+
 
 
         return findBoard.ResDtoFromEntity();
