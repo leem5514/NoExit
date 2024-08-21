@@ -19,6 +19,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,8 +42,14 @@ public class ChatController {
             // STOMP 헤더에서 사용자 정보 가져오기
             String senderEmail = accessor.getUser().getName();
 
-            // senderEmail 설정
+            // 사용자 정보 조회
+            Member member = memberRepository.findByEmail(senderEmail)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + senderEmail));
+
+            // 사용자 이름 및 프로필 이미지 설정
             chatMessage.setSender(senderEmail);
+            chatMessage.setSenderName(member.getNickname());
+            chatMessage.setSenderProfileImage(member.getProfileImage());
 
             // 메시지 처리 및 저장
             chatService.handleMessage(chatMessage.getRoomId(), chatMessage.getSender(), chatMessage.getContent());
