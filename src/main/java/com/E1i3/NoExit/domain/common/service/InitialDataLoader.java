@@ -108,7 +108,7 @@ public class InitialDataLoader implements CommandLineRunner {
 		}
 
 		if (memberRepository.findByEmail("user@gmail.com").isEmpty()) {
-			for (int i = 3; i <= 100; i++) { // 1부터 100까지 반복
+			for (int i = 3; i <= 9; i++) { // 1부터 100까지 반복
 				Member user = Member.builder()
 						.username("user" + i) // 고유한 username
 						.email("user" + i + "@gmail.com") // 고유한 email

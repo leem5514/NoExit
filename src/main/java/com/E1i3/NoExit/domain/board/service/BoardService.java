@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.board.dto.*;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
 import com.E1i3.NoExit.domain.boardimage.domain.BoardImage;
 import com.E1i3.NoExit.domain.boardimage.repository.BoardImageRepository;
+import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.member.domain.Member;
@@ -200,7 +201,9 @@ public class BoardService {
     }
 
     @Transactional
-    public int boardUpdateLikes(Long id) {
+    public boolean boardUpdateLikes(Long id) {
+        boolean value = false;
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
@@ -214,16 +217,13 @@ public class BoardService {
         Boolean isLiked = boardRedisTemplate.hasKey(memberLikesKey);
 
         if (isLiked != null && isLiked) {
-            // If already liked, remove the like
             boardRedisTemplate.delete(memberLikesKey);
             boardRedisTemplate.opsForSet().remove(likesKey, member.getId());
             board.updateLikes(false);
         } else {
-            // If not liked yet, add the like
             boardRedisTemplate.opsForValue().set(memberLikesKey, true);
             boardRedisTemplate.opsForSet().add(likesKey, member.getId());
             board.updateLikes(true);
-
             String receiver_email = board.getMember().getEmail();
             if(!receiver_email.equals(email)) {
                 NotificationResDto notificationResDto = NotificationResDto.builder()
@@ -238,10 +238,13 @@ public class BoardService {
 
         boardRepository.save(board);
         return board.getLikes();
+
     }
 
     @Transactional
-    public int boardUpdateDislikes(Long id) {
+    public boolean boardUpdateDislikes(Long id) {
+        boolean value = false;
+
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email)
             .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 이메일입니다."));
@@ -255,20 +258,19 @@ public class BoardService {
         Boolean isDisliked = boardRedisTemplate.hasKey(memberDislikesKey);
 
         if (isDisliked != null && isDisliked) {
-            // If already disliked, remove the dislike
             boardRedisTemplate.delete(memberDislikesKey);
             boardRedisTemplate.opsForSet().remove(dislikesKey, member.getId());
             board.updateDislikes(false);
         } else {
-            // If not disliked yet, add the dislike
             boardRedisTemplate.opsForValue().set(memberDislikesKey, true);
             boardRedisTemplate.opsForSet().add(dislikesKey, member.getId());
             board.updateDislikes(true);
+            value = true;
         }
 
         boardRepository.save(board);
 
-        return board.getDislikes();
+        return value;
     }
 
 }
