@@ -157,11 +157,22 @@
   </summary>
   <div markdown="1">
     <ul>
-      <li>모집글 작성</li>
-      <li>모집글 수정</li>
-      <li>모집글 삭제</li>
-      <li>모집글 조회</li>
-      <li>모집글 참여</li>
+      <li>모집글 작성,수정,삭제,조회</li>
+
+  ![withme게시글CRUD](https://github.com/user-attachments/assets/8a2c4695-d29f-4cd9-8b59-c8fa57715859)
+      
+      <li>모집글 검색</li>
+
+  ![withme검색기능](https://github.com/user-attachments/assets/ac383e96-b042-489c-a3c6-efb6d4a73f62)
+  
+      <li>모집글 참여하기,알림 뱃지</li>
+
+![withme참여하기알림채팅](https://github.com/user-attachments/assets/1a787136-9b8f-4da1-808d-ee211df36aa5)
+
+      <li>모집글 페이징 처리 , 채팅방 자동 생성</li>
+
+  ![withme페이징,참여하기](https://github.com/user-attachments/assets/3cb297d3-27cf-4b32-8519-58656e0703bb)
+      
     </ul>
   </div>
 </details>
