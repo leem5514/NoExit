@@ -115,6 +115,24 @@
 <br/>
 
 ## ✨ 기능 테스트 및 시연
+
+<details>
+  <summary>
+    <b>Escape With me</b>
+  </summary>
+  <div markdown="1">
+    <ul>
+      <li>1. 점주 및 일반회원 회원 가입 </li>
+      <li>2. 로그인</li>
+      <li>3. SMTP 이메일 인증 </li>
+    </ul>
+
+    ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)
+
+    
+  </div>
+</details>
+
 <details>
 <summary>
   <b> 게시판</b>
