@@ -137,9 +137,8 @@
   <div markdown="1">
     <ul>
       <li>회원가입 & 로그인
-
-  ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/8b3e4bbd-81dc-4109-b0fc-2638e4f8fc92)
         
+  ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/8b3e4bbd-81dc-4109-b0fc-2638e4f8fc92)
       </li>
     </ul>
     
