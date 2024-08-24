@@ -147,7 +147,10 @@
   </summary>
   <div markdown="1">
     <ul>
-      <li>실시간 채팅</li>
+      <li>실시간 채팅
+        
+  ![실시간채팅](https://github.com/user-attachments/assets/d2bf4012-d1a6-4258-ab22-3cf0178418fd)
+      </li>
     </ul>
   </div>
 </details>
