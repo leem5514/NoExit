@@ -195,12 +195,22 @@
 </summary>
   <div markdown="">
     <ul>
-      <li>게시판 글 작성</li>
-      <li>게시판 글 수정 및 삭제</li>
-      <li>게시판 글 검색(제목, 카테고리, 내용)</li>
-      <li>게시판 글 추천/비추천</li>
-      <li>뎃글 작성 및 수정</li>
-      <li>댓글 추천/비추천</li>
+      <li>게시판 글 작성
+
+  ![게시판글작성](https://github.com/user-attachments/assets/7cb4efe8-3f03-4ae4-9416-367a68d77214)
+      </li>
+      <li>게시판 글 수정 및 삭제
+      ![게시글수정삭제권한분리](https://github.com/user-attachments/assets/f72dec98-51b1-42e9-8a8d-7ee2b2f3b3ac)
+      </li>
+      <li>게시판 글 검색(제목, 카테고리, 내용)
+      ![보드검색기능](https://github.com/user-attachments/assets/1d2d0dce-0760-4cbb-8dff-62cc30c3bd67)
+      </li>
+      <li>게시판 글 추천/비추천
+      ![게시글좋아요싫어요](https://github.com/user-attachments/assets/dc3e7362-c39f-4c5f-9b44-29ea2fc41b02)</li>
+      <li>댓글 작성 및 수정</li>
+      <li>댓글 추천/비추천
+      ![댓글좋아요싫어요](https://github.com/user-attachments/assets/f74b1d7c-05bc-488b-abd2-de82d071a6fa)
+      </li>
     </ul>
   </div>
 </details>
