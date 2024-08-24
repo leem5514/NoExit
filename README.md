@@ -153,7 +153,7 @@
 
 <details>
   <summary>
-    <b>Escape With me</b>
+    <b>회원가입 & 로그인</b>
   </summary>
   <div markdown="1">
     <ul>
