@@ -211,9 +211,16 @@
   </summary>
   <div markdown="1">
     <ul>
-      <li>위시리스트 생성</li>
-      <li>위시리스트 삭제</li>
-      <li>위시리스트 내역 확인</li>
+      <li>위시리스트 생성
+        
+  ![위시리스트찜추가](https://github.com/user-attachments/assets/b4f96e0e-13e3-4f78-9c51-5384c629932f)
+      </li>
+      <li>위시리스트 삭제
+      ![위시리스트찜해제](https://github.com/user-attachments/assets/e7612a97-3aa9-47ea-aaa4-d5b7325c4500)
+      </li>
+      <li>위시리스트 내역 확인
+      ![마이페이지찜목록](https://github.com/user-attachments/assets/748c9573-343e-470e-a69f-5ea850cdbfe9)
+      </li>
     </ul>
   </div>
 </details>
