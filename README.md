@@ -20,9 +20,7 @@
 <br/>
 
 ## 💡 프로젝트 배경 및 필요성
-
 방탈출게임 시장 동향
-
   ![escape-room-market](https://github.com/user-attachments/assets/4670d24b-8fc1-4d96-9d18-a9b35f8821ec)
   
 -  현재 방탈출 산업의 호황은 엔터테인먼트에 대한 소비자의 욕구가 증가한 결과입니다. 사람들이 친구 및 가족과 함께 시간을 보낼 수 있는 새롭고 창의적인 방법을 찾으면서 방 탈출은 점점 더 인기를 얻고 있습니다. 방탈출 카페 시장은 고객들이 방탈출 서비스에 점점 더 다양한 테마, 창의적인 도전을 원하는 추세이며 그에따라 자연스럽게 더 질 좋은 서비스를 원하고 있습니다.
@@ -86,12 +84,12 @@
 <br/>
 
 ## 📝 요구사항정의서
+[2팀 회의 문서 - 요구사항 명세서.pdf](https://github.com/user-attachments/files/16707833/2.-.pdf)
 
 
 [📝 요구사항 명세서 상세보기](https://docs.google.com/spreadsheets/d/1VdXKl6pfghy9OK6zTpShCHeG1uyAGB85Y2ycm1viF5g/edit?gid=566809607#gid=566809607)
 
 <br/>
-
 
 ## 📋 ERD
 <img src="./img/MediBooker.jpg" alt="ERD" width="1000" height="700"/>
@@ -99,6 +97,9 @@
 ![findboard추가ERD (1)](https://github.com/user-attachments/assets/a7a859f6-06dd-436d-9fb4-dee6afef6081)
 
 <br/>
+
+<div align=left>	
+
 
 ## 📌 주요 기능    
 - 참여 게시판
@@ -114,60 +115,33 @@
 
 ## ✨ 기능 테스트 및 시연
 <details>
-</summary>
-  <b> 회원가입&로그인</b>
-  <div markdown="1">
-    <ul>
-      <li>1. 점주 및 일반회원 회원 가입 </li>
-      <li>2. 로그인</li>
-      <li>3. SMTP 이메일 인증 </li>
-    </ul>
-  </div> 
-</details>
-
-
-<details>
 <summary>
   <b> 게시판</b>
 </summary>
-  <div markdown="1">
+  <div markdown="">
     <ul>
-      <li>1. 게시판 글 작성</li>
-      <li>2. 게시판 글 수정 및 삭제</li>
-      <li>3. 게시판 글 검색(제목, 카테고리, 내용)</li>
-      <li>4. 게시판 글 추천/비추천</li>
-      <li>5. 뎃글 작성 및 수정</li>
-      <li>6. 댓글 추천/비추천</li>
+      <li>게시판 글 작성</li>
+      <li>게시판 글 수정 및 삭제</li>
+      <li>게시판 글 검색(제목, 카테고리, 내용)</li>
+      <li>게시판 글 추천/비추천</li>
+      <li>뎃글 작성 및 수정</li>
+      <li>댓글 추천/비추천</li>
     </ul>
   </div>
 </details>
 
 <details>
   <summary>
-    <b>Escape with me board </b>
+    <b>Escape With me</b>
   </summary>
   <div markdown="1">
     <ul>
-      <li>모집글 작성,수정,삭제,조회 
-        
-  ![withme게시글CRUD](https://github.com/user-attachments/assets/8a2c4695-d29f-4cd9-8b59-c8fa57715859) 
-      </li>
-
-  <li>모집글 검색
-    
-  ![withme검색기능](https://github.com/user-attachments/assets/ac383e96-b042-489c-a3c6-efb6d4a73f62)
-  </li>
-  
-  <li>모집글 참여하기,알림 뱃지
-    
-  ![withme참여하기알림채팅](https://github.com/user-attachments/assets/1a787136-9b8f-4da1-808d-ee211df36aa5)
-  </li>
-
-  <li>모집글 페이징 처리 , 채팅방 자동 생성
-    
-   ![withme페이징,참여하기](https://github.com/user-attachments/assets/3cb297d3-27cf-4b32-8519-58656e0703bb)
-  </li>
-  </ul>
+      <li>모집글 작성</li>
+      <li>모집글 수정</li>
+      <li>모집글 삭제</li>
+      <li>모집글 조회</li>
+      <li>모집글 참여</li>
+    </ul>
   </div>
 </details>
 
