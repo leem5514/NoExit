@@ -133,8 +133,6 @@
   </div>
 </details>
 
-![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)
-
 
 
 <details>
@@ -143,12 +141,12 @@
 </summary>
   <div markdown="">
     <ul>
-      <li>게시판 글 작성</li>
-      <li>게시판 글 수정 및 삭제</li>
-      <li>게시판 글 검색(제목, 카테고리, 내용)</li>
-      <li>게시판 글 추천/비추천</li>
-      <li>뎃글 작성 및 수정</li>
-      <li>댓글 추천/비추천</li>
+      <li>1. 게시판 글 작성</li>
+      <li>2. 게시판 글 수정 및 삭제</li>
+      <li>3. 게시판 글 검색(제목, 카테고리, 내용)</li>
+      <li>4. 게시판 글 추천/비추천</li>
+      <li>5. 뎃글 작성 및 수정</li>
+      <li>6. 댓글 추천/비추천</li>
     </ul>
   </div>
 </details>
