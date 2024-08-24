@@ -84,7 +84,6 @@
 <br/>
 
 ## 📝 요구사항정의서
-[2팀 회의 문서 - 요구사항 명세서.pdf](https://github.com/user-attachments/files/16707833/2.-.pdf)
 
 
 [📝 요구사항 명세서 상세보기](https://docs.google.com/spreadsheets/d/1VdXKl6pfghy9OK6zTpShCHeG1uyAGB85Y2ycm1viF5g/edit?gid=566809607#gid=566809607)
@@ -92,7 +91,7 @@
 <br/>
 
 ## 📋 ERD
-<img src="./img/MediBooker.jpg" alt="ERD" width="1000" height="700"/>
+
 
 ![findboard추가ERD (1)](https://github.com/user-attachments/assets/a7a859f6-06dd-436d-9fb4-dee6afef6081)
 
