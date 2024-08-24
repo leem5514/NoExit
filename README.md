@@ -172,7 +172,10 @@
   </summary>
   <div markdown="1">
     <ul>
-      <li>모집글 작성</li>
+      <li>모집글 조회,작성,수정,삭제
+        ![withme게시글CRUD](https://github.com/user-attachments/assets/8a2c4695-d29f-4cd9-8b59-c8fa57715859)
+      </li>
+      
       <li>모집글 수정</li>
       <li>모집글 삭제</li>
       <li>모집글 조회</li>
