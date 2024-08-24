@@ -94,22 +94,37 @@
 
 
 ## 📋 ERD
+<img src="./img/MediBooker.jpg" alt="ERD" width="1000" height="700"/>
+
+![findboard추가ERD (1)](https://github.com/user-attachments/assets/a7a859f6-06dd-436d-9fb4-dee6afef6081)
+
+<br/>
+
+## 📌 주요 기능    
+- 참여 게시판
+  - 방탈출 게임 매니아들과 언제든지 함께 하기위해 원하는 게임, 시간, 인원을 선택하여 사람들을 모집할 수 있습니다.
+  - 모집인원 마감 시 자동으로 채팅방이 생성되어 참여 인원들에게 초대메시지를 보내지며 참여 인원들은 초대메시지를 통해 채팅방에 참여할 수 있습니다.
+- 검색 기능
+  - 게임을 카테고리별, 금액별, 난이도별로 검색할 수 있습니다.
+- 예약
+  - 사용자가 예약을 요청하면 점주는 예약 요청에 대한 알림을 받을 수 있습니다.
+  - 점주의 예약 승인/거절 여부에 대해서 사용자는 알림을 받을 수 있습니다. 
+
+<br/>
 
 
-
-
-![findboard추가ERD (1인</b>
-  </summary>
+<details>
+</summary>
+  <b> 회원가입&로그인</b>
   <div markdown="1">
     <ul>
       <li>1. 점주 및 일반회원 회원 가입 </li>
       <li>2. 로그인</li>
       <li>3. SMTP 이메일 인증 </li>
-    </ul>
 
-![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)
+  ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)
 
-    
+  </ul>
   </div>
 </details>
 
