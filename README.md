@@ -121,13 +121,10 @@
       <li>1. 점주 및 일반회원 회원 가입 </li>
       <li>2. 로그인</li>
       <li>3. SMTP 이메일 인증 </li>
-      <div>
-        
-  ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)
-  
-      </div>    
     </ul>
   </div>
+  
+![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)  
 </details>
 
 
@@ -154,24 +151,26 @@
   </summary>
   <div markdown="1">
     <ul>
-      <li>모집글 작성,수정,삭제,조회</li>
+      <li>모집글 작성,수정,삭제,조회 
+        
+  ![withme게시글CRUD](https://github.com/user-attachments/assets/8a2c4695-d29f-4cd9-8b59-c8fa57715859) 
+      </li>
 
-  ![withme게시글CRUD](https://github.com/user-attachments/assets/8a2c4695-d29f-4cd9-8b59-c8fa57715859)
-
-      
-  <li>모집글 검색</li>
-
+  <li>모집글 검색
+    
   ![withme검색기능](https://github.com/user-attachments/assets/ac383e96-b042-489c-a3c6-efb6d4a73f62)
+  </li>
   
-  <li>모집글 참여하기,알림 뱃지</li>
+  <li>모집글 참여하기,알림 뱃지
+    
+  ![withme참여하기알림채팅](https://github.com/user-attachments/assets/1a787136-9b8f-4da1-808d-ee211df36aa5)
+  </li>
 
-![withme참여하기알림채팅](https://github.com/user-attachments/assets/1a787136-9b8f-4da1-808d-ee211df36aa5)
-
-  <li>모집글 페이징 처리 , 채팅방 자동 생성</li>
-
-  ![withme페이징,참여하기](https://github.com/user-attachments/assets/3cb297d3-27cf-4b32-8519-58656e0703bb)
-      
-    </ul>
+  <li>모집글 페이징 처리 , 채팅방 자동 생성
+    
+   ![withme페이징,참여하기](https://github.com/user-attachments/assets/3cb297d3-27cf-4b32-8519-58656e0703bb)
+  </li>
+  </ul>
   </div>
 </details>
 
