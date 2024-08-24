@@ -136,7 +136,10 @@
   </summary>
   <div markdown="1">
     <ul>
-      <li>알림 목록 조회</li>
+      <li>알림 목록 조회
+
+  ![실시간알림](https://github.com/user-attachments/assets/b1db2b4c-866e-4935-8787-5d5067a2656f)
+      </li>
     </ul>
   </div>
 </details>
