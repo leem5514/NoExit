@@ -164,10 +164,13 @@
   </summary>
   <div markdown="1">
     <ul>
-      <li>예약 요청</li>
-      <li>[점주]예약 거절 및 승인</li>
-      <li>리뷰 작성 및 조회</li>
-      <li>리뷰 수정 및 삭제</li>
+      <li>예약 요청 ,(점주)예약 거절 및 승인
+
+  ![에약거절_예약승인_예약신청_예약알림](https://github.com/user-attachments/assets/815c1c68-7be8-4786-8186-f22a505c1642)
+      </li>
+      <li>리뷰 작성 , 조회 , 수정 , 삭제
+      ![리뷰수정삭제](https://github.com/user-attachments/assets/17649d95-707d-43fb-954a-cda169ee3534)
+      </li>
     </ul>
   </div>
 </details>
