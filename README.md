@@ -132,6 +132,19 @@
 
 <details>
   <summary>
+    <b>회원가입 & 로그인</b>
+  </summary>
+  <div markdown="1">
+    <ul>
+      <li>회원가입 & 로그인
+      </li>
+    </ul>
+    
+  </div>
+</details>
+
+<details>
+  <summary>
     <b>Escape With me</b>
   </summary>
   <div markdown="1">
