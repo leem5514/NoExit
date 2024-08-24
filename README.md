@@ -114,21 +114,6 @@
 <br/>
 
 ## ✨ 기능 테스트 및 시연
-<details>
-<summary>
-  <b> 게시판</b>
-</summary>
-  <div markdown="">
-    <ul>
-      <li>게시판 글 작성</li>
-      <li>게시판 글 수정 및 삭제</li>
-      <li>게시판 글 검색(제목, 카테고리, 내용)</li>
-      <li>게시판 글 추천/비추천</li>
-      <li>뎃글 작성 및 수정</li>
-      <li>댓글 추천/비추천</li>
-    </ul>
-  </div>
-</details>
 
 <details>
   <summary>
@@ -142,48 +127,6 @@
       </li>
     </ul>
     
-  </div>
-</details>
-
-<details>
-  <summary>
-    <b>Escape With me</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>모집글 작성</li>
-      <li>모집글 수정</li>
-      <li>모집글 삭제</li>
-      <li>모집글 조회</li>
-      <li>모집글 참여</li>
-    </ul>
-  </div>
-</details>
-
-<details>
-  <summary>
-    <b>예약 및 리뷰 작성</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>예약 요청</li>
-      <li>[점주]예약 거절 및 승인</li>
-      <li>리뷰 작성 및 조회</li>
-      <li>리뷰 수정 및 삭제</li>
-    </ul>
-  </div>
-</details>
-
-<details>
-  <summary>
-    <b>위시리스트 추가 및 조회</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>위시리스트 생성</li>
-      <li>위시리스트 삭제</li>
-      <li>위시리스트 내역 확인</li>
-    </ul>
   </div>
 </details>
 
@@ -205,6 +148,64 @@
   <div markdown="1">
     <ul>
       <li>실시간 채팅</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>
+    <b>예약 및 리뷰 작성</b>
+  </summary>
+  <div markdown="1">
+    <ul>
+      <li>예약 요청</li>
+      <li>[점주]예약 거절 및 승인</li>
+      <li>리뷰 작성 및 조회</li>
+      <li>리뷰 수정 및 삭제</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>
+    <b>Escape With me</b>
+  </summary>
+  <div markdown="1">
+    <ul>
+      <li>모집글 작성</li>
+      <li>모집글 수정</li>
+      <li>모집글 삭제</li>
+      <li>모집글 조회</li>
+      <li>모집글 참여</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+<summary>
+  <b> 게시판</b>
+</summary>
+  <div markdown="">
+    <ul>
+      <li>게시판 글 작성</li>
+      <li>게시판 글 수정 및 삭제</li>
+      <li>게시판 글 검색(제목, 카테고리, 내용)</li>
+      <li>게시판 글 추천/비추천</li>
+      <li>뎃글 작성 및 수정</li>
+      <li>댓글 추천/비추천</li>
+    </ul>
+  </div>
+</details>
+
+<details>
+  <summary>
+    <b>위시리스트 추가 및 조회</b>
+  </summary>
+  <div markdown="1">
+    <ul>
+      <li>위시리스트 생성</li>
+      <li>위시리스트 삭제</li>
+      <li>위시리스트 내역 확인</li>
     </ul>
   </div>
 </details>
