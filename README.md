@@ -95,30 +95,7 @@
 ## 📋 ERD
 
 
-![findboard추가ERD (1)](https://github.com/user-attachments/assets/a7a859f6-06dd-436d-9fb4-dee6afef6081)
-
-<br/>
-
-<div align=left>	
-
-
-## 📌 주요 기능    
-- 참여 게시판
-  - 방탈출 게임 매니아들과 언제든지 함께 하기위해 원하는 게임, 시간, 인원을 선택하여 사람들을 모집할 수 있습니다.
-  - 모집인원 마감 시 자동으로 채팅방이 생성되어 참여 인원들에게 초대메시지를 보내지며 참여 인원들은 초대메시지를 통해 채팅방에 참여할 수 있습니다.
-- 검색 기능
-  - 게임을 카테고리별, 금액별, 난이도별로 검색할 수 있습니다.
-- 예약
-  - 사용자가 예약을 요청하면 점주는 예약 요청에 대한 알림을 받을 수 있습니다.
-  - 점주의 예약 승인/거절 여부에 대해서 사용자는 알림을 받을 수 있습니다. 
-
-<br/>
-
-## ✨ 기능 테스트 및 시연
-
-<details>
-  <summary>
-    <b>Escape With me</b>
+![findboard추가ERD (1인</b>
   </summary>
   <div markdown="1">
     <ul>
@@ -153,7 +130,7 @@
 
 <details>
   <summary>
-    <b>회원가입 & 로그인</b>
+    <b>Escape with me board </b>
   </summary>
   <div markdown="1">
     <ul>
