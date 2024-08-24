@@ -126,11 +126,11 @@
       <li>2. 로그인</li>
       <li>3. SMTP 이메일 인증 </li>
     </ul>
+
+![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)
+
+    
   </div>
-
-  ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)
-
-  
 </details>
 
 ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/ac47e42e-4303-475e-94b2-df4b5e060843)
