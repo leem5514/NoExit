@@ -224,6 +224,7 @@ public class BoardService {
             boardRedisTemplate.opsForValue().set(memberLikesKey, true);
             boardRedisTemplate.opsForSet().add(likesKey, member.getId());
             board.updateLikes(true);
+            value = true;
             String receiver_email = board.getMember().getEmail();
             if(!receiver_email.equals(email)) {
                 NotificationResDto notificationResDto = NotificationResDto.builder()
@@ -236,10 +237,13 @@ public class BoardService {
             }
         }
 
+
         boardRepository.save(board);
-        return board.getLikes();
+        return value;
 
     }
+
+
 
     @Transactional
     public boolean boardUpdateDislikes(Long id) {
