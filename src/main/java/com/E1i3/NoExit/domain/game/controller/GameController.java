@@ -6,6 +6,10 @@ import java.util.List;
 import com.E1i3.NoExit.domain.game.dto.GameDetailResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +30,13 @@ public class GameController {
 	}
 
 	@GetMapping("/game/list")
-	public ResponseEntity<?> gameList() {
-		List<GameResDto> games = gameService.gameList();
+	public ResponseEntity<CommonResDto> gameList(
+			@PageableDefault(size=6, sort = "createdTime", direction = Sort.Direction.DESC)
+			Pageable pageable) {
+		Page<GameResDto> games = gameService.gameList(pageable);
 		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
 	}
+
 	@GetMapping("/game/detail/{id}")
 	@Operation(summary = "게임 상세 정보 조회 API")
 	public ResponseEntity<CommonResDto> getGameDetail(@PathVariable Long id) {
@@ -44,10 +51,10 @@ public class GameController {
 		List<LocalTime> availableHours = gameService.getAvailableHours(gameId);
 		return ResponseEntity.ok(availableHours);
 	}
-
-	@GetMapping("/game/ranking")
-	public ResponseEntity<?> gameRankingList() {
-		List<GameResDto> games = gameService.gameList();
-		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
-	}
+//	일단 주석처리햇지만 나중에 수정해야함.
+//	@GetMapping("/game/ranking")
+//	public ResponseEntity<?> gameRankingList() {
+//		List<GameResDto> games = gameService.gameList();
+//		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
+//	}
 }

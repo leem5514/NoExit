@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.E1i3.NoExit.domain.game.dto.GameDetailResDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +27,14 @@ public class GameService {
 		this.gameRepository = gameRepository;
 	}
 
-	public List<GameResDto> gameList() {
-		List<Game> gameList = gameRepository.findAll();
-		List<GameResDto> gameResDtolist = new ArrayList<>();
-		for (Game game : gameList) {
-			gameResDtolist.add(game.fromEntity());
-		}
-		return gameResDtolist;
+	@Transactional(readOnly = true)
+
+	public Page<GameResDto> gameList(Pageable pageable) {
+
+		Page<Game> gameList = gameRepository.findAll(pageable);
+		return gameList.map(Game::fromEntity);
 	}
+
 	@Transactional
 	public GameDetailResDto getGameDetail(Long gameId) {
 		Game game = gameRepository.findById(gameId)

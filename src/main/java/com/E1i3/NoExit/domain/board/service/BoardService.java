@@ -202,6 +202,7 @@ public class BoardService {
 
     @Transactional
     public boolean boardUpdateLikes(Long id) {
+
         boolean value = false;
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -237,7 +238,8 @@ public class BoardService {
         }
 
         boardRepository.save(board);
-        return board.getLikes();
+
+        return value;
 
     }
 
