@@ -1,0 +1,13 @@
+addReviewers: true
+addAssignees: true
+
+reviewers:
+   - 34suuuuu
+   - epiuwiruiw
+   - leem5514
+   - Windowmincastle
+
+numberOfReviewers: 1
+
+skipKeywords:
+   - wip

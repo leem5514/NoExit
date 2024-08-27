@@ -1,7 +1,5 @@
 package com.E1i3.NoExit.domain.comment.controller;
 
-import com.E1i3.NoExit.domain.board.domain.Board;
-import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentCreateReqDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentListResDto;
 import com.E1i3.NoExit.domain.comment.dto.CommentUpdateReqDto;
@@ -35,7 +33,6 @@ public class CommentController {
 	}
 
     // url은 임의로 대충 붙임
-
 
     @Operation(summary= "댓글 작성")
     @PostMapping("/comment/create") // 댓글 생성
@@ -106,9 +103,15 @@ public class CommentController {
     @PatchMapping("/comment/like/{id}")
     public ResponseEntity<Object> commentLike(@PathVariable Long id) {
         try {
-            int likes = commentService.commentUpdateLikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you liked this comment", likes);
-            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            CommonResDto commonResDto;
+            boolean value = false;
+            if(commentService.commentUpdateLikes(id)) {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you liked this comment", !value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            } else {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you un-liked this comment", value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            }
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
             CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());
@@ -120,9 +123,15 @@ public class CommentController {
     @PatchMapping("/comment/dislike/{id}")
     public ResponseEntity<Object> commentDislike(@PathVariable Long id) {
         try {
-            int dislikes = commentService.commentUpdateDislikes(id);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this comment", dislikes);
-            return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            CommonResDto commonResDto;
+            boolean value = false;
+            if(commentService.commentUpdateDislikes(id)) {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you disliked this comment", !value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            } else {
+                commonResDto = new CommonResDto(HttpStatus.OK, "you un-disliked this comment", value);
+                return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+            }
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
             CommonErrorDto commonErrorDto = new CommonErrorDto(HttpStatus.BAD_REQUEST.value(), e.getMessage());

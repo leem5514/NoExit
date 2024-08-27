@@ -6,6 +6,7 @@ import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.member.domain.Member;
 import com.E1i3.NoExit.domain.owner.domain.Owner;
 import com.E1i3.NoExit.domain.reservation.dto.ReservationDetailResDto;
+import com.E1i3.NoExit.domain.reservation.dto.ReservationUpdateResDto;
 import com.E1i3.NoExit.domain.review.domain.Review;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -60,17 +61,19 @@ public class Reservation extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus; // 사장님기준 예약 승인 거절 여부
 
-    @CreationTimestamp
-    private LocalDateTime createdAt; // 예약 당시 시간
+//    @CreationTimestamp
+//    private LocalDateTime createdAt; // 예약 당시 시간
 
     @Enumerated(EnumType.STRING)
     private DelYN delYN = DelYN.N;
 
+//    private boolean reviewWritten = false; // 리뷰 읽음 처리
 
     @Builder
     public Reservation(Owner owner, Member member, Game game, String resName, String phoneNumber, LocalDate resDate, String resDateTime,
                        int numberOfPlayers, ReservationStatus reservationStatus, ApprovalStatus approvalStatus,
-                       LocalDateTime createdAt, DelYN delYN) {
+                       LocalDateTime createdTime, DelYN delYN) {
+        this.id = id;
         this.owner = owner;
         this.member = member;
         this.game = game;
@@ -81,9 +84,10 @@ public class Reservation extends BaseTimeEntity {
         this.numberOfPlayers = numberOfPlayers;
         this.reservationStatus = reservationStatus;
         this.approvalStatus = approvalStatus;
-        this.createdAt = createdAt;
+        createdTime = LocalDateTime.now();
         this.delYN = delYN.N;
     }
+
 
     public void updateStatus(ApprovalStatus approvalStatus) {
         this.approvalStatus = approvalStatus;
@@ -93,6 +97,10 @@ public class Reservation extends BaseTimeEntity {
             this.reservationStatus = ReservationStatus.REJECT;
         }
     }
+
+//    public void markReviewAsWritten() {
+//        this.reviewWritten = true;
+//    }
 
     public void updateDelYN() {
         this.delYN = DelYN.Y;
@@ -108,7 +116,21 @@ public class Reservation extends BaseTimeEntity {
                 .resDate(this.resDate)
                 .resDateTime(this.resDateTime)
                 .reservationStatus(this.reservationStatus)
-                .createdTime(this.createdAt.format(formatter))
+                .gameName(this.game.getGameName())
+                .storeName(this.game.getStore().getStoreName())
+                .createdTime(this.createdTime().format(formatter))
                 .build();
+    }
+
+    public ReservationUpdateResDto fromEntity() {
+        return ReservationUpdateResDto.builder()
+                .id(this.id)
+            .adminEmail(this.getOwner().getEmail())
+            .memberEmail(this.getMember().getEmail())
+            .gameId(this.getGame().getId())
+            .resDate(this.getResDate().toString())
+            .resDateTime(this.getResDateTime())
+            .approvalStatus(this.getApprovalStatus())
+            .build();
     }
 }

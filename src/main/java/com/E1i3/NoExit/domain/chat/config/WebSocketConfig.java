@@ -1,27 +1,38 @@
 package com.E1i3.NoExit.domain.chat.config;
 
-import lombok.RequiredArgsConstructor;
+import com.E1i3.NoExit.domain.common.Interceptor.AuthChannelInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.socket.config.annotation.*;
 
-@RequiredArgsConstructor
 @Configuration
-@EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+    private final AuthChannelInterceptor authChannelInterceptor;
 
-    private final WebSocketHandler webSocketHandler;
-    @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketHandler, "/ws/chat")
-                .setAllowedOrigins("*");//CORS 설정
-        // 주소 : ws://localhost:8080/ws/chat
+    public WebSocketConfig(AuthChannelInterceptor authChannelInterceptor) {
+        this.authChannelInterceptor = authChannelInterceptor;
     }
-//    @Override
-//    public void configureMessageBroker(MessageBrokerRegistry registry) {
-//        registry.enableSimpleBroker("/room");    //해당 주소를 구독하고 있는 클라이언트들에게 메세지 전달
-//        registry.setApplicationDestinationPrefixes("/send");       //클라이언트에서 보낸 메세지를 받을 prefix
-//        }
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        // 메시지 브로커 구성
+        config.enableSimpleBroker("/topic", "/queue"); // topic :N명, queue : 1:1
+        config.setApplicationDestinationPrefixes("/app");
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws-chat")
+                .setAllowedOrigins("http://localhost:8082")  // 허용 경료(명확화를) -> * 사용하기는 함
+                .withSockJS(); //
+    }
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(authChannelInterceptor)
+                .taskExecutor(new ThreadPoolTaskExecutor());
+    }
 
 }

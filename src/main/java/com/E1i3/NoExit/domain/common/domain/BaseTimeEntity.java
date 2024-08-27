@@ -18,4 +18,12 @@ public abstract class BaseTimeEntity {
 
 	@UpdateTimestamp
 	private LocalDateTime updateTime;
+
+	public LocalDateTime createdTime() {
+		return createdTime;
+	}
+
+	public LocalDateTime updateTime() {
+		return updateTime;
+	}
 }

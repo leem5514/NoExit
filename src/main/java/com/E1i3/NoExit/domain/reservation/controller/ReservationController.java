@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,8 +64,15 @@ public class ReservationController {
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
+    @GetMapping("/reservation/storeReservation")
+    public ResponseEntity<?> getReservationsByOwner() {
+        List<ReservationDetailResDto> reservations = reservationService.findReservationsByOwner();
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "예약 상세 조회 완료!", reservations);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
     /* 예약 승인 여부 처리*/
-    @PreAuthorize("hasRole('OWNER')")
+//    @PreAuthorize("hasRole('OWNER')")
     @PutMapping("/reservation/approval")
     @Operation(summary= "[점장 사용자] 예약 승인 여부 처리 API")
     public ResponseEntity<?> updateApprovalStatus(@RequestBody ReservationUpdateResDto dto) {
@@ -90,15 +98,15 @@ public class ReservationController {
 
     /* 특정 일 특정 시간대 에 대한 예약 여부 조회 */
     /* 후 일수에 관한 예약 가능 시간대로 변경 */
-    @GetMapping("/reservation/time")
-    public ResponseEntity<?> findReservation(@RequestParam String resDate, @RequestParam String resDateTime) {
-        Optional<Reservation> reservation = reservationService.findReservationTime(resDate, resDateTime);
-        if (reservation.isPresent()) {
-            return new ResponseEntity<>(reservation.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new CommonResDto(HttpStatus.NOT_FOUND, "시간대 별 조회가 불가능합니다.", null), HttpStatus.NOT_FOUND);
-        }
-    }
+//    @GetMapping("/reservation/time")
+//    public ResponseEntity<?> findReservation(@RequestParam String resDate, @RequestParam String resDateTime) {
+//        Optional<Reservation> reservation = reservationService.findReservationTime(resDate, resDateTime);
+//        if (reservation.isPresent()) {
+//            return new ResponseEntity<>(reservation.get(), HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(new CommonResDto(HttpStatus.NOT_FOUND, "시간대 별 조회가 불가능합니다.", null), HttpStatus.NOT_FOUND);
+//        }
+//    }
 
 
 

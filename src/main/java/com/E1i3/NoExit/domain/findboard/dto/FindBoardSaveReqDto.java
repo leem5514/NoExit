@@ -19,7 +19,7 @@ public class FindBoardSaveReqDto {
     private String writer;
     private String contents;
     private LocalDateTime expirationTime;
-
+    private String selectedStoreName;
     private int totalCapacity;
     private String imagePath;
 
@@ -32,6 +32,7 @@ public class FindBoardSaveReqDto {
                 .totalCapacity(this.totalCapacity)
                 .imagePath(member.getProfileImage()) // 수정
                 .member(member)
+                .selectedStoreName(this.selectedStoreName)
                 .build();
     }
 }

@@ -1,68 +1,85 @@
 package com.E1i3.NoExit.domain.chat.service;
 
+
+import com.E1i3.NoExit.domain.chat.domain.ChatMessageEntity;
 import com.E1i3.NoExit.domain.chat.domain.ChatRoom;
-import com.E1i3.NoExit.domain.chat.dto.ChatDto;
+import com.E1i3.NoExit.domain.chat.dto.ChatMessage;
+import com.E1i3.NoExit.domain.chat.repository.ChatMessageRepository;
+import com.E1i3.NoExit.domain.chat.repository.ChatRoomRepository;
+import com.E1i3.NoExit.domain.member.domain.Member;
+import com.E1i3.NoExit.domain.member.repository.MemberRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
-@Slf4j
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class ChatService {
+
+    @Qualifier("chatRedisTemplate")
+    private final RedisTemplate<String, Object> redisTemplateChat;
+    @Qualifier("chatRedisMessageListenerContainer")
+    private final RedisMessageListenerContainer redisContainer;
+
+    private final RedisMessagePublisher redisMessagePublisher;
+    //    private final RedisStreamService redisStreamService;
+    private final ChatMessageRepository chatMessageRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final MemberRepository memberRepository;
     private final ObjectMapper objectMapper;
-    private Map<String, ChatRoom> chatRooms;
 
-    @PostConstruct
-    private void init() {
-        chatRooms = new LinkedHashMap<>();
+    public List<ChatMessageEntity> getMessagesForRoom(Long roomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
+        return chatMessageRepository.findByChatRoom(chatRoom);
     }
 
-    //활성화된 모든 채팅방을 조회
-//    public List<ChatDto> findAllRoom() {
-//        List<ChatDto> collect = chatRooms.values().stream().map(chatRoom -> new ChatDto(chatRoom.getRoomId(), chatRoom.getName(), (long) chatRoom.getSessions().size())).collect(Collectors.toList());
-//        return collect;
-//    }
-    //채팅방 하나를 조회
-    public ChatRoom findRoomById(String roomId) {
-        return chatRooms.get(roomId);
-    }
+    // 메시지를 처리하고 저장하는 기능
+    public void handleMessage(String roomId, String senderEmail, Object content) {
+        //String senderEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    //새로운 방 생성
-    public ChatRoom createRoom(String name) {
-        String randomId = UUID.randomUUID().toString();
-        ChatRoom chatRoom = ChatRoom.builder()
-                .roomId(randomId)
-                .name(name)
-                .build();
-        chatRooms.put(randomId, chatRoom);
-        return chatRoom;
-    }
-    //방 삭제
-    public void deleteRoom(String roomId) {
-        ChatRoom chatRoom = findRoomById(roomId);
-        //해당방에 아무도 없다면 자동 삭제
-        if(chatRoom.getSessions().size() == 0) chatRooms.remove(roomId);
-    }
 
-    public <T> void sendMessage(WebSocketSession session, T message) {
-        try{
-            session.sendMessage(new TextMessage(objectMapper.writeValueAsString(message)));
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
+        ChatRoom chatRoom = chatRoomRepository.findById(Long.parseLong(roomId))
+                .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
+
+        // JSON으로 content를 변환
+        String contentAsString;
+        try {
+            contentAsString = objectMapper.writeValueAsString(content);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to serialize content", e);
         }
+
+        ChatMessageEntity chatMessageEntity = ChatMessageEntity.builder()
+                .sender(senderEmail)
+                .content(contentAsString)
+                .chatRoom(chatRoom)
+                .timestamp(System.currentTimeMillis())
+                .build();
+
+        // 메시지 저장
+        chatMessageRepository.save(chatMessageEntity);
+        System.out.println("Saved message to database: " + contentAsString);
+
+        // Redis로 메시지 퍼블리시
+        redisMessagePublisher.publish(contentAsString);
+        System.out.println("Published message to Redis: " + contentAsString);
+    }
+
+
+    // 특정 방의 모든 메시지 조회
+    public List<ChatMessageEntity> getMessagesByRoomId(Long roomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found"));
+        return chatMessageRepository.findByChatRoom(chatRoom);
     }
 }
+
+

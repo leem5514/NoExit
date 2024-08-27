@@ -1,5 +1,10 @@
 package com.E1i3.NoExit.domain.store.domain;
 
+
+import javax.persistence.*;
+import com.E1i3.NoExit.domain.game.domain.Game;
+import com.E1i3.NoExit.domain.game.dto.GameResDto;
+import com.E1i3.NoExit.domain.owner.domain.Owner;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,10 +13,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.E1i3.NoExit.domain.store.dto.StoreResDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import java.util.List;
 
 @Getter
 @Builder
@@ -39,4 +46,16 @@ public class Store {
 	private String address;
 	private String info;
 
+	@ManyToOne
+	@JoinColumn(name = "owner_id")
+	private Owner owner; //
+	@OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Game> games;
+
+	public StoreResDto fromEntity(){
+		return StoreResDto.builder()
+				.id(this.id)
+				.storeName(this.storeName)
+				.build();
+	}
 }

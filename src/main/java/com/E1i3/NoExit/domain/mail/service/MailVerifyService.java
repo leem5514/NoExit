@@ -21,12 +21,11 @@ public class MailVerifyService {
 	private final JavaMailSender mailSender;
 	private final RedisService redisService;
 
-	private static final String AUTH_CODE_PREFIX = "USER_AUTH_CODE ";
-	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE ";
+	private static final String AUTH_CODE_PREFIX = "USER_AUTH_CODE : ";
+	private static final String AUTH_EMAIL_PREFIX = "EMAIL_CERTIFICATE : ";
 
 	@Value("${spring.mail.auth-code-expiration-millis}")
 	private long authCodeExpirationMillis;
-
 
 	@Autowired
 	public MailVerifyService(JavaMailSender mailSender, RedisService redisService) {
@@ -35,15 +34,15 @@ public class MailVerifyService {
 	}
 
 	// 	인증번호 생성
-	public String createCode(){
-		StringBuilder sb = new StringBuilder();	//인증번호
-		try{
+	public String createCode() {
+		StringBuilder sb = new StringBuilder();    //인증번호
+		try {
 			Random random = SecureRandom.getInstanceStrong();
 			for (int i = 0; i < 6; i++) {
 				// 6자리 랜덤 수 생성 -> 추후에 문자와 숫자 섞는걸로 수정
 				sb.append(random.nextInt(10));
 			}
-		}catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		return sb.toString();
@@ -52,11 +51,20 @@ public class MailVerifyService {
 	// 메일 전송
 	public void sendEmail(MailReqDto mailReqDto) {
 		// 전송할 이메일 저장
+
+		String redisAuthCode = redisService.getValues(AUTH_EMAIL_PREFIX + mailReqDto.getReceiver());
+		if(redisService.checkExistsValue(redisAuthCode) ){
+		// 	이미 회원가입한 내역이 존재한다면
+			throw new IllegalArgumentException("이미 인증 내역이 존재합니다.");
+		}
+
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(mailReqDto.getReceiver());
 		message.setSubject(mailReqDto.getTitle());
 		message.setText(mailReqDto.getContents());
-		mailSender.send(message);	//이메일 전송
+		mailSender.send(message);    //이메일 전송
+
+
 	}
 
 	// 	인증번호 검증
@@ -68,6 +76,7 @@ public class MailVerifyService {
 		boolean response = redisService.checkExistsValue(redisAuthCode) && redisAuthCode.equals(authCode);
 
 		if (response) {
+			// 기존의 AUTH_CODE_PRE
 			redisService.setValues(AUTH_EMAIL_PREFIX + email, "true",
 				Duration.ofMillis(this.authCodeExpirationMillis));
 			redisService.deleteValues(AUTH_CODE_PREFIX + email);

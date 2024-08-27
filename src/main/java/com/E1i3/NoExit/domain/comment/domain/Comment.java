@@ -18,6 +18,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,14 +44,11 @@ public class Comment extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member; // 댓글 작성자
 
-    private String content; // 댓글 내용
+    private String contents; // 댓글 내용
 
-    private int likes; // 좋아요 // 엔티티에서는 삭제하고 dto에만 likeMembers size로
-    private int dislikes; // 싫어요 // like와 이하동문
-//    @Builder.Default
-//    private List<Member> likeMembers = new ArrayList<>(); // 좋아요 누른 회원들
-//    @Builder.Default
-//    private List<Member> dislikeMembers = new ArrayList<>(); // 싫어요 누른 회원들
+    private int likes; // 좋아요
+    private int dislikes; // 싫어요
+
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -58,31 +56,44 @@ public class Comment extends BaseTimeEntity {
 
 
     public CommentListResDto fromEntity(){
+        String createdTime
+                = this.getCreatedTime().format(
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        );
+
         CommentListResDto commentListResDto = CommentListResDto.builder()
-                .memberId(this.member.getId())
-                .content(this.content)
+                .id(this.id)
+                .writer(this.member.getNickname())
+                .contents(this.contents)
                 .likes(this.likes)
                 .dislikes(this.dislikes)
-                .createdTime(this.getCreatedTime())
-                .updatedTime(this.getUpdateTime())
+                .createdTime(createdTime)
                 .build();
 
         return commentListResDto;
     }
 
     public void updateEntity(CommentUpdateReqDto dto) {
-        this.content = dto.getContent();
+        this.contents = dto.getContents();
     }
 
     public void deleteEntity() {
         this.delYN = DelYN.Y;
     }
 
-    public void updateLikes() {
-        this.likes++;
+    public void updateLikes(boolean like) {
+        if(like) {
+            this.likes++;
+        }else{
+            this.likes--;
+        }
     }
 
-    public void updateDislikes() {
-        this.dislikes++;
+    public void updateDislikes(boolean dislike) {
+        if(dislike) {
+            this.dislikes++;
+        }else{
+            this.dislikes--;
+        }
     }
 }

@@ -13,9 +13,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameResDto {
+	private Long id;
 	private String gameName; // 게임명
 	private Difficult difficult; // 난이도
 	private int price;
 	private String imagePath; // 사진 경로
 	// private Store store;
+	private String storeName;
 }

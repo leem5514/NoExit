@@ -1,10 +1,8 @@
 package com.E1i3.NoExit.domain.findboard.controller;
 
+import com.E1i3.NoExit.domain.board.dto.BoardListResDto;
 import com.E1i3.NoExit.domain.common.dto.CommonResDto;
-import com.E1i3.NoExit.domain.findboard.dto.FindBoardListResDto;
-import com.E1i3.NoExit.domain.findboard.dto.FindBoardResDto;
-import com.E1i3.NoExit.domain.findboard.dto.FindBoardSaveReqDto;
-import com.E1i3.NoExit.domain.findboard.dto.FindBoardUpdateReqDto;
+import com.E1i3.NoExit.domain.findboard.dto.*;
 import com.E1i3.NoExit.domain.findboard.service.FindBoardService;
 import com.E1i3.NoExit.domain.member.dto.MemberUpdateDto;
 import com.E1i3.NoExit.domain.notification.service.NotificationService;
@@ -16,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/findboard")
@@ -50,20 +50,14 @@ public class FindBoardController {
     @Operation(summary= "[일반 사용자] 번개 글 게시판 API")
     @GetMapping("/list")
     public ResponseEntity<CommonResDto> getFindBoardList(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "createdTime") String sort,
-            @RequestParam(defaultValue = "desc") String direction) {
+            @PageableDefault(size=6, sort = "createdTime", direction = Sort.Direction.DESC) Pageable pageable,
+            FindBoardSearchDto searchDto) {
 
-        // 페이지 번호를 1에서 0으로 조정
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.fromString(direction), sort));
-        Page<FindBoardListResDto> findBoardListResDtos = findBoardService.findBoardListResDto(pageable);
+        Page<FindBoardListResDto> findBoardListResDtos = findBoardService.findBoardList(searchDto, pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "조회 성공", findBoardListResDtos);
 
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
-
     }
-
 
     @Operation(summary= "[일반 사용자] 번개 글 수정 API")
     @PutMapping("/update/{id}")
@@ -87,7 +81,6 @@ public class FindBoardController {
             try {
                 FindBoardResDto updatedFindBoardResDto = findBoardService.incrementParticipantCount(id);
                 if (updatedFindBoardResDto.getCurrentCount() > updatedFindBoardResDto.getTotalCapacity()) {
-                    notificationService.notifyFullCount();
                     return new ResponseEntity<>(new CommonResDto(HttpStatus.BAD_REQUEST, "참가자가 이미 가득 찼습니다.", null), HttpStatus.BAD_REQUEST);
                 }
                 CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "참가자 수 증가 성공", updatedFindBoardResDto);
@@ -97,5 +90,23 @@ public class FindBoardController {
             return new ResponseEntity<>(commonResDto, HttpStatus.NOT_FOUND);
         }
     }
+
+    @Operation(summary= "[일반 사용자] 마감 임박 게시글 조회 API")
+    @GetMapping("/imminent-closing")
+    public ResponseEntity<CommonResDto> getImminentClosingBoards() {
+        List<FindBoardListResDto> imminentBoards = findBoardService.getImminentClosingBoards();
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "마감 임박 게시글 조회 성공", imminentBoards);
+
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
+//    분리 방식
+//    @GetMapping("/search")
+//    public ResponseEntity<CommonResDto> searchFindBoard(FindBoardSearchDto searchDto, Pageable pageable) {
+//        Page<FindBoardListResDto> searchResults = findBoardService.findBoardList(searchDto, pageable);
+//        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "조회 성공", searchResults);
+//        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+//    }
+
 
 }

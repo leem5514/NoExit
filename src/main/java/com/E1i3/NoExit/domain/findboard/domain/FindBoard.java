@@ -35,6 +35,8 @@ public class FindBoard extends BaseTimeEntity {
     @Column(length = 100, nullable = true)
     private String writer;
 
+    private String selectedStoreName;
+
     @Column(length = 3000)
     private String contents;
 
@@ -71,12 +73,12 @@ public class FindBoard extends BaseTimeEntity {
                 .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .imagePath(this.imagePath)
+                .imagePath(this.member.getProfileImage())
                 .build();
     }
 
-    //생각해보니까 FindBoard에는 리스트만 잇으면 되지않나? 어차피 글 안에 들어가는게 아니잖아
-    //ResDto도 필요없을 것 같은데.. 생각해보길 바람.
+//    //생각해보니까 FindBoard에는 리스트만 잇으면 되지않나? 어차피 글 안에 들어가는게 아니잖아
+//    //ResDto도 필요없을 것 같은데.. 생각해보길 바람.
     public FindBoardListResDto listFromEntity(){
         return FindBoardListResDto.builder()
                 .member_id(this.member.getId()) // 작성자 ID 추가
@@ -88,7 +90,8 @@ public class FindBoard extends BaseTimeEntity {
                 .expirationTime(this.expirationTime)
                 .currentCount(this.currentCount)
                 .totalCapacity(this.totalCapacity)
-                .imagePath(this.imagePath)
+                .imagePath(this.member.getProfileImage())
+                .selectedStoreName(this.selectedStoreName)
                 .build();
     }
 
@@ -105,7 +108,6 @@ public class FindBoard extends BaseTimeEntity {
         this.contents = dto.getContents();
         this.expirationTime = dto.getExpirationDate();
         this.totalCapacity = dto.getTotalCapacity();
-        this.imagePath = dto.getImagePath();
         this.getUpdateTime(); // 데이터 값 이상한지 확인하기.
     }
 }

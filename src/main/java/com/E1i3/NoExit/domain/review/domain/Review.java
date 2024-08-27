@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -49,6 +51,7 @@ public class Review extends BaseTimeEntity {
     public void updateDelYN() {
         this.delYN = DelYN.Y;
     }
+    public void cancelAndRecreateYN() {this.delYN = delYN.N;}
 
     public void updateImagePath(String imagePath) {
         this.imagePath = imagePath;
@@ -63,12 +66,28 @@ public class Review extends BaseTimeEntity {
 
     public static ReviewListDto fromEntity(Review review) {
         return ReviewListDto.builder()
-                .id(review.getId())
-                .rating(review.getRating())
-                .imagePath(review.getImagePath())
-                .memberNickname(review.getMember().getNickname())
-                .content(review.getContent())
-                .gameId(review.getReservation().getGame().getId())
-                .build();
+            .id(review.getId())
+            .rating(review.getRating())
+            .imagePath(review.getImagePath())
+            .memberNickname(review.getMember().getNickname())
+            .content(review.getContent())
+            .gameName(review.getReservation().getGame().getGameName())
+            .storeName(review.getReservation().getOwner().getStoreName())
+            .createdAt(review.getCreatedTime())
+            .build();
+    }
+
+    public void updateContent(String content, int rating, MultipartFile image) {
+        this.content = content;
+        this.rating = rating;
+        updateTime();
+        if (image != null && !image.isEmpty()) {
+            this.imagePath = "new_image_path"; // 실제로는 업로드된 이미지의 경로를 할당해야 합니다.
+        }
+    }
+    public void updateContentAndRating(String content, int rating) {
+        this.content = content;
+        this.rating = rating;
+        updateTime();
     }
 }
