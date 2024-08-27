@@ -60,6 +60,9 @@
 
 <br/>
 
+<div align=center>	
+
+
 ## 🛠 기술 스택
 
 ###  DB
@@ -134,8 +137,7 @@
   </summary>
   <div markdown="1">
     <ul>
-      
-      <li>회원가입 & 로그인
+      <li>회원가입 & 로그인  
         
   ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/8b3e4bbd-81dc-4109-b0fc-2638e4f8fc92)
       </li>
@@ -184,7 +186,7 @@
       </li>
       <li>리뷰 작성 , 조회 , 수정 , 삭제
         
-      ![리뷰수정삭제](https://github.com/user-attachments/assets/17649d95-707d-43fb-954a-cda169ee3534)
+  ![리뷰수정삭제](https://github.com/user-attachments/assets/17649d95-707d-43fb-954a-cda169ee3534)
       </li>
     </ul>
   </div>
@@ -228,19 +230,19 @@
       </li>
       <li>게시판 글 수정 및 삭제
         
-      ![게시글수정삭제권한분리](https://github.com/user-attachments/assets/f72dec98-51b1-42e9-8a8d-7ee2b2f3b3ac)
+  ![게시글수정삭제권한분리](https://github.com/user-attachments/assets/f72dec98-51b1-42e9-8a8d-7ee2b2f3b3ac)
       </li>
       <li>게시판 글 검색(제목, 카테고리, 내용)
         
-      ![보드검색기능](https://github.com/user-attachments/assets/1d2d0dce-0760-4cbb-8dff-62cc30c3bd67)
+  ![보드검색기능](https://github.com/user-attachments/assets/1d2d0dce-0760-4cbb-8dff-62cc30c3bd67)
       </li>
       <li>게시판 글 추천/비추천
         
-      ![게시글좋아요싫어요](https://github.com/user-attachments/assets/dc3e7362-c39f-4c5f-9b44-29ea2fc41b02)</li>
+  ![게시글좋아요싫어요](https://github.com/user-attachments/assets/dc3e7362-c39f-4c5f-9b44-29ea2fc41b02)</li>
       <li>댓글 작성 및 수정</li>
       <li>댓글 추천/비추천
         
-      ![댓글좋아요싫어요](https://github.com/user-attachments/assets/f74b1d7c-05bc-488b-abd2-de82d071a6fa)
+  ![댓글좋아요싫어요](https://github.com/user-attachments/assets/f74b1d7c-05bc-488b-abd2-de82d071a6fa)
       </li>
     </ul>
   </div>
@@ -258,11 +260,11 @@
       </li>
       <li>위시리스트 삭제
         
-      ![위시리스트찜해제](https://github.com/user-attachments/assets/e7612a97-3aa9-47ea-aaa4-d5b7325c4500)
+  ![위시리스트찜해제](https://github.com/user-attachments/assets/e7612a97-3aa9-47ea-aaa4-d5b7325c4500)
       </li>
       <li>위시리스트 내역 확인
         
-      ![마이페이지찜목록](https://github.com/user-attachments/assets/748c9573-343e-470e-a69f-5ea850cdbfe9)
+  ![마이페이지찜목록](https://github.com/user-attachments/assets/748c9573-343e-470e-a69f-5ea850cdbfe9)
       </li>
     </ul>
   </div>
