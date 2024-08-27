@@ -100,6 +100,15 @@ public class CommentService {
         return commentListResDtos;
     }
 
+
+    public CommentListResDto commentOne(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException("댓글을 조회할 수 없습니다."));
+        CommentListResDto dto = comment.fromEntity();
+        return dto;
+    }
+
+
+
     public Comment commentUpdate(Long id, CommentUpdateReqDto dto) { // 댓글 수정
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
@@ -209,5 +218,7 @@ public class CommentService {
 
         return value;
     }
+
+
 }
 

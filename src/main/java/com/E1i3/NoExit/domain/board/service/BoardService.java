@@ -6,7 +6,6 @@ import com.E1i3.NoExit.domain.board.dto.*;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
 import com.E1i3.NoExit.domain.boardimage.domain.BoardImage;
 import com.E1i3.NoExit.domain.boardimage.repository.BoardImageRepository;
-import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.member.domain.Member;

@@ -40,7 +40,7 @@ public class CommentController {
     public ResponseEntity<Object> commentCreate(@RequestBody CommentCreateReqDto dto) {
         try {
             Comment comment = commentService.commentCreate(dto);
-            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "comment is successfully created", comment);
+            CommonResDto commonResDto = new CommonResDto(HttpStatus.CREATED, "comment is successfully created", comment.getId());
             return new ResponseEntity<>(commonResDto, HttpStatus.CREATED);
         } catch(IllegalArgumentException e) {
             e.printStackTrace();
@@ -59,6 +59,17 @@ public class CommentController {
             @PageableDefault(size=10,sort = "createdTime", direction = Sort.Direction.ASC) Pageable pageable) {
         Page<CommentListResDto> dtos = commentService.commentList(id, pageable);
         CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "list is successfully found", dtos);
+        return new ResponseEntity<>(commonResDto, HttpStatus.OK);
+    }
+
+
+
+
+    @Operation(summary= "댓글 조회")
+    @GetMapping("/comment/{id}") // 댓글 조회
+    public ResponseEntity<Object> commentReadOnlyOne(@PathVariable Long id) {
+        CommentListResDto dto = commentService.commentOne(id);
+        CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "comment is successfully found", dto);
         return new ResponseEntity<>(commonResDto, HttpStatus.OK);
     }
 
