@@ -31,7 +31,7 @@ public class GameController {
 
 	@GetMapping("/game/list")
 	public ResponseEntity<CommonResDto> gameList(
-			@PageableDefault(size=6, sort = "createdTime", direction = Sort.Direction.DESC)
+			@PageableDefault(size=16, sort = "createdTime", direction = Sort.Direction.DESC)
 			Pageable pageable) {
 		Page<GameResDto> games = gameService.gameList(pageable);
 		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
