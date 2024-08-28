@@ -1,8 +1,10 @@
 package com.E1i3.NoExit.domain.game.controller;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.E1i3.NoExit.domain.game.domain.Game;
 import com.E1i3.NoExit.domain.game.dto.GameDetailResDto;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +53,18 @@ public class GameController {
 		List<LocalTime> availableHours = gameService.getAvailableHours(gameId);
 		return ResponseEntity.ok(availableHours);
 	}
+
+
 //	일단 주석처리햇지만 나중에 수정해야함.
-//	@GetMapping("/game/ranking")
-//	public ResponseEntity<?> gameRankingList() {
-//		List<GameResDto> games = gameService.gameList();
-//		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
-//	}
+	@GetMapping("/game/ranking")
+	public ResponseEntity<?> gameRankingList() {
+		List<GameResDto> games = gameService.gameListAll();
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
+	}
+
+	@GetMapping("/game/listAll")
+	public ResponseEntity<?> gameList() {
+		List<GameResDto> games = gameService.gameListAll();
+		return new ResponseEntity<>(new CommonResDto(HttpStatus.OK, "OK", games), HttpStatus.OK);
+	}
 }

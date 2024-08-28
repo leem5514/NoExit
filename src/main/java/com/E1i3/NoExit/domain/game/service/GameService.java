@@ -30,7 +30,6 @@ public class GameService {
 	@Transactional(readOnly = true)
 
 	public Page<GameResDto> gameList(Pageable pageable) {
-
 		Page<Game> gameList = gameRepository.findAll(pageable);
 		return gameList.map(Game::fromEntity);
 	}
@@ -59,5 +58,14 @@ public class GameService {
 			startTime = startTime.plusHours(1);
 		}
 		return availableHours;
+	}
+
+	public List<GameResDto> gameListAll() {
+		List<Game> gameList = gameRepository.findAll();
+		List<GameResDto> gameResDtolist = new ArrayList<>();
+		for (Game game : gameList) {
+			gameResDtolist.add(game.fromEntity());
+		}
+		return gameResDtolist;
 	}
 }
