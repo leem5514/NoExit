@@ -6,7 +6,6 @@ import com.E1i3.NoExit.domain.board.dto.*;
 import com.E1i3.NoExit.domain.board.repository.BoardRepository;
 import com.E1i3.NoExit.domain.boardimage.domain.BoardImage;
 import com.E1i3.NoExit.domain.boardimage.repository.BoardImageRepository;
-import com.E1i3.NoExit.domain.comment.domain.Comment;
 import com.E1i3.NoExit.domain.common.domain.DelYN;
 import com.E1i3.NoExit.domain.common.service.S3Service;
 import com.E1i3.NoExit.domain.member.domain.Member;
@@ -224,6 +223,7 @@ public class BoardService {
             boardRedisTemplate.opsForValue().set(memberLikesKey, true);
             boardRedisTemplate.opsForSet().add(likesKey, member.getId());
             board.updateLikes(true);
+            value = true;
             String receiver_email = board.getMember().getEmail();
             if(!receiver_email.equals(email)) {
                 NotificationResDto notificationResDto = NotificationResDto.builder()
@@ -236,10 +236,13 @@ public class BoardService {
             }
         }
 
+
         boardRepository.save(board);
-        return board.getLikes();
+        return value;
 
     }
+
+
 
     @Transactional
     public boolean boardUpdateDislikes(Long id) {
