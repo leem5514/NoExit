@@ -127,6 +127,7 @@ public class CommentService {
 
     @Transactional
     public boolean commentUpdateLikes(Long id) {
+
         boolean value = false;
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -136,12 +137,10 @@ public class CommentService {
         Comment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + id));
 
-
         String likesKey = COMMENT_PREFIX + id + ":likes";
         String memberLikesKey = MEMBER_PREFIX + member.getId() + ":likes:" + id;
 
         Boolean isLiked = commentRedisTemplate.hasKey(memberLikesKey);
-
 
         if (isLiked != null && isLiked) {
             commentRedisTemplate.delete(memberLikesKey);

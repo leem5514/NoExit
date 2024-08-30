@@ -49,6 +49,7 @@ public class GameController {
 
 	// store의 오프닝 시간대을 게임에서 출력하기 위한 코드
 	@GetMapping("/game/{gameId}/available-hours")
+
 	public ResponseEntity<List<LocalTime>> getAvailableHours(@PathVariable Long gameId) {
 		List<LocalTime> availableHours = gameService.getAvailableHours(gameId);
 		return ResponseEntity.ok(availableHours);
