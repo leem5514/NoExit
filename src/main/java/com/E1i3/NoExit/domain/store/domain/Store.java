@@ -46,6 +46,12 @@ public class Store {
 	private String address;
 	private String info;
 
+	@Column(nullable = true)
+	private Double latitude;  // 위도
+
+	@Column(nullable = true)
+	private Double longitude; // 경도
+
 	@ManyToOne
 	@JoinColumn(name = "owner_id")
 	private Owner owner; //
@@ -56,6 +62,8 @@ public class Store {
 		return StoreResDto.builder()
 				.id(this.id)
 				.storeName(this.storeName)
+				.latitude(this.latitude)
+				.longitude(this.longitude)
 				.build();
 	}
 }
