@@ -214,8 +214,9 @@ public class BoardService {
         String memberLikesKey = MEMBER_PREFIX + member.getId() + ":likes:" + id;
 
         Boolean isLiked = boardRedisTemplate.hasKey(memberLikesKey);
+        System.out.println(isLiked);
 
-        if (isLiked != null && isLiked) {
+        if (isLiked != null && isLiked) { // 이미 좋아요 누름
             boardRedisTemplate.delete(memberLikesKey);
             boardRedisTemplate.opsForSet().remove(likesKey, member.getId());
             board.updateLikes(false);
