@@ -50,6 +50,7 @@ public class Reservation extends BaseTimeEntity {
     private Owner owner; // Owner 필드 추가
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "member_id")
     @JsonIgnore
     private Member member; // 예약을 한 회원

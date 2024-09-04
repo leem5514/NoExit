@@ -16,4 +16,5 @@ public class StoreResDto {
     private String storeName;
     private Double latitude;  // 위도
     private Double longitude; // 경도
+
 }
