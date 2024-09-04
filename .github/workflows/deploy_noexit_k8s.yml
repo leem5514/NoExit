@@ -1,4 +1,4 @@
-name: deploy ordersystem with k8s
+name: deploy noexit with k8s
 on:
   push:
     branches:

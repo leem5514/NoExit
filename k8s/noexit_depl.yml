@@ -66,3 +66,36 @@ spec:
                 secretKeyRef:
                   key: AWS_SECRET_KEY
                   name: noexit-app-secrets
+
+            - name: MAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: MAIL_HOST
+                  name: noexit-app-secrets
+            - name: MAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: MAIL_PASSWORD
+                  name: noexit-app-secrets
+            - name: MAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                  key: MAIL_PORT
+                  name: noexit-app-secrets
+
+            - name: MAIL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: MAIL_USERNAME
+                  name: noexit-app-secrets
+
+            - name: AWS_BUCKET_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_BUCKET_NAME
+                  name: noexit-app-secrets
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  key: AWS_REGION
+                  name: noexit-app-secrets
