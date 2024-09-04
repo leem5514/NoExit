@@ -45,7 +45,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-chat")
-                .setAllowedOrigins("http://localhost:8082")  // Vue.js 클라이언트의 도메인을 명확히 설정
+                .setAllowedOrigins("https://server.noexxit.store")
+                .setAllowedOrigins("https://www.noexxit.store")
                 .withSockJS();
 //                .setClientLibraryUrl("https://cdn.jsdelivr.net/sockjs/1.4.0/sockjs.min.js"); // SockJS 라이브러리 경로 설정
     }
