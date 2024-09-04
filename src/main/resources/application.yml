@@ -69,8 +69,8 @@ jwt:
 cloud:
   aws:
     credentials:
-      access-key: ${AWS_S3_ACCESS}
-      secret-key: ${AWS_S3_SECRET}
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
     region: #S3 지역
       static: ${AWS_REGION}
     s3: #버킷이름
