@@ -237,7 +237,7 @@ public class BoardService {
         }
 
         boardRepository.save(board);
-        return board.getLikes();
+        return value;
 
     }
 
