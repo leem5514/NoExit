@@ -96,33 +96,12 @@ public class CommentService {
     return comment;
     }
 
-    public Page<CommentListResDto> commentList(Long id, Pageable pageable){ // 댓글 조회
-        Board board = boardRepository.findById(id).orElseThrow(()->new EntityNotFoundException("게시글을 조회할 수 없습니다."));
-        Page<Comment> comments = commentRepository.findByBoardAndDelYN(pageable, board, DelYN.N);
-//        Page<CommentListResDto> commentListResDtos = comments.map(
-//                a->a.fromEntity());
-        Page<CommentListResDto> commentListResDtos = comments.map(Comment::fromEntity);
-        return commentListResDtos;
-    }
 
 
     public CommentListResDto commentOne(Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException("댓글을 조회할 수 없습니다."));
         CommentListResDto dto = comment.fromEntity();
         return dto;
-    }
-
-
-
-    public Comment commentUpdate(Long id, CommentUpdateReqDto dto) { // 댓글 수정
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
-        if (!member.getEmail().equals(email)) {
-            throw new IllegalArgumentException("본인의 댓글만 수정할 수 있습니다.");
-        }
-        Comment comment = commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException(" 찾을 수 없습니다."));
-        comment.updateEntity(dto);
-        return comment;
     }
 
 	public Page<CommentListResDto> commentList(Long id, Pageable pageable) { // 댓글 조회
@@ -133,7 +112,6 @@ public class CommentService {
 		Page<CommentListResDto> commentListResDtos = comments.map(Comment::fromEntity);
 		return commentListResDtos;
 	}
-
 
 	public Comment commentUpdate(Long id, CommentUpdateReqDto dto) { // 댓글 수정
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();

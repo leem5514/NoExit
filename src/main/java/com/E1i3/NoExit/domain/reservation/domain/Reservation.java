@@ -52,7 +52,6 @@ public class Reservation extends BaseTimeEntity {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "member_id")
-    @JsonIgnore
     private Member member; // 예약을 한 회원
 
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.PERSIST)
