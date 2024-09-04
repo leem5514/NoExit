@@ -62,9 +62,9 @@ spring:
     port: ${REDIS_PORT}
 jwt:
   expiration: ${JWT_EXPIRATION}
-  secretKey: ${JWT_SECRETKEY}
+  secretKey: ${JWT_SECRET}
   expirationRt: ${JWT_RT_EXPIRATION}
-  secretKeyRt: ${JWT_RT_SECRETKEY}
+  secretKeyRt: ${JWT_SECRET_RT}
 
 cloud:
   aws:
