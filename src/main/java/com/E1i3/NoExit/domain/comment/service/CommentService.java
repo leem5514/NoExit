@@ -59,6 +59,7 @@ public class CommentService {
 	@Qualifier("5")
 	private RedisTemplate<String, Object> commentRedisTemplate;
 
+
 	public Comment commentCreate(CommentCreateReqDto dto) { // 댓굴 생성 보드아이디, 멤버아이디, 내용 받아옴
 
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -66,6 +67,7 @@ public class CommentService {
 
 		Board board = boardRepository.findById(dto.getBoardId())
 				.orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다.")); // 보드 아이디로 보드 조회
+
 
 		if (board.getDelYN().equals(DelYN.Y)) {
 			throw new IllegalArgumentException("이미 삭제된 댓글입니다.");
@@ -80,19 +82,48 @@ public class CommentService {
 		board.getComments().add(comment); // 게시글 댓글 목록에 추가
 
 		commentRepository.save(comment);
+        // 댓글 작성 알림
+    String receiver_email = board.getMember().getEmail();
+    NotificationResDto notificationResDto = NotificationResDto.builder()
+          .notification_id(board.getId())
+          .email(receiver_email)
+          .sender_email(email)
+          .type(NotificationType.COMMENT)
+          .message(member.getNickname() + "님이 게시글에 댓글을 남겼습니다.").build();
+        sseController.publishMessage(notificationResDto, receiver_email);
+        // notificationRepository.save(notificationResDto);
 
-		// 댓글 작성 알림
-		String receiver_email = board.getMember().getEmail();
-		NotificationResDto notificationResDto = NotificationResDto.builder()
-				.notification_id(board.getId())
-				.email(receiver_email)
-				.sender_email(email)
-				.type(NotificationType.COMMENT)
-				.message(member.getNickname() + "님이 게시글에 댓글을 남겼습니다.").build();
+    return comment;
+    }
 
-		sseController.publishMessage(notificationResDto, receiver_email);
-		return comment;
-	}
+    public Page<CommentListResDto> commentList(Long id, Pageable pageable){ // 댓글 조회
+        Board board = boardRepository.findById(id).orElseThrow(()->new EntityNotFoundException("게시글을 조회할 수 없습니다."));
+        Page<Comment> comments = commentRepository.findByBoardAndDelYN(pageable, board, DelYN.N);
+//        Page<CommentListResDto> commentListResDtos = comments.map(
+//                a->a.fromEntity());
+        Page<CommentListResDto> commentListResDtos = comments.map(Comment::fromEntity);
+        return commentListResDtos;
+    }
+
+
+    public CommentListResDto commentOne(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException("댓글을 조회할 수 없습니다."));
+        CommentListResDto dto = comment.fromEntity();
+        return dto;
+    }
+
+
+
+    public Comment commentUpdate(Long id, CommentUpdateReqDto dto) { // 댓글 수정
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
+        if (!member.getEmail().equals(email)) {
+            throw new IllegalArgumentException("본인의 댓글만 수정할 수 있습니다.");
+        }
+        Comment comment = commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException(" 찾을 수 없습니다."));
+        comment.updateEntity(dto);
+        return comment;
+    }
 
 	public Page<CommentListResDto> commentList(Long id, Pageable pageable) { // 댓글 조회
 		Board board = boardRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("게시글을 조회할 수 없습니다."));
@@ -205,5 +236,4 @@ public class CommentService {
 		commentRepository.save(comment);
 		return value;
 	}
-
 }
