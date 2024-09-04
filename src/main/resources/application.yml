@@ -48,7 +48,7 @@ spring:
     properties:
       mail:
         smtp:
-          auth: truegit
+          auth: true
           starttls:
             enable: true
             required: true
