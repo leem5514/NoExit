@@ -36,7 +36,8 @@ public class SseController implements MessageListener {
 	private final NotificationRepository notificationRepository;
 	private Set<String> subscribeList = ConcurrentHashMap.newKeySet();
 
-	// private final Map<String, SseEmitter> ownerEmitters = new ConcurrentHashMap<>();
+	// private final Map<String, SseEmitter> ownerEmitters = new
+	// ConcurrentHashMap<>();
 	// private Set<String> subsbribeOwnerList = ConcurrentHashMap.newKeySet();
 
 	@Qualifier("3")
@@ -45,7 +46,8 @@ public class SseController implements MessageListener {
 	private final RedisMessageListenerContainer redisMessageListenerContainer;
 
 	public SseController(@Qualifier("3") RedisTemplate<String, Object> sseRedisTemplate,
-		RedisMessageListenerContainer redisMessageListenerContainer, NotificationRepository notificationRepository) {
+			RedisMessageListenerContainer redisMessageListenerContainer,
+			NotificationRepository notificationRepository) {
 		this.sseRedisTemplate = sseRedisTemplate;
 		this.redisMessageListenerContainer = redisMessageListenerContainer;
 		this.notificationRepository = notificationRepository;
@@ -94,15 +96,7 @@ public class SseController implements MessageListener {
 	}
 
 	public void publishMessage(NotificationResDto dto, String email) {
-		// NotificationResDto savedDto = notificationRepository.save(dto);
-		sseRedisTemplate.convertAndSend(email, dto);
 		notificationRepository.save(dto);
-
-
-	}
-
-	public Long saveDto(NotificationResDto dto) {
-		NotificationResDto savedDto = notificationRepository.save(dto);
-		return savedDto.getId();
+		sseRedisTemplate.convertAndSend(email, dto);
 	}
 }
