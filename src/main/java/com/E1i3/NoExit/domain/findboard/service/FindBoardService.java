@@ -204,7 +204,6 @@ public class FindBoardService {
                 .map(FindBoard::listFromEntity)
                 .collect(Collectors.toList());
     }
-
     public Page<FindBoardListResDto> findBoardList(FindBoardSearchDto searchDto, Pageable pageable) {
         Specification<FindBoard> specification = (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
