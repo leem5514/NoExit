@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,9 @@ public class S3Service {
 	// 단일 이미지 파일 업로드
 	public String uploadFile(MultipartFile imgFile, String folder) {
 		// 파일이 비어있는지 확인해줘야하나?
+		if (imgFile == null) {
+			throw new NoSuchElementException("프로필 이미지를 등록하십시오.");
+		}
 
 		// 저장한 새로운 이름 생성
 		String fileName = createFileName(imgFile.getOriginalFilename());

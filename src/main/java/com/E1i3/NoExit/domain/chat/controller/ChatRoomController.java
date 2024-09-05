@@ -6,6 +6,8 @@ import com.E1i3.NoExit.domain.chat.dto.CreateRoomRequest;
 import com.E1i3.NoExit.domain.chat.repository.ChatMessageRepository;
 import com.E1i3.NoExit.domain.chat.service.ChatRoomService;
 import com.E1i3.NoExit.domain.chat.service.ChatService;
+import com.E1i3.NoExit.domain.chat.service.RedisChatRoomManager;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,16 +21,18 @@ public class ChatRoomController {
     private final ChatRoomService chatRoomService;
     private final ChatService chatService;
     private final ChatMessageRepository chatMessageRepository;
-
+    private final RedisChatRoomManager redisChatRoomManager;
    
     private Map<String, List<String>> chatRooms = new HashMap<>();
 
 
-    public ChatRoomController(ChatRoomService chatRoomService, ChatService chatService, ChatMessageRepository chatMessageRepository) {
+    public ChatRoomController(ChatRoomService chatRoomService, ChatService chatService, ChatMessageRepository chatMessageRepository,
+		RedisChatRoomManager redisChatRoomManager) {
         this.chatRoomService = chatRoomService;
         this.chatService = chatService;
         this.chatMessageRepository = chatMessageRepository;
-    }
+		this.redisChatRoomManager = redisChatRoomManager;
+	}
 
     @PostMapping("/createRoom")
     public ResponseEntity<ChatRoom> createRoom(@RequestBody CreateRoomRequest request) {
@@ -73,6 +77,13 @@ public class ChatRoomController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         List<ChatRoom> chatRooms = chatRoomService.getChatRoomsForMember(email);
         return ResponseEntity.  ok(chatRooms);
+    }
+
+    @PostMapping("/ensure-subscription")
+    public String ensureSubscription(@RequestBody Map<String, String> payload) {
+        String roomId = payload.get("roomId");
+        redisChatRoomManager.ensureRoomSubscription(roomId);
+        return "Subscription ensured for room " + roomId;
     }
 }
 
