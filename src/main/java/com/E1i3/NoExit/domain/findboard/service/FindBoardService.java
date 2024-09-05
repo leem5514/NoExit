@@ -177,7 +177,7 @@ public class FindBoardService {
                     .notification_id(chatRoom.getRoomId())
                     .email(a.getMember().getEmail())
                     .type(NotificationType.CHAT_ROOM_INVITE)
-                    .message("참여한 채팅방이 생성되었습니다. 채팅방 이름: " + chatRoom.getName())
+                    .message("참여한 채팅방이 생성되었습니다.\n 채팅방 이름: " + chatRoom.getName())
                     .build();
                 sseController.publishMessage(participantNotification, a.getMember().getEmail());
             }

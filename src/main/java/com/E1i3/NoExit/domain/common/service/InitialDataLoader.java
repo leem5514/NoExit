@@ -123,8 +123,5 @@ public class InitialDataLoader implements CommandLineRunner {
 				memberRepository.save(user);
 			}
 		}
-
-
 	}
-
 }
