@@ -53,7 +53,6 @@ public class ChatController {
 
             // 메시지 처리 및 저장
             chatService.handleMessage(chatMessage.getRoomId(), chatMessage.getSender(), chatMessage.getSenderName(), chatMessage.getSenderProfileImage(), chatMessage.getContent());
-
             // WebSocket을 통해 클라이언트로 메시지 전송
             String destination = "/topic/room/" + chatMessage.getRoomId();
             messagingTemplate.convertAndSend(destination, chatMessage);
