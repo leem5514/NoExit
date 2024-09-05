@@ -103,6 +103,7 @@ public class InitialDataLoader implements CommandLineRunner {
 					.profileImage(
 							"https://noexit-bucket.s3.ap-northeast-2.amazonaws.com/member/393e9081-b2f1-4809-a7ce-833bfcb79ab8.png\n") // Set default or placeholder image URL
 					.build();
+			System.out.println("무시하세요");
 			memberRepository.save(user);
 		}
 
