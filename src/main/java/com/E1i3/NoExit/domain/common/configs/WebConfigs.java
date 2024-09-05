@@ -21,6 +21,8 @@ public class WebConfigs implements WebMvcConfigurer {
 		registry.addMapping("/**")
 				.allowedOrigins("https://server.noexxit.store")  // 허용할 클라이언트 도메인
 				.allowedOrigins("https://www.noexxit.store")
+				.allowedOrigins("http://localhost:8082")
+				.allowedOrigins("http://localhost:3000")
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
 				.allowedHeaders("*")
 				.allowCredentials(true);  // 자격 증명을 허용
