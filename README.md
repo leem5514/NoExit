@@ -1,5 +1,3 @@
-<div align=center>	
-
 # NoExit
 방탈출게임을 사랑하는 찐덕후들을 위한 통합 플랫폼 서비스
 
@@ -269,4 +267,3 @@
     </ul>
   </div>
 </details>
-

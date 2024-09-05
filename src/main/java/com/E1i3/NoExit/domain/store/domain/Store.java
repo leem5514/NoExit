@@ -51,10 +51,6 @@ public class Store {
 
 	@Column(nullable = true)
 	private Double longitude; // 경도
-
-
-
-
 	@ManyToOne
 	@JoinColumn(name = "owner_id")
 	private Owner owner; //

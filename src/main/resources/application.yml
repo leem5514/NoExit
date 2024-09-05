@@ -8,9 +8,9 @@ server:
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: ${MONGODB_URL}
-    username: ${MONGODB_USERNAME}
-    password: ${MONGODB_PASSWORD}
+    url: jdbc:mariadb://${DB_HOST}:3306/noexit
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 20
       minimum-idle: 5
@@ -61,16 +61,16 @@ spring:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
 jwt:
-  expiration: ${JWT_EXPIRATION}
-  secretKey: ${JWT_SECRETKEY}
-  expirationRt: ${JWT_RT_EXPIRATION}
-  secretKeyRt: ${JWT_RT_SECRETKEY}
+  expiration: 30
+  secretKey: ${JWT_SECRET}
+  expirationRt: 14400
+  secretKeyRt: ${JWT_SECRET_RT}
 
 cloud:
   aws:
     credentials:
-      access-key: ${AWS_S3_ACCESS}
-      secret-key: ${AWS_S3_SECRET}
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
     region: #S3 지역
       static: ${AWS_REGION}
     s3: #버킷이름

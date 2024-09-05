@@ -26,8 +26,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-chat")
-                .setAllowedOrigins("http://localhost:8082")  // 허용 경료(명확화를) -> * 사용하기는 함
-                .withSockJS(); //
+
+                .setAllowedOrigins("https://server.noexxit.store")
+                .setAllowedOrigins("https://www.noexxit.store")
+                .withSockJS();
+//                .setClientLibraryUrl("https://cdn.jsdelivr.net/sockjs/1.4.0/sockjs.min.js"); // SockJS 라이브러리 경로 설정
     }
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
