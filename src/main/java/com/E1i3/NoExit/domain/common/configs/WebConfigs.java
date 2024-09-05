@@ -20,7 +20,9 @@ public class WebConfigs implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 				.allowedOrigins("https://server.noexxit.store")  // 허용할 클라이언트 도메인
-				.allowedOrigins("https://www.noexxit.store")  // 허용할 클라이언트 도메인
+				.allowedOrigins("https://www.noexxit.store")
+				.allowedOrigins("https://localhost:8082") // 허용할 클라이언트 도메인
+				.allowedOrigins("https://localhost:3000")
 				.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
 				.allowedHeaders("*")
 				.allowCredentials(true);  // 자격 증명을 허용
