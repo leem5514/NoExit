@@ -80,8 +80,8 @@ public class Member extends BaseTimeEntity{
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
 	private List<Reservation> reservations;
 
-	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
-	private List<Board> boards;
+//	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
+//	private List<Board> boards;
 
 	// Member객체에 Findboard 객체 추가. : 김민성
 	@OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)

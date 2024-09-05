@@ -39,7 +39,7 @@ public class MailVerifyController {
 	public ResponseEntity<CommonResDto> requestEmail(@RequestParam("email") @Valid String email) {
 		mailVerifyService.sendCodeToEmail(email);
 		// 이메일 전송하고 레디스에 저장
-		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 요청", email);
+		CommonResDto commonResDto = new CommonResDto(HttpStatus.OK, "이메일 인증 요청을 성공했습니다.", email);
 		return new ResponseEntity<>(commonResDto, HttpStatus.OK);
 	}
 

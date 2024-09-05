@@ -55,15 +55,15 @@ public class CommentService {
 
 
 
-    public void commentCreate(CommentCreateReqDto dto) { // 댓굴 생성 보드아이디, 멤버아이디, 내용 받아옴
+    public Comment commentCreate(CommentCreateReqDto dto) { // 댓굴 생성 보드아이디, 멤버아이디, 내용 받아옴
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Member member = memberRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("없는 회원입니다."));
 
-        Board board = boardRepository.findById(dto.getBoardId()).orElseThrow(()-> new EntityNotFoundException("게시글을 찾을 수 없습니다.")); // 보드 아이디로 보드 조회
+        Board board = boardRepository.findById(dto.getBoardId()).orElseThrow(()-> new EntityNotFoundException("댓글을 찾을 수 없습니다.")); // 보드 아이디로 보드 조회
 
         if(board.getDelYN().equals(DelYN.Y)) {
-            throw new IllegalArgumentException("이미 삭제된 게시글입니다.");
+            throw new IllegalArgumentException("이미 삭제된 댓글입니다.");
         }
 
         Comment comment = Comment.builder()
@@ -86,6 +86,8 @@ public class CommentService {
               .message(member.getNickname() + "님이 게시글에 댓글을 남겼습니다.").build();
             sseController.publishMessage(notificationResDto, receiver_email);
             // notificationRepository.save(notificationResDto);
+
+        return comment;
     }
 
 
@@ -97,6 +99,15 @@ public class CommentService {
         Page<CommentListResDto> commentListResDtos = comments.map(Comment::fromEntity);
         return commentListResDtos;
     }
+
+
+    public CommentListResDto commentOne(Long id) {
+        Comment comment = commentRepository.findById(id).orElseThrow(()->new EntityNotFoundException("댓글을 조회할 수 없습니다."));
+        CommentListResDto dto = comment.fromEntity();
+        return dto;
+    }
+
+
 
     public Comment commentUpdate(Long id, CommentUpdateReqDto dto) { // 댓글 수정
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -207,5 +218,7 @@ public class CommentService {
 
         return value;
     }
+
+
 }
 
