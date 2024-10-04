@@ -93,6 +93,7 @@
 [🗓️ WBS 상세 보기](https://docs.google.com/spreadsheets/d/1VdXKl6pfghy9OK6zTpShCHeG1uyAGB85Y2ycm1viF5g/edit?usp=sharing)
 
 
+
 <br/>
 
 ## 📝 요구사항정의서
@@ -104,7 +105,9 @@
 
 ## 📋 ERD
 
-![findboard추가ERD (1)](https://github.com/user-attachments/assets/a7a859f6-06dd-436d-9fb4-dee6afef6081)
+![10-04 17;43;57](https://github.com/user-attachments/assets/996d0475-6631-4f5b-8a92-a8c780ffb7c0)
+![Fixed SwithT erd(24-09-20)](https://github.com/user-attachments/assets/2bdb36fa-7ef1-4860-8a0b-bc9ad29ce864)
+
 
 <br/>
 
