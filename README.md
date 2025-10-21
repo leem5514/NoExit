@@ -145,19 +145,16 @@
 ## ✨ 기능 테스트 및 시연
 
 <details>
-  <summary>
-    <b>회원가입 & 로그인</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>회원가입 & 로그인  
-        
-  ![회원가입로그인SMTP인증회원가입](https://github.com/user-attachments/assets/8b3e4bbd-81dc-4109-b0fc-2638e4f8fc92)
-      </li>
-    </ul>
-    
-  </div>
+  <summary><b>회원가입 & 로그인</b></summary>
+</br>
+
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/00e0c0d2-f9c7-45f9-a60c-664bf03b7fde"
+         alt="회원가입 & 로그인 시연" width="820">
+  </p>
+
 </details>
+
 
 <details>
   <summary>
@@ -166,6 +163,7 @@
   <div markdown="1">
     <ul>
       <li>실시간 알림 & 알림 목록 조회
+
 
   ![실시간알림](https://github.com/user-attachments/assets/b1db2b4c-866e-4935-8787-5d5067a2656f)
       </li>
