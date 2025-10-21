@@ -104,9 +104,7 @@
 <br/>
 
 ## 📋 ERD
-
-![10-04 17;43;57](https://github.com/user-attachments/assets/996d0475-6631-4f5b-8a92-a8c780ffb7c0)
-![Fixed SwithT erd(24-09-20)](https://github.com/user-attachments/assets/2bdb36fa-7ef1-4860-8a0b-bc9ad29ce864)
+<img width="2313" height="1335" alt="findboard추가ERD" src="https://github.com/user-attachments/assets/3f28193c-2b1d-478b-b80d-db8b88f4808b" />
 
 
 <br/>
