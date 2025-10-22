@@ -157,32 +157,24 @@
 
 
 <details>
-  <summary>
-    <b>알림</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>실시간 알림 & 알림 목록 조회
+  <summary><b>알림</b></summary>
+</br>
 
+  <p align="center">
+   <img src="https://github.com/user-attachments/assets/3140d0f8-4cd2-4172-b767-951336857643" 
+     alt="실시간 알림 & 알림 목록 조회" width="820">
+  </p>
 
-  ![실시간알림](https://github.com/user-attachments/assets/b1db2b4c-866e-4935-8787-5d5067a2656f)
-      </li>
-    </ul>
-  </div>
 </details>
 
 <details>
-  <summary>
-    <b>실시간 채팅</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>실시간 채팅
-        
-  ![실시간채팅](https://github.com/user-attachments/assets/d2bf4012-d1a6-4258-ab22-3cf0178418fd)
-      </li>
-    </ul>
-  </div>
+  <summary><b>실시간 채팅</b></summary>
+  </br>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/7662e584-0593-4a57-bb43-c9681970eb74" 
+      alt="실시간 채팅 데모" width="820">
+  </p>
+
 </details>
 
 <details>
