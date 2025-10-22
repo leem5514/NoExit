@@ -58,7 +58,7 @@
 
 <br/>
 
-<div align=center>	
+<div align=left>	
 
 
 ## 🛠 기술 스택
