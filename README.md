@@ -227,35 +227,36 @@
   </p>
 </details>
 
-<details>
-<summary>
-  <b> 게시판</b>
-</summary>
-  <div markdown="">
-    <ul>
-      <li>게시판 글 작성
 
-  ![게시판글작성](https://github.com/user-attachments/assets/7cb4efe8-3f03-4ae4-9416-367a68d77214)
-      </li>
-      <li>게시판 글 수정 및 삭제
-        
-  ![게시글수정삭제권한분리](https://github.com/user-attachments/assets/f72dec98-51b1-42e9-8a8d-7ee2b2f3b3ac)
-      </li>
-      <li>게시판 글 검색(제목, 카테고리, 내용)
-        
-  ![보드검색기능](https://github.com/user-attachments/assets/1d2d0dce-0760-4cbb-8dff-62cc30c3bd67)
-      </li>
-      <li>게시판 글 추천/비추천
-        
-  ![게시글좋아요싫어요](https://github.com/user-attachments/assets/dc3e7362-c39f-4c5f-9b44-29ea2fc41b02)</li>
-      <li>댓글 작성 및 수정</li>
-      <li>댓글 추천/비추천
-        
-  ![댓글좋아요싫어요](https://github.com/user-attachments/assets/f74b1d7c-05bc-488b-abd2-de82d071a6fa)
-      </li>
-    </ul>
-  </div>
+
+<details>
+  <summary><b>게시판</b></summary>
+
+  <p><b>① 글 작성</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/0927a977-1e8a-4852-8543-2e06317490f0" alt="게시판 글 작성" width="820">
+
+  </p>
+
+  <p><b>② 글 수정 · 삭제</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/5b27d1de-0261-4626-a6ca-4c27b1b8e309" alt="게시판 글 수정 및 삭제" width="820">
+
+  </p>
+
+  <p><b>③ 글 검색(제목 · 카테고리 · 내용)</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/db693d0f-a0af-498c-968d-0f753aba14db" alt="게시판 글 검색" width="820">
+
+  </p>
+
+  <p><b>④ 글 추천 · 비추천</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/09afd407-03ba-4e58-a06f-e3541ed1c987" alt="게시판 글 추천/비추천" width="820">
+
+  </p>
 </details>
+
 
 <details>
   <summary>
