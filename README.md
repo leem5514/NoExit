@@ -232,7 +232,7 @@
 <details>
   <summary><b>게시판</b></summary>
 
-  <p><b>① 글 작성</b></p>
+  <p><b>글 작성</b></p>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/0927a977-1e8a-4852-8543-2e06317490f0" alt="게시판 글 작성" width="820">
 
@@ -244,13 +244,13 @@
 
   </p>
 
-  <p><b>③ 글 검색(제목 · 카테고리 · 내용)</b></p>
+  <p><b>글 검색(제목 · 카테고리 · 내용)</b></p>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/db693d0f-a0af-498c-968d-0f753aba14db" alt="게시판 글 검색" width="820">
 
   </p>
 
-  <p><b>④ 글 추천 · 비추천</b></p>
+  <p><b>글 추천 · 비추천</b></p>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/09afd407-03ba-4e58-a06f-e3541ed1c987" alt="게시판 글 추천/비추천" width="820">
 
