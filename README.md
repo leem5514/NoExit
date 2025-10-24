@@ -199,7 +199,7 @@
   <p align="center"><em>리뷰 작성 · 조회 · 수정 · 삭제</em></p>
   <p align="center">
 
-    <img src="https://github.com/user-attachments/assets/assets/fce65a80-2fde-4ac1-99f9-168b5f30cca6" alt="리뷰 CRUD" width="820">
+    <img src="https://github.com/user-attachments/assets/fce65a80-2fde-4ac1-99f9-168b5f30cca6" alt="리뷰 CRUD" width="820">
 
   </p>
 
