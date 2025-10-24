@@ -1,4 +1,4 @@
-# NoExit
+![위시_마이페이지](https://github.com/user-attachments/assets/325957a1-a0a1-4755-8cfe-8ac1cdf7ddef)# NoExit
 방탈출게임을 사랑하는 찐덕후들을 위한 통합 플랫폼 서비스
 
 ![NoExit_Logo](https://github.com/user-attachments/assets/c82287fc-49f0-49ee-8602-a9835d39aafa)
@@ -259,23 +259,28 @@
 
 
 <details>
-  <summary>
-    <b>위시리스트 추가 및 조회</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>위시리스트 생성
-        
-  ![위시리스트찜추가](https://github.com/user-attachments/assets/b4f96e0e-13e3-4f78-9c51-5384c629932f)
-      </li>
-      <li>위시리스트 삭제
-        
-  ![위시리스트찜해제](https://github.com/user-attachments/assets/e7612a97-3aa9-47ea-aaa4-d5b7325c4500)
-      </li>
-      <li>위시리스트 내역 확인
-        
-  ![마이페이지찜목록](https://github.com/user-attachments/assets/748c9573-343e-470e-a69f-5ea850cdbfe9)
-      </li>
-    </ul>
-  </div>
+  <summary><b>위시리스트 추가 및 조회</b></summary>
+
+  <p><b>위시리스트 생성(찜 추가)</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/b4f96e0e-13e3-4f78-9c51-5384c629932f"
+         alt="위시리스트 찜 추가" width="820">
+
+    
+  </p>
+
+  <p><b>위시리스트 삭제(찜 해제)</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/c8821381-8361-4d8f-a123-eecc236425a7"
+         alt="위시리스트 찜 해제" width="820">
+
+  </p>
+
+  <p><b>위시리스트 내역 확인</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/2172bb02-4192-4105-9ea1-bacd235b565d"
+         alt="마이페이지 찜 목록" width="820">
+  </p>
+
 </details>
+
