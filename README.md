@@ -189,21 +189,20 @@
 </details>
 
 <details>
-  <summary>
-    <b>예약 및 리뷰 작성</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>예약 요청 ,(점주)예약 거절 및 승인
+  <summary><b>예약 및 리뷰 작성</b></summary>
 
-  ![에약거절_예약승인_예약신청_예약알림](https://github.com/user-attachments/assets/815c1c68-7be8-4786-8186-f22a505c1642)
-      </li>
-      <li>리뷰 작성 , 조회 , 수정 , 삭제
-        
-  ![리뷰수정삭제](https://github.com/user-attachments/assets/17649d95-707d-43fb-954a-cda169ee3534)
-      </li>
-    </ul>
-  </div>
+  <p align="center"><em>예약 요청 → 점주 승인/거절 → 실시간 알림</em></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/5e704853-2fe5-41de-b698-421e876cf650" alt="예약 요청 / 승인·거절 / 알림" width="820">
+  </p>
+
+  <p align="center"><em>리뷰 작성 · 조회 · 수정 · 삭제</em></p>
+  <p align="center">
+
+    <img src="https://github.com/user-attachments/assets/assets/fce65a80-2fde-4ac1-99f9-168b5f30cca6" alt="리뷰 CRUD" width="820">
+
+  </p>
+
 </details>
 
 <details>
