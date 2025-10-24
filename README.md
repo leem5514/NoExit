@@ -177,7 +177,6 @@
   </p>
 
 </details>
-
 <details>
   <summary><b>실시간 채팅</b></summary>
   </br>
@@ -185,8 +184,8 @@
     <img src="https://github.com/user-attachments/assets/7662e584-0593-4a57-bb43-c9681970eb74" 
       alt="실시간 채팅 데모" width="820">
   </p>
-
 </details>
+
 
 <details>
   <summary><b>예약 및 리뷰 작성</b></summary>
@@ -201,33 +200,31 @@
     <img src="https://github.com/user-attachments/assets/0ec5f7d8-e9fe-479d-a8c2-ac5dc4f62ef1" alt="리뷰 CRUD" width="820">
 
   </p>
-
 </details>
 
+
 <details>
-  <summary>
-    <b>Escape With me</b>
-  </summary>
-  <div markdown="1">
-    <ul>
-      <li>모집글 조회,작성,수정,삭제 기능
-        
-  ![withme게시글CRUD](https://github.com/user-attachments/assets/8a2c4695-d29f-4cd9-8b59-c8fa57715859)
-      </li>
-      <li>모집글 검색 기능
-        
-  ![withme검색기능](https://github.com/user-attachments/assets/ac383e96-b042-489c-a3c6-efb6d4a73f62)
-      </li>
-      <li>모집글 참여,뱃지,채팅방 생성
-        
-  ![withme참여하기알림채팅](https://github.com/user-attachments/assets/1a787136-9b8f-4da1-808d-ee211df36aa5)
-      </li>
-      <li>모집글 페이징,참여하기
-        
-  ![withme페이징,참여하기](https://github.com/user-attachments/assets/3cb297d3-27cf-4b32-8519-58656e0703bb)
-      </li>
-    </ul>
-  </div>
+  <summary><b>Escape With Me (모집글)</b></summary>
+
+  <p><b>① 모집글 CRUD</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/b09fe80f-3fc8-4fb4-aeb9-e31963d534ab" alt="모집글 CRUD" width="820">
+  </p>
+
+  <p><b>② 모집글 검색</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/acc2705e-0f94-4283-949e-3cb676c9bd2b" alt="모집글 검색 기능" width="820">
+  </p>
+  
+  <p><b>③ 참여 · 뱃지 · 채팅방 생성</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/e6557d29-4bfa-41ce-9a00-edf055c939b8" alt="모집글 참여/뱃지/채팅방 생성" width="820">
+  </p>
+
+  <p><b>④ 페이징 · 참여하기</b></p>
+  <p align="center">
+    <img src="https://github.com/user-attachments/assets/9d967654-257b-4ede-8282-328be9ee2230" alt="모집글 페이징·참여하기" width="820">
+  </p>
 </details>
 
 <details>
