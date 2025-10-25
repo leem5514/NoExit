@@ -206,22 +206,22 @@
 <details>
   <summary><b>Escape With Me (모집글)</b></summary>
 
-  <p><b>① 모집글 CRUD</b></p>
+  <p><b>모집글 CRUD</b></p>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/b09fe80f-3fc8-4fb4-aeb9-e31963d534ab" alt="모집글 CRUD" width="820">
   </p>
 
-  <p><b>② 모집글 검색</b></p>
+  <p><b>모집글 검색</b></p>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/acc2705e-0f94-4283-949e-3cb676c9bd2b" alt="모집글 검색 기능" width="820">
   </p>
   
-  <p><b>③ 참여 · 뱃지 · 채팅방 생성</b></p>
+  <p><b>참여 · 뱃지 · 채팅방 생성</b></p>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/e6557d29-4bfa-41ce-9a00-edf055c939b8" alt="모집글 참여/뱃지/채팅방 생성" width="820">
   </p>
 
-  <p><b>④ 페이징 · 참여하기</b></p>
+  <p><b>페이징 · 참여하기</b></p>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/9d967654-257b-4ede-8282-328be9ee2230" alt="모집글 페이징·참여하기" width="820">
   </p>
