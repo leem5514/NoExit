@@ -1,4 +1,3 @@
-![위시_마이페이지](https://github.com/user-attachments/assets/325957a1-a0a1-4755-8cfe-8ac1cdf7ddef)# NoExit
 방탈출게임을 사랑하는 찐덕후들을 위한 통합 플랫폼 서비스
 
 ![NoExit_Logo](https://github.com/user-attachments/assets/c82287fc-49f0-49ee-8602-a9835d39aafa)
