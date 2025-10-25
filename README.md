@@ -238,7 +238,7 @@
 
   </p>
 
-  <p><b>② 글 수정 · 삭제</b></p>
+  <p><b>글 수정 · 삭제</b></p>
   <p align="center">
     <img src="https://github.com/user-attachments/assets/5b27d1de-0261-4626-a6ca-4c27b1b8e309" alt="게시판 글 수정 및 삭제" width="820">
 
