@@ -263,10 +263,10 @@
 
   <p><b>위시리스트 생성(찜 추가)</b></p>
   <p align="center">
-    <img src="https://github.com/user-attachments/assets/b4f96e0e-13e3-4f78-9c51-5384c629932f"
+    <img src="https://github.com/user-attachments/assets/5c60221a-f9e2-4d24-aa23-daf529b21045"
          alt="위시리스트 찜 추가" width="820">
 
-    
+
   </p>
 
   <p><b>위시리스트 삭제(찜 해제)</b></p>
